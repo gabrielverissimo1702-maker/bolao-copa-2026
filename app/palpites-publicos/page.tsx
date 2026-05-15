@@ -1,5 +1,7 @@
 'use client'
 
+import Link from 'next/link'
+
 import { useEffect, useMemo, useState } from 'react'
 
 import Navbar from '@/app/components/Navbar'
@@ -231,7 +233,7 @@ export default function PalpitesPublicos() {
                 w-12
                 h-12
                 rounded-[10px]
-                bg-zinc-800
+                bg-zinc-00
                 text-xl
                 font-bold
                 disabled:opacity-30
@@ -265,7 +267,7 @@ export default function PalpitesPublicos() {
                 w-12
                 h-12
                 rounded-[10px]
-                bg-zinc-800
+                bg-zinc-00
                 text-xl
                 font-bold
                 disabled:opacity-30
@@ -744,7 +746,7 @@ export default function PalpitesPublicos() {
                 w-12
                 h-12
                 rounded-[10px]
-                bg-zinc-800
+                bg-zinc-00
                 text-xl
                 font-bold
                 disabled:opacity-30
@@ -778,7 +780,7 @@ export default function PalpitesPublicos() {
                 w-12
                 h-12
                 rounded-[10px]
-                bg-zinc-800
+                bg-zinc-00
                 text-xl
                 font-bold
                 disabled:opacity-30
@@ -787,11 +789,116 @@ export default function PalpitesPublicos() {
               →
             </button>
 
+            
+
           </div>
 
         </div>
 
       </div>
+
+      <br>
+      </br>
+{/* BOTÕES */}
+
+<div
+  className="
+    w-full
+    flex
+    justify-center
+    mt-24
+    pb-20
+    px-4
+  "
+>
+
+  <div
+    className="
+      w-full
+      max-w-5xl
+      grid
+      grid-cols-3
+      gap-2
+      items-center
+      justify-items-center
+    "
+  >
+
+    {/* HOME */}
+
+    <Link
+      href="/"
+      className="
+        w-full
+        text-center
+        border
+        border-white/10
+        bg-white/5
+        hover:bg-white/10
+        transition
+        px-2
+        py-4
+        rounded-[8px]
+        text-[11px]
+        font-medium
+        whitespace-nowrap
+        backdrop-blur-sm
+      "
+    >
+      HOME
+    </Link>
+
+    {/* MEUS PALPITES */}
+
+    <Link
+      href="/jogos"
+      className="
+        w-full
+        text-center
+        border
+        border-white/10
+        bg-white/5
+        hover:bg-white/10
+        transition
+        px-2
+        py-4
+        rounded-[8px]
+        text-[11px]
+        font-medium
+        whitespace-nowrap
+        backdrop-blur-sm
+      "
+    >
+      MEUS PALPITES
+    </Link>
+
+    {/* CLASSIFICAÇÃO */}
+
+    <Link
+      href="/ranking"
+      className="
+        w-full
+        text-center
+        border
+        border-white/10
+        bg-white/5
+        hover:bg-white/10
+        transition
+        px-2
+        py-4
+        rounded-[8px]
+        text-[11px]
+        font-medium
+        whitespace-nowrap
+        backdrop-blur-sm
+      "
+    >
+      CLASSIFICAÇÃO
+    </Link>
+
+  </div>
+
+</div>
 
     </main>
 

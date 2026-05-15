@@ -249,7 +249,7 @@ export default function Jogos() {
                 w-10
                 h-10
                 rounded-[8px]
-                bg-zinc-800
+                bg-zinc-000
                 text-lg
                 font-bold
                 disabled:opacity-30
@@ -280,7 +280,7 @@ export default function Jogos() {
                 w-10
                 h-10
                 rounded-[8px]
-                bg-zinc-800
+                bg-zinc-000
                 text-lg
                 font-bold
                 disabled:opacity-30
@@ -583,7 +583,7 @@ export default function Jogos() {
                 w-10
                 h-10
                 rounded-[8px]
-                bg-zinc-800
+                bg-zinc-000
                 text-lg
                 font-bold
                 disabled:opacity-30
@@ -617,7 +617,7 @@ export default function Jogos() {
                 w-10
                 h-10
                 rounded-[8px]
-                bg-zinc-800
+                bg-zinc-000
                 text-lg
                 font-bold
                 disabled:opacity-30
