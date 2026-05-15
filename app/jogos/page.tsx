@@ -686,7 +686,8 @@ export default function Jogos() {
             w-full
             max-w-5xl
             grid
-            grid-cols-1
+            grid-cols-3
+gap-2
             md:grid-cols-3
             gap-5
             items-center
@@ -706,11 +707,12 @@ export default function Jogos() {
               bg-white/5
               hover:bg-white/10
               transition
-              px-10
-              py-5
+              px-2
+              py-4
               rounded-[8px]
-              text-sm
+              text-[11px]
               font-medium
+              whitespace-nowrap
               backdrop-blur-sm
             "
           >
@@ -736,11 +738,12 @@ export default function Jogos() {
               bg-white/5
               hover:bg-white/10
               transition
-              px-10
-              py-5
+               px-2
+              py-4
               rounded-[8px]
-              text-sm
+              text-[11px]
               font-medium
+              whitespace-nowrap
               backdrop-blur-sm
             "
           >
@@ -760,11 +763,12 @@ export default function Jogos() {
               bg-white/5
               hover:bg-white/10
               transition
-              px-10
-              py-5
+               px-2
+              py-4
               rounded-[8px]
-              text-sm
+              text-[11px]
               font-medium
+              whitespace-nowrap
               backdrop-blur-sm
             "
           >
