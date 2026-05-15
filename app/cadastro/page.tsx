@@ -43,10 +43,7 @@ export default function Cadastro() {
   .from('profiles')
   .insert({
     id: user.id,
-    nome:
-      nome
-        .trim()
-        .toUpperCase()
+    nome: nome.toUpperCase()
   })
 
       }
