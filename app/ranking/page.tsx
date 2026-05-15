@@ -294,7 +294,7 @@ export default function Ranking() {
                 {/* CLASSIFICAÇÃO */}
       
                 <Link
-                  href="/ranking"
+                  href="/jogos"
                   className="
                     w-full
                     md:w-auto
@@ -313,7 +313,7 @@ export default function Ranking() {
                     backdrop-blur-sm
                   "
                 >
-                  CLASSIFICAÇÃO
+                  MEUS PALPITES
                 </Link>
       
               </div>
