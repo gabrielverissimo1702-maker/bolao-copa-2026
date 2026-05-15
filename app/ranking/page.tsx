@@ -301,7 +301,7 @@ export default function Ranking() {
                     text-center
                     border
                     border-white/
-                    bg-white/5
+                    bg-white/
                     hover:bg-white/10
                     transition
                      px-2
