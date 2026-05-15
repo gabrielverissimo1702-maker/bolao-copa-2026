@@ -16,12 +16,12 @@ export default function RankingPreview({
   return (
 
     <section
-  className="
-    max-w-4xl
-    mx-auto
-    w-full
-  "
->
+      className="
+        max-w-4xl
+        mx-auto
+        w-full
+      "
+    >
 
       {/* TÍTULO */}
 
@@ -38,7 +38,10 @@ export default function RankingPreview({
         >
           Copa do Mundo 2026
         </p>
-<br></br><br></br>
+
+        <br></br>
+        <br></br>
+
         <h2
           className="
             text-4xl
@@ -66,15 +69,19 @@ export default function RankingPreview({
         <div
           className="
             grid
-            grid-cols-[120px_1fr_160px_160px]
-            px-8
-            py-5
+            grid-cols-[70px_1fr_80px_90px]
+            md:grid-cols-[120px_1fr_160px_160px]
+            px-3
+            md:px-8
+            py-4
+            md:py-5
             border-b
             border-white/10
             text-white/60
             uppercase
             tracking-[0.2em]
-            text-sm
+            text-[10px]
+            md:text-sm
           "
         >
 
@@ -91,7 +98,7 @@ export default function RankingPreview({
           </div>
 
           <div className="text-center">
-            Cravadas
+            Crav.
           </div>
 
         </div>
@@ -104,10 +111,13 @@ export default function RankingPreview({
             key={index}
             className="
               grid
-              grid-cols-[120px_1fr_160px_160px]
+              grid-cols-[70px_1fr_80px_90px]
+              md:grid-cols-[120px_1fr_160px_160px]
               items-center
-              px-8
-              py-5
+              px-3
+              md:px-8
+              py-4
+              md:py-5
               border-b
               border-white/5
             "
@@ -119,14 +129,17 @@ export default function RankingPreview({
 
               <div
                 className="
-                  w-14
-                  h-14
+                  w-10
+                  h-10
+                  md:w-14
+                  md:h-14
                   bg-zinc-00
                   rounded-[10px]
                   flex
                   items-center
                   justify-center
-                  text-xl
+                  text-sm
+                  md:text-xl
                   font-bold
                 "
               >
@@ -139,11 +152,22 @@ export default function RankingPreview({
 
             <div
               className="
-                text-2xl
-                font-semibold
+                min-w-0
+                pr-2
               "
             >
-              {user.nome}
+
+              <p
+                className="
+                  truncate
+                  text-sm
+                  md:text-2xl
+                  font-semibold
+                "
+              >
+                {user.nome}
+              </p>
+
             </div>
 
             {/* PONTOS */}
@@ -152,15 +176,19 @@ export default function RankingPreview({
 
               <div
                 className="
-                  min-w-[70px]
-                  h-14
-                  px-4
+                  min-w-[50px]
+                  md:min-w-[70px]
+                  h-10
+                  md:h-14
+                  px-2
+                  md:px-4
                   bg-zinc-00
                   rounded-[10px]
                   flex
                   items-center
                   justify-center
-                  text-xl
+                  text-sm
+                  md:text-xl
                   font-bold
                 "
               >
@@ -175,15 +203,19 @@ export default function RankingPreview({
 
               <div
                 className="
-                  min-w-[70px]
-                  h-14
-                  px-4
+                  min-w-[50px]
+                  md:min-w-[70px]
+                  h-10
+                  md:h-14
+                  px-2
+                  md:px-4
                   bg-zinc-00
                   rounded-[10px]
                   flex
                   items-center
                   justify-center
-                  text-xl
+                  text-sm
+                  md:text-xl
                   font-bold
                 "
               >
