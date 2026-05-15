@@ -653,9 +653,9 @@ export default function Jogos() {
             bg-white/5
             hover:bg-white/10
             transition
-            px-10
-            py-5
-            rounded-[8px]
+            px-2
+            py-4
+            rounded-[4px]
             text-sm
             font-medium
             backdrop-blur-sm

@@ -201,6 +201,7 @@ export default function Ranking() {
 
           <RankingCompleto
             ranking={ranking}
+            completo={true}
           />
 
         </div>
