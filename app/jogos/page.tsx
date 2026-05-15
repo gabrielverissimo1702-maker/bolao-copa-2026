@@ -670,114 +670,104 @@ export default function Jogos() {
 
       {/* BOTÕES */}
 
-      <div
-        className="
-          w-full
-          flex
-          justify-center
-          mt-24
-          pb-20
-          px-4
-        "
-      >
+<div
+  className="
+    w-full
+    flex
+    justify-center
+    mt-24
+    pb-20
+    px-4
+  "
+>
 
-        <div
-          className="
-            w-full
-            max-w-5xl
-            grid
-            grid-cols-3
-gap-2
-            md:grid-cols-3
-            gap-5
-            items-center
-            justify-items-center
-          "
-        >
+  <div
+    className="
+      w-full
+      max-w-5xl
+      grid
+      grid-cols-3
+      gap-2
+      items-center
+      justify-items-center
+    "
+  >
 
-          {/* VOLTAR */}
+    {/* HOME */}
 
-          <button
-            onClick={() => history.back()}
-            className="
-              w-full
-              md:w-auto
-              border
-              border-white/10
-              bg-white/5
-              hover:bg-white/10
-              transition
-              px-2
-              py-4
-              rounded-[8px]
-              text-[11px]
-              font-medium
-              whitespace-nowrap
-              backdrop-blur-sm
-            "
-          >
-            VOLTAR
-          </button>
+    <Link
+      href="/"
+      className="
+        w-full
+        text-center
+        border
+        border-white/10
+        bg-white/5
+        hover:bg-white/10
+        transition
+        px-2
+        py-4
+        rounded-[8px]
+        text-[11px]
+        font-medium
+        whitespace-nowrap
+        backdrop-blur-sm
+      "
+    >
+      HOME
+    </Link>
 
-          {/* SAIR */}
+    {/* CLASSIFICAÇÃO */}
 
-          <button
-            onClick={async () => {
+    <Link
+      href="/ranking"
+      className="
+        w-full
+        text-center
+        border
+        border-white/10
+        bg-white/5
+        hover:bg-white/10
+        transition
+        px-2
+        py-4
+        rounded-[8px]
+        text-[11px]
+        font-medium
+        whitespace-nowrap
+        backdrop-blur-sm
+      "
+    >
+      CLASSIFICAÇÃO
+    </Link>
 
-              await supabase.auth.signOut()
+    {/* PALPITES ADVERSÁRIOS */}
 
-              window.location.href =
-                '/login'
+    <Link
+      href="/palpites-publicos"
+      className="
+        w-full
+        text-center
+        border
+        border-white/10
+        bg-white/5
+        hover:bg-white/10
+        transition
+        px-2
+        py-4
+        rounded-[8px]
+        text-[11px]
+        font-medium
+        whitespace-nowrap
+        backdrop-blur-sm
+      "
+    >
+      PALPITES ADVERSÁRIOS
+    </Link>
 
-            }}
-            className="
-              w-full
-              md:w-auto
-              border
-              border-white/10
-              bg-white/5
-              hover:bg-white/10
-              transition
-               px-2
-              py-4
-              rounded-[8px]
-              text-[11px]
-              font-medium
-              whitespace-nowrap
-              backdrop-blur-sm
-            "
-          >
-            SAIR
-          </button>
+  </div>
 
-          {/* CLASSIFICAÇÃO */}
-
-          <Link
-            href="/ranking"
-            className="
-              w-full
-              md:w-auto
-              text-center
-              border
-              border-white/10
-              bg-white/5
-              hover:bg-white/10
-              transition
-               px-2
-              py-4
-              rounded-[8px]
-              text-[11px]
-              font-medium
-              whitespace-nowrap
-              backdrop-blur-sm
-            "
-          >
-            CLASSIFICAÇÃO
-          </Link>
-
-        </div>
-
-      </div>
+</div>
 
     </main>
 
