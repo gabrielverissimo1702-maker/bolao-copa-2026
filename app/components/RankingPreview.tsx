@@ -13,7 +13,8 @@ export default function RankingPreview({
     <section>
 
       {/* TÍTULO */}
-<br></br><br></br><br></br>
+
+      <br></br>
 
       <div className="mb-8 text-center">
 
@@ -26,7 +27,7 @@ export default function RankingPreview({
             mb-3
           "
         >
-          TOP 7
+          TOP 3
         </p>
 
         <Link
@@ -60,15 +61,18 @@ export default function RankingPreview({
         <div
           className="
             grid
-            grid-cols-[100px_1fr_120px_140px]
-            px-6
+            grid-cols-[70px_1fr_80px_90px]
+            md:grid-cols-[100px_1fr_120px_140px]
+            px-3
+            md:px-6
             py-4
             border-b
             border-white/10
             text-white/60
             uppercase
             tracking-[0.2em]
-            text-sm
+            text-[10px]
+            md:text-sm
           "
         >
 
@@ -85,22 +89,24 @@ export default function RankingPreview({
           </div>
 
           <div className="text-center">
-            Cravadas
+            Crav.
           </div>
 
         </div>
 
-        {/* TOP 7 */}
+        {/* TOP 3 */}
 
-        {ranking.slice(0, 7).map((user, index) => (
+        {ranking.slice(0, 3).map((user, index) => (
 
           <div
             key={index}
             className="
               grid
-              grid-cols-[100px_1fr_120px_140px]
+              grid-cols-[70px_1fr_80px_90px]
+              md:grid-cols-[100px_1fr_120px_140px]
               items-center
-              px-6
+              px-3
+              md:px-6
               py-4
               border-b
               border-white/5
@@ -113,14 +119,17 @@ export default function RankingPreview({
 
               <div
                 className="
-                  w-12
-                  h-12
+                  w-10
+                  h-10
+                  md:w-12
+                  md:h-12
                   bg-zinc-00
                   rounded-[10px]
                   flex
                   items-center
                   justify-center
-                  text-lg
+                  text-sm
+                  md:text-lg
                   font-bold
                 "
               >
@@ -133,11 +142,22 @@ export default function RankingPreview({
 
             <div
               className="
-                text-xl
-                font-semibold
+                min-w-0
+                pr-2
               "
             >
-              {user.nome}
+
+              <p
+                className="
+                  truncate
+                  text-sm
+                  md:text-xl
+                  font-semibold
+                "
+              >
+                {user.nome}
+              </p>
+
             </div>
 
             {/* PTS */}
@@ -146,15 +166,18 @@ export default function RankingPreview({
 
               <div
                 className="
-                  min-w-[60px]
-                  h-12
-                  px-3
+                  min-w-[50px]
+                  md:min-w-[60px]
+                  h-10
+                  md:h-12
+                  px-2
                   bg-zinc-00
                   rounded-[10px]
                   flex
                   items-center
                   justify-center
-                  text-lg
+                  text-sm
+                  md:text-lg
                   font-bold
                 "
               >
@@ -169,15 +192,18 @@ export default function RankingPreview({
 
               <div
                 className="
-                  min-w-[60px]
-                  h-12
-                  px-3
+                  min-w-[50px]
+                  md:min-w-[60px]
+                  h-10
+                  md:h-12
+                  px-2
                   bg-zinc-00
                   rounded-[10px]
                   flex
                   items-center
                   justify-center
-                  text-lg
+                  text-sm
+                  md:text-lg
                   font-bold
                 "
               >
@@ -216,7 +242,8 @@ export default function RankingPreview({
         </Link>
 
       </div>
-<br></br><br></br>
+
+      <br></br>
 
     </section>
 

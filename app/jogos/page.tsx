@@ -222,6 +222,70 @@ export default function Jogos() {
           "
         >
 
+          {/* PAGINAÇÃO TOPO */}
+
+<div
+  className="
+    flex
+    items-center
+    justify-center
+    gap-6
+    mb-10
+  "
+>
+
+  <button
+    disabled={pagina === 1}
+    onClick={() =>
+      setPagina(pagina - 1)
+    }
+    className="
+      w-12
+      h-12
+      rounded-[10px]
+      bg-zinc-800
+      text-xl
+      font-bold
+      disabled:opacity-30
+    "
+  >
+    ←
+  </button>
+
+  <p
+    className="
+      text-white/70
+      uppercase
+      tracking-[0.2em]
+      text-sm
+    "
+  >
+    Página {pagina}
+  </p>
+
+  <button
+    disabled={
+      pagina === totalPaginas
+    }
+    onClick={() =>
+      setPagina(pagina + 1)
+    }
+    className="
+      w-12
+      h-12
+      rounded-[10px]
+      bg-zinc-800
+      text-xl
+      font-bold
+      disabled:opacity-30
+    "
+  >
+    →
+  </button>
+
+</div>
+
+<br></br>
           {/* LISTA */}
 
           <div
@@ -284,22 +348,24 @@ export default function Jogos() {
                   {/* LINHA JOGO */}
 
                   <div
-                    className="
-                      flex
-                      items-center
-                      justify-center
-                      gap-5
-                      flex-wrap
-                    "
-                  >
+                   className="
+                 w-full
+         flex
+          items-center
+               justify-center
+    gap-8
+  "
+>
 
                     {/* HOME */}
 
                     <div
                       className="
-                        flex
-                        items-center
-                        gap-4
+                       w-[240px]
+flex
+items-center
+justify-end
+gap-4
                       "
                     >
 
@@ -316,12 +382,14 @@ export default function Jogos() {
                       />
 
                       <p
-                        className="
-                          text-4xl
-                          font-bold
-                          tracking-wide
-                        "
-                      >
+  className="
+    w-[70px]
+    text-right
+    text-4xl
+    font-bold
+    tracking-wide
+  "
+>
                         {game.home_team}
                       </p>
 
@@ -402,19 +470,23 @@ export default function Jogos() {
 
                     <div
                       className="
-                        flex
-                        items-center
-                        gap-4
+                        w-[240px]
+flex
+items-center
+justify-start
+gap-4
                       "
                     >
 
                       <p
-                        className="
-                          text-4xl
-                          font-bold
-                          tracking-wide
-                        "
-                      >
+  className="
+    w-[70px]
+    text-left
+    text-4xl
+    font-bold
+    tracking-wide
+  "
+>
                         {game.away_team}
                       </p>
 
@@ -484,6 +556,7 @@ export default function Jogos() {
 
           </div>
 
+<br></br>
           {/* PAGINAÇÃO */}
 
           <div

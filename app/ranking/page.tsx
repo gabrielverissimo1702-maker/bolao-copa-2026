@@ -11,9 +11,11 @@ import RankingCompleto from '../components/RankingCompleto'
 
 export default function Ranking() {
 
-  const [perfil, setPerfil] = useState<any>(null)
+  const [perfil, setPerfil] =
+    useState<any>(null)
 
-  const [ranking, setRanking] = useState<any[]>([])
+  const [ranking, setRanking] =
+    useState<any[]>([])
 
   useEffect(() => {
 
@@ -22,7 +24,14 @@ export default function Ranking() {
       const { data } =
         await supabase.auth.getUser()
 
-      if (!data.user) return
+      if (!data.user) {
+
+        window.location.href =
+          '/login'
+
+        return
+
+      }
 
       const { data: meuPerfil } =
         await supabase
@@ -133,9 +142,11 @@ export default function Ranking() {
           if (
             b.pontos !== a.pontos
           ) {
+
             return (
               b.pontos - a.pontos
             )
+
           }
 
           return (
@@ -168,14 +179,15 @@ export default function Ranking() {
         nome={perfil?.nome || ''}
       />
 
-      {/* CONTAINER CENTRAL */}
+      {/* CONTAINER */}
 
       <div
         className="
           w-full
           flex
           justify-center
-          px-6
+          px-4
+          md:px-6
           mt-10
         "
       >
@@ -196,43 +208,50 @@ export default function Ranking() {
       </div>
 
       {/* BOTÕES */}
-<br></br>
+
       <div
         className="
           w-full
           flex
           justify-center
-          mt-24
+          mt-20
           pb-20
-          px-6
+          px-4
+          md:px-6
         "
       >
 
         <div
-  className="
-    w-full
-    max-w-5xl
-    grid
-    grid-cols-3
-    gap-10
-    items-center
-    justify-items-center
-  "
+          className="
+            w-full
+            max-w-4xl
+            grid
+            grid-cols-1
+            md:grid-cols-3
+            gap-6
+            md:gap-10
+            items-center
+            justify-items-center
+          "
         >
 
           {/* VOLTAR */}
 
           <button
-            onClick={() => history.back()}
+            onClick={() =>
+              history.back()
+            }
             className="
+              w-full
+              md:w-auto
               border
-              border-white
+              border-white/10
               bg-white/5
               hover:bg-white/10
               transition
               px-10
               py-5
-              rounded-[4px]
+              rounded-[8px]
               text-lg
               font-medium
               backdrop-blur-sm
@@ -248,39 +267,45 @@ export default function Ranking() {
 
               await supabase.auth.signOut()
 
-              window.location.href = '/login'
+              window.location.href =
+                '/login'
 
             }}
-          className="
-            border
-            border-white/10
-            bg-white/5
-            hover:bg-white/10
-            transition
-            px-16
-            py-6
-            rounded-[4px]
-            text-xl
-            font-medium
-            backdrop-blur-sm
-          "
+            className="
+              w-full
+              md:w-auto
+              border
+              border-white/10
+              bg-white/5
+              hover:bg-white/10
+              transition
+              px-16
+              py-6
+              rounded-[8px]
+              text-xl
+              font-medium
+              backdrop-blur-sm
+            "
           >
             SAIR
           </button>
 
-          {/* CLASSIFICAÇÃO */}
+          {/* PALPITES */}
 
           <Link
             href="/jogos"
             className="
+              w-full
+              md:w-auto
+              text-center
               border
-              border-white/1
+              border-white/10
               bg-white/5
               hover:bg-white/10
               transition
               px-10
               py-5
-              rounded-[4px]
+              rounded-[8px]
               text-lg
               font-medium
               backdrop-blur-sm

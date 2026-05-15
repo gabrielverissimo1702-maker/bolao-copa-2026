@@ -1,12 +1,15 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
-import Navbar from '../components/Navbar'
+import Navbar from '@/app/components/Navbar'
 
-import { supabase } from '../../lib/supabase'
+import { supabase } from '@/lib/supabase'
 
 export default function PalpitesPublicos() {
+
+  const [perfil, setPerfil] =
+    useState<any>(null)
 
   const [games, setGames] =
     useState<any[]>([])
@@ -20,6 +23,9 @@ export default function PalpitesPublicos() {
   const [teams, setTeams] =
     useState<any[]>([])
 
+  const [pagina, setPagina] =
+    useState(1)
+
   useEffect(() => {
 
     carregar()
@@ -27,6 +33,33 @@ export default function PalpitesPublicos() {
   }, [])
 
   const carregar = async () => {
+
+    const { data } =
+      await supabase.auth.getUser()
+
+    if (!data.user) {
+
+      window.location.href =
+        '/login'
+
+      return
+
+    }
+
+    const user = data.user
+
+    /* PERFIL */
+
+    const { data: meuPerfil } =
+      await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single()
+
+    if (meuPerfil) {
+      setPerfil(meuPerfil)
+    }
 
     /* GAMES */
 
@@ -88,6 +121,61 @@ export default function PalpitesPublicos() {
 
   }
 
+  /* PÁGINA INICIAL */
+
+  const paginaInicial =
+    useMemo(() => {
+
+      const index =
+        games.findIndex(
+          (game) =>
+            new Date(
+              game.match_date
+            ) > new Date()
+        )
+
+      if (index === -1) {
+        return 1
+      }
+
+      return (
+        Math.floor(index / 6) + 1
+      )
+
+    }, [games])
+
+  useEffect(() => {
+
+    if (pagina === 1) {
+      setPagina(paginaInicial)
+    }
+
+  }, [paginaInicial])
+
+  /* PAGINAÇÃO */
+
+  const jogosPorPagina = 6
+
+  const inicio =
+    (pagina - 1) *
+    jogosPorPagina
+
+  const fim =
+    inicio +
+    jogosPorPagina
+
+  const jogosPaginados =
+    games.slice(
+      inicio,
+      fim
+    )
+
+  const totalPaginas =
+    Math.ceil(
+      games.length /
+      jogosPorPagina
+    )
+
   return (
 
     <main
@@ -97,7 +185,11 @@ export default function PalpitesPublicos() {
       "
     >
 
-      <Navbar nome="" />
+      <Navbar
+        nome={perfil?.nome || ''}
+      />
+
+      {/* CONTAINER */}
 
       <div
         className="
@@ -112,248 +204,590 @@ export default function PalpitesPublicos() {
         <div
           className="
             w-full
-            max-w-5xl
-            flex
-            flex-col
-            gap-8
+            max-w-7xl
           "
         >
+<br></br>
+          {/* PAGINAÇÃO TOPO */}
 
-          <h1
+          <div
             className="
-              text-4xl
-              font-bold
-              text-center
-              mb-4
+              flex
+              items-center
+              justify-center
+              gap-6
+              mb-10
             "
           >
-            Palpites Públicos
-          </h1>
 
-          {games.map((game) => {
+            <button
+              disabled={pagina === 1}
+              onClick={() =>
+                setPagina(
+                  pagina - 1
+                )
+              }
+              className="
+                w-12
+                h-12
+                rounded-[10px]
+                bg-zinc-800
+                text-xl
+                font-bold
+                disabled:opacity-30
+              "
+            >
+              ←
+            </button>
 
-            const liberado =
-              jogoLiberado(
-                game.match_date
-              )
+            <p
+              className="
+                text-white/70
+                uppercase
+                tracking-[0.2em]
+                text-sm
+              "
+            >
+              Página {pagina}
+            </p>
 
-            const homeTeam =
-              teams.find(
-                (t) =>
-                  t.nome ===
-                  game.home_team
-              )
+            <button
+              disabled={
+                pagina ===
+                totalPaginas
+              }
+              onClick={() =>
+                setPagina(
+                  pagina + 1
+                )
+              }
+              className="
+                w-12
+                h-12
+                rounded-[10px]
+                bg-zinc-800
+                text-xl
+                font-bold
+                disabled:opacity-30
+              "
+            >
+              →
+            </button>
 
-            const awayTeam =
-              teams.find(
-                (t) =>
-                  t.nome ===
-                  game.away_team
-              )
+          </div>
+<br></br>
+          {/* GRID */}
 
-            const betsDoJogo =
-              bets.filter(
-                (bet) =>
-                  bet.game_id ===
-                  game.id
-              )
+          <div
+            className="
+              grid
+              grid-cols-1
+              md:grid-cols-2
+              xl:grid-cols-3
+              gap-8
+            "
+          >
 
-            return (
+            {jogosPaginados.map((game) => {
 
-              <section
-                key={game.id}
-                className="
-                  bg-zinc-900/20
-                  rounded-[10px]
-                  p-8
-                "
-              >
+              const liberado =
+                jogoLiberado(
+                  game.match_date
+                )
 
-                {/* JOGO */}
+              const homeTeam =
+                teams.find(
+                  (t) =>
+                    t.nome ===
+                    game.home_team
+                )
 
-                <div
+              const awayTeam =
+                teams.find(
+                  (t) =>
+                    t.nome ===
+                    game.away_team
+                )
+
+              const betsDoJogo =
+                bets.filter(
+                  (bet) =>
+                    bet.game_id ===
+                    game.id
+                )
+
+              const meuPalpite =
+                betsDoJogo.find(
+                  (bet) =>
+                    bet.user_id ===
+                    perfil?.id
+                )
+
+              const outrosPalpites =
+                betsDoJogo.filter(
+                  (bet) =>
+                    bet.user_id !==
+                    perfil?.id
+                )
+
+              return (
+
+                <section
+                  key={game.id}
                   className="
-                    flex
-                    items-center
-                    justify-center
-                    gap-5
-                    flex-wrap
+                    bg-zinc-900/10
+                    rounded-[16px]
+                    p-6
                   "
                 >
+
+                  {/* HEADER */}
 
                   <div
                     className="
                       flex
                       items-center
+                      justify-center
                       gap-3
                     "
                   >
+                    {/* HOME */}
 
-                    <img
-                      src={`https://flagcdn.com/w320/${homeTeam?.flag}.png`}
+                    <div
                       className="
-                        w-10
-                        h-7
-                        object-cover
-                        rounded
-                      "
-                    />
-
-                    <p
-                      className="
-                        text-3xl
-                        font-bold
+                        flex
+                        items-center
+                        gap-2
                       "
                     >
-                      {game.home_team}
-                    </p>
 
-                  </div>
+                      <img
+                        src={`https://flagcdn.com/w320/${homeTeam?.flag}.png`}
+                        className="
+                          w-9
+                          h-7
+                          object-cover
+                          rounded
+                        "
+                      />
 
-                  <span
-                    className="
-                      text-white/60
-                      uppercase
-                    "
-                  >
-                    vs
-                  </span>
+                      <p
+                        className="
+                          w-[40px]
+                          text-right
+                          text-xl
+                          font-bold
+                        "
+                      >
+                        {game.home_team}
+                      </p>
 
-                  <div
-                    className="
-                      flex
-                      items-center
-                      gap-3
-                    "
-                  >
+                    </div>
 
-                    <p
+                    {/* RESULTADO */}
+
+                    <div
                       className="
-                        text-3xl
-                        font-bold
+                        flex
+                        items-center
+                        gap-2
                       "
                     >
-                      {game.away_team}
-                    </p>
-
-                    <img
-                      src={`https://flagcdn.com/w320/${awayTeam?.flag}.png`}
-                      className="
-                        w-10
-                        h-7
-                        object-cover
-                        rounded
-                      "
-                    />
-
-                  </div>
-
-                </div>
-
-                {/* DATA */}
-
-                <p
-                  className="
-                    text-center
-                    text-white/60
-                    mt-4
-                  "
-                >
-                  {new Date(
-                    game.match_date
-                  ).toLocaleString(
-                    'pt-BR',
-                    {
-                      day: '2-digit',
-                      month: '2-digit',
-                      year: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    }
-                  )}
-                </p>
-
-                {/* PALPITES */}
-
-                <div
-                  className="
-                    mt-8
-                    flex
-                    flex-col
-                    gap-3
-                  "
-                >
-
-                  {betsDoJogo.map((bet) => {
-
-                    const profile =
-                      profiles.find(
-                        (p) =>
-                          p.id ===
-                          bet.user_id
-                      )
-
-                    return (
 
                       <div
-                        key={bet.id}
+                        className="
+                          w-11
+                          h-11
+                          bg-zinc-800
+                          rounded-[8px]
+                          flex
+                          items-center
+                          justify-center
+                          text-lg
+                          font-bold
+                        "
+                      >
+                        {
+                          liberado
+                            ? game.home_score
+                            : ''
+                        }
+                      </div>
+
+                      <span
+                        className="
+                          text-white/60
+                          text-sm
+                          font-semibold
+                        "
+                      >
+                        x
+                      </span>
+
+                      <div
+                        className="
+                          w-11
+                          h-11
+                          bg-zinc-800
+                          rounded-[8px]
+                          flex
+                          items-center
+                          justify-center
+                          text-lg
+                          font-bold
+                        "
+                      >
+                        {
+                          liberado
+                            ? game.away_score
+                            : ''
+                        }
+                      </div>
+
+                    </div>
+
+                    {/* AWAY */}
+
+                    <div
+                      className="
+                        flex
+                        items-center
+                        gap-2
+                      "
+                    >
+
+                      <p
+                        className="
+                          w-[40px]
+                          text-left
+                          text-xl
+                          font-bold
+                        "
+                      >
+                        {game.away_team}
+                      </p>
+
+                      <img
+                        src={`https://flagcdn.com/w320/${awayTeam?.flag}.png`}
+                        className="
+                          w-9
+                          h-7
+                          object-cover
+                          rounded
+                        "
+                      />
+
+                    </div>
+
+                  </div>
+
+                  {/* DATA */}
+
+                  <p
+                    className="
+                      text-center
+                      text-white/40
+                      text-xs
+                      mt-4
+                    "
+                  >
+                    {new Date(
+                      game.match_date
+                    ).toLocaleString(
+                      'pt-BR',
+                      {
+                        day: '2-digit',
+                        month: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      }
+                    )}
+                  </p>
+
+                  {/* MEU PALPITE */}
+
+                  {meuPalpite && (
+
+                    <div
+                      className="
+                        mt-6
+                        flex
+                        flex-col
+                        items-center
+                      "
+                    >
+
+                      <p
+                        className="
+                          text-[10px]
+                          uppercase
+                          tracking-[0.2em]
+                          text-white/40
+                          mb-2
+                        "
+                      >
+                        Meu Palpite
+                      </p>
+
+                      <div
                         className="
                           flex
                           items-center
-                          justify-between
-                          bg-zinc-800/40
-                          px-5
-                          py-4
-                          rounded-[8px]
+                          gap-2
                         "
                       >
 
-                        <p
+                        <div
                           className="
-                            font-semibold
+                            w-8
+                            h-8
+                            bg-zinc-800
+                            rounded-[6px]
+                            flex
+                            items-center
+                            justify-center
+                            text-xs
+                            font-bold
                           "
                         >
-                          {profile?.nome}
-                        </p>
+                          {
+                            liberado
+                              ? meuPalpite.home_guess
+                              : ''
+                          }
+                        </div>
 
-                        {liberado ? (
+                        <span
+                          className="
+                            text-white/50
+                            text-xs
+                          "
+                        >
+                          x
+                        </span>
 
-                          <p
-                            className="
-                              text-2xl
-                              font-bold
-                            "
-                          >
-                            {bet.home_guess}
-                            {' x '}
-                            {bet.away_guess}
-                          </p>
-
-                        ) : (
-
-                          <p
-                            className="
-                              text-2xl
-                            "
-                          >
-                            🔒
-                          </p>
-
-                        )}
+                        <div
+                          className="
+                            w-8
+                            h-8
+                            bg-zinc-800
+                            rounded-[6px]
+                            flex
+                            items-center
+                            justify-center
+                            text-xs
+                            font-bold
+                          "
+                        >
+                          {
+                            liberado
+                              ? meuPalpite.away_guess
+                              : ''
+                          }
+                        </div>
 
                       </div>
 
-                    )
+                    </div>
 
-                  })}
+                  )}
+                  <br></br>
+                  {/* LINHA */}
 
-                </div>
+                  <div
+                    className="
+                      w-full
+                      h-px
+                      bg-white/
+                      my-10
+                    "
+                  />
 
-              </section>
+                  {/* PALPITES */}
 
-            )
+                  <div
+                    className="
+                      flex
+                      flex-col
+                      gap-5
+                    "
+                  >
 
-          })}
+                    {outrosPalpites.map((bet) => {
+
+                      const profile =
+                        profiles.find(
+                          (p) =>
+                            p.id ===
+                            bet.user_id
+                        )
+
+                      return (
+
+                        <div
+                          key={bet.id}
+                          className="
+                            flex
+                            flex-col
+                            items-center
+                          "
+                        >
+
+                          <p
+                            className="
+                              text-sm
+                              font-semibold
+                              uppercase
+                              mb-2
+                            "
+                          >
+                            {profile?.nome}
+                          </p>
+
+                          <div
+                            className="
+                              flex
+                              items-center
+                              gap-2
+                            "
+                          >
+
+                            <div
+                              className="
+                                w-9
+                                h-9
+                                bg-zinc-800
+                                rounded-[8px]
+                                flex
+                                items-center
+                                justify-center
+                                text-sm
+                                font-bold
+                              "
+                            >
+                              {
+                                liberado
+                                  ? bet.home_guess
+                                  : ''
+                              }
+                            </div>
+
+                            <span
+                              className="
+                                text-white/60
+                                text-xs
+                              "
+                            >
+                              x
+                            </span>
+
+                            <div
+                              className="
+                                w-9
+                                h-9
+                                bg-zinc-800
+                                rounded-[8px]
+                                flex
+                                items-center
+                                justify-center
+                                text-sm
+                                font-bold
+                              "
+                            >
+                              {
+                                liberado
+                                  ? bet.away_guess
+                                  : ''
+                              }
+                            </div>
+
+                          </div>
+
+                        </div>
+
+                      )
+
+                    })}
+
+                  </div>
+
+                </section>
+
+              )
+
+            })}
+
+          </div>
+
+          {/* PAGINAÇÃO BAIXO */}
+
+          <br></br>
+
+          <div
+            className="
+              flex
+              items-center
+              justify-center
+              gap-6
+              mt-10
+            "
+          >
+
+            <button
+              disabled={pagina === 1}
+              onClick={() =>
+                setPagina(
+                  pagina - 1
+                )
+              }
+              className="
+                w-12
+                h-12
+                rounded-[10px]
+                bg-zinc-800
+                text-xl
+                font-bold
+                disabled:opacity-30
+              "
+            >
+              ←
+            </button>
+
+            <p
+              className="
+                text-white/70
+                uppercase
+                tracking-[0.2em]
+                text-sm
+              "
+            >
+              Página {pagina}
+            </p>
+
+            <button
+              disabled={
+                pagina ===
+                totalPaginas
+              }
+              onClick={() =>
+                setPagina(
+                  pagina + 1
+                )
+              }
+              className="
+                w-12
+                h-12
+                rounded-[10px]
+                bg-zinc-800
+                text-xl
+                font-bold
+                disabled:opacity-30
+              "
+            >
+              →
+            </button>
+
+          </div>
 
         </div>
 

@@ -7,21 +7,36 @@ import { supabase } from '../lib/supabase'
 import Navbar from './components/Navbar'
 import RankingPreview from './components/RankingPreview'
 import JogosPreview from './components/JogosPreview'
+import PalpitesPreview from './components/PalpitesPreview'
 
 export default function Home() {
 
-  const [perfil, setPerfil] = useState<any>(null)
+  const [perfil, setPerfil] =
+    useState<any>(null)
 
-  const [games, setGames] = useState<any[]>([])
+  const [games, setGames] =
+    useState<any[]>([])
 
-  const [teams, setTeams] = useState<any[]>([])
+  const [teams, setTeams] =
+    useState<any[]>([])
 
-  const [ranking, setRanking] = useState<any[]>([])
+  const [ranking, setRanking] =
+    useState<any[]>([])
 
-  const [palpites, setPalpites] = useState<any>({})
+  const [palpites, setPalpites] =
+    useState<any>({})
 
   const [ultimaCravada, setUltimaCravada] =
     useState<any>(null)
+
+  const [allBets, setAllBets] =
+    useState<any[]>([])
+
+  const [profiles, setProfiles] =
+    useState<any[]>([])
+
+  const [carregando, setCarregando] =
+    useState(true)
 
   useEffect(() => {
 
@@ -30,17 +45,18 @@ export default function Home() {
       const { data } =
         await supabase.auth.getUser()
 
-      if (!data.user) return
+      if (!data.user) {
+
+        window.location.href =
+          '/login'
+
+        return
+
+      }
 
       const user = data.user
 
-      if (!user) {
-
-  window.location.href = '/'
-
-  return
-
-}
+      setCarregando(false)
 
       /* PERFIL */
 
@@ -77,7 +93,7 @@ export default function Home() {
         setTeams(teamsData)
       }
 
-      /* BETS */
+      /* BETS USER */
 
       const { data: betsData } =
         await supabase
@@ -100,6 +116,28 @@ export default function Home() {
 
         setPalpites(formatado)
 
+      }
+
+      /* TODAS BETS */
+
+      const { data: allBetsData } =
+        await supabase
+          .from('bets')
+          .select('*')
+
+      if (allBetsData) {
+        setAllBets(allBetsData)
+      }
+
+      /* PROFILES */
+
+      const { data: profilesData } =
+        await supabase
+          .from('profiles')
+          .select('*')
+
+      if (profilesData) {
+        setProfiles(profilesData)
       }
 
       /* ÚLTIMA CRAVADA */
@@ -151,19 +189,9 @@ export default function Home() {
 
       /* RANKING */
 
-      const { data: profilesData } =
-        await supabase
-          .from('profiles')
-          .select('*')
-
-      const { data: allBets } =
-        await supabase
-          .from('bets')
-          .select('*')
-
       if (
         profilesData &&
-        allBets &&
+        allBetsData &&
         gamesData
       ) {
 
@@ -174,7 +202,7 @@ export default function Home() {
 
             let cravadas = 0
 
-            allBets.forEach((bet) => {
+            allBetsData.forEach((bet) => {
 
               if (
                 bet.user_id !== profile.id
@@ -245,9 +273,11 @@ export default function Home() {
           if (
             b.pontos !== a.pontos
           ) {
+
             return (
               b.pontos - a.pontos
             )
+
           }
 
           return (
@@ -283,6 +313,34 @@ export default function Home() {
 
   }
 
+  if (carregando) {
+
+    return (
+
+      <main
+        className="
+          min-h-screen
+          flex
+          items-center
+          justify-center
+        "
+      >
+
+        <p
+          className="
+            text-2xl
+            text-white/70
+          "
+        >
+          Carregando...
+        </p>
+
+      </main>
+
+    )
+
+  }
+
   return (
 
     <main
@@ -296,440 +354,494 @@ export default function Home() {
         nome={perfil?.nome || ''}
       />
 
-      {/* TOP GRID */}
+      {/* BLOCO PRINCIPAL */}
 
       <div
         className="
-          grid
-          grid-cols-1
-          xl:grid-cols-2
-          gap-16
-          items-start
-        "
-      >
-
-        {/* CLASSIFICAÇÃO */}
-
-        <RankingPreview
-          ranking={ranking}
-        />
-
-        {/* PALPITES */}
-
-        <JogosPreview
-          games={games}
-          teams={teams}
-          palpites={palpites}
-          handleChange={handleChange}
-        />
-
-      </div>
-
-       {/* MINHA COLOCAÇÃO + ÚLTIMA CRAVADA */}
-
-<div
-  className="
-    grid
-    grid-cols-1
-    xl:grid-cols-2
-    gap-16
-    mt-32
-  "
->
-
-  {/* MINHA COLOCAÇÃO */}
-
-  <div>
-
-    <div className="text-center mb-8">
-
-      <p
-        className="
-          text-white/70
-          uppercase
-          tracking-[0.3em]
-          text-xs
-          mb-3
-        "
-      >
-        SEGUE O..
-      </p>
-
-      <h2
-        className="
-          text-4xl
-          font-semibold
-          tracking-tight
-        "
-      >
-        Minha Colocação
-      </h2>
-
-    </div>
-
-    <div
-      className="
-        bg-zinc-900/10
-        rounded-[10px]
-        p-10
-      "
-    >
-
-      <div
-        className="
+          w-full
           flex
-          items-center
           justify-center
-          gap-8
+          px-6
         "
       >
 
-        {/* PONTOS */}
-
         <div
           className="
-            flex
-            flex-col
-            items-center
-            opacity-80
+            w-full
+            max-w-7xl
+            grid
+            grid-cols-1
+            xl:grid-cols-2
+            gap-16
+            items-start
           "
         >
 
-          <span
-            className="
-              text-3xl
-              font-bold
-            "
-          >
-            {ranking.find(
-              (r) =>
-                r.nome === perfil?.nome
-            )?.pontos || 0}
-          </span>
+          {/* MEUS PALPITES */}
 
-          <span
-            className="
-              text-sm
-              uppercase
-              tracking-[0.2em]
-              text-white/30
-            "
-          >
-            pts
-          </span>
+          <JogosPreview
+            games={games}
+            teams={teams}
+            palpites={palpites}
+            handleChange={handleChange}
+          />
+          {/* PALPITES ADVERSÁRIOS */}
 
-        </div>
-
-        {/* COLOCAÇÃO */}
-
-        <div
-          className="
-            w-40
-            h-28
-            bg-zinc-000
-            rounded-[14px]
-            flex
-            items-center
-            justify-center
-            text-6xl
-            font-bold
-            shadow-xl
-          "
-        >
-          {ranking.findIndex(
-            (r) =>
-              r.nome === perfil?.nome
-          ) + 1}
-          °
-        </div>
-
-        {/* CRAVADAS */}
-
-        <div
-          className="
-            flex
-            flex-col
-            items-center
-            opacity-80
-          "
-        >
-
-          <span
-            className="
-              text-2xl
-              font-bold
-            "
-          >
-            {ranking.find(
-              (r) =>
-                r.nome === perfil?.nome
-            )?.cravadas || 0}
-          </span>
-
-          <span
-            className="
-              text-sm
-              uppercase
-              tracking-[0.2em]
-              text-white/30
-            "
-          >
-            cravadas
-          </span>
+          <PalpitesPreview
+            games={games}
+            bets={allBets}
+            profiles={profiles}
+            teams={teams}
+            perfil={perfil}
+          />
 
         </div>
 
       </div>
 
-    </div>
+      {/* PERFORMANCE */}
 
-  </div>
-
-  {/* ÚLTIMA CRAVADA */}
-
-  <div>
-
-    <div className="text-center mb-8">
-
-      <p
+      <div
         className="
-          text-white/70
-          uppercase
-          tracking-[0.3em]
-          text-xs
-          mb-3
+          w-full
+          flex
+          justify-center
+          px-6
+          mt-32
         "
       >
-        The Best
-      </p>
-
-      <h2
-        className="
-          text-4xl
-          font-semibold
-          tracking-tight
-        "
-      >
-        Última Cravada
-      </h2>
-
-    </div>
-
-    <div
-      className="
-        bg-zinc-900/10
-        rounded-[10px]
-        p-10
-      "
-    >
-
-      {ultimaCravada ? (
 
         <div
           className="
-            flex
-            flex-col
-            items-center
-            gap-6
+            w-full
+            max-w-7xl
+            grid
+            grid-cols-1
+            xl:grid-cols-2
+            gap-16
           "
         >
 
-          {/* TIMES */}
+          {/* MINHA COLOCAÇÃO */}
+          <div>
 
-          <div
-            className="
-              flex
-              items-center
-              justify-center
-              gap-5
-              flex-wrap
-            "
-          >
-
-            {/* HOME */}
-
-            <div
-              className="
-                flex
-                items-center
-                gap-4
-              "
-            >
-
-              <img
-                src={`https://flagcdn.com/w320/${
-                  teams.find(
-                    (t) =>
-                      t.nome ===
-                      ultimaCravada.home_team
-                  )?.flag
-                }.png`}
-                alt=""
-                className="
-                  w-14
-                  h-10
-                  object-cover
-                  rounded-md
-                  shadow-lg
-                "
-              />
+            <div className="text-center mb-8">
 
               <p
-                className="
-                  text-3xl
-                  font-bold
-                  tracking-wide
-                "
-              >
-                {ultimaCravada.home_team}
-              </p>
-
-            </div>
-
-            {/* RESULTADO */}
-
-            <div
-              className="
-                flex
-                items-center
-                gap-3
-              "
-            >
-
-              <div
-                className="
-                  w-14
-                  h-14
-                  bg-zinc-800
-                  rounded-[10px]
-                  flex
-                  items-center
-                  justify-center
-                  text-2xl
-                  font-bold
-                "
-              >
-                {ultimaCravada.home_score}
-              </div>
-
-              <span
                 className="
                   text-white/70
-                  text-lg
                   uppercase
-                  font-semibold
+                  tracking-[0.3em]
+                  text-xs
+                  mb-3
                 "
               >
-                vs
-              </span>
+                PERFORMANCE
+              </p>
 
-              <div
+              <h2
                 className="
-                  w-14
-                  h-14
-                  bg-zinc-800
-                  rounded-[10px]
-                  flex
-                  items-center
-                  justify-center
-                  text-2xl
-                  font-bold
+                  text-4xl
+                  font-semibold
+                  tracking-tight
                 "
               >
-                {ultimaCravada.away_score}
-              </div>
+                Minha Colocação
+              </h2>
 
             </div>
 
-            {/* AWAY */}
-
             <div
               className="
-                flex
-                items-center
-                gap-4
+                bg-zinc-900/10
+                rounded-[10px]
+                p-10
               "
             >
 
-              <p
+              <div
                 className="
-                  text-3xl
-                  font-bold
-                  tracking-wide
+                  flex
+                  items-center
+                  justify-center
+                  gap-8
                 "
               >
-                {ultimaCravada.away_team}
-              </p>
 
-              <img
-                src={`https://flagcdn.com/w320/${
-                  teams.find(
-                    (t) =>
-                      t.nome ===
-                      ultimaCravada.away_team
-                  )?.flag
-                }.png`}
-                alt=""
-                className="
-                  w-14
-                  h-10
-                  object-cover
-                  rounded-md
-                  shadow-lg
-                "
-              />
+                {/* PONTOS */}
+
+                <div
+                  className="
+                    flex
+                    flex-col
+                    items-center
+                    opacity-80
+                  "
+                >
+
+                  <span
+                    className="
+                      text-3xl
+                      font-bold
+                    "
+                  >
+                    {ranking.find(
+                      (r) =>
+                        r.nome === perfil?.nome
+                    )?.pontos || 0}
+                  </span>
+
+                  <span
+                    className="
+                      text-sm
+                      uppercase
+                      tracking-[0.2em]
+                      text-white/30
+                    "
+                  >
+                    pts
+                  </span>
+
+                </div>
+
+                {/* POSIÇÃO */}
+
+                <div
+                  className="
+                    w-40
+                    h-28
+                    rounded-[14px]
+                    flex
+                    items-center
+                    justify-center
+                    text-6xl
+                    font-bold
+                    shadow-xl
+                  "
+                >
+                  {ranking.findIndex(
+                    (r) =>
+                      r.nome === perfil?.nome
+                  ) + 1}
+                  °
+                </div>
+
+                {/* CRAVADAS */}
+
+                <div
+                  className="
+                    flex
+                    flex-col
+                    items-center
+                    opacity-80
+                  "
+                >
+
+                  <span
+                    className="
+                      text-2xl
+                      font-bold
+                    "
+                  >
+                    {ranking.find(
+                      (r) =>
+                        r.nome === perfil?.nome
+                    )?.cravadas || 0}
+                  </span>
+
+                  <span
+                    className="
+                      text-sm
+                      uppercase
+                      tracking-[0.2em]
+                      text-white/30
+                    "
+                  >
+                    cravadas
+                  </span>
+
+                </div>
+
+              </div>
 
             </div>
 
           </div>
 
-          {/* DATA */}
+          {/* ÚLTIMA CRAVADA */}
 
-          <p
-            className="
-              text-white/70
-              text-center
-            "
-          >
-            {new Date(
-              ultimaCravada.match_date
-            ).toLocaleString(
-              'pt-BR',
-              {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-              }
-            )}
-          </p>
+          <div>
+
+            <div className="text-center mb-8">
+
+              <p
+                className="
+                  text-white/70
+                  uppercase
+                  tracking-[0.3em]
+                  text-xs
+                  mb-3
+                "
+              >
+                THE BEST
+              </p>
+
+              <h2
+                className="
+                  text-4xl
+                  font-semibold
+                  tracking-tight
+                "
+              >
+                Última Cravada
+              </h2>
+
+            </div>
+
+            <div
+              className="
+                bg-zinc-900/10
+                rounded-[10px]
+                p-10
+              "
+            >
+
+              {ultimaCravada ? (
+
+                <div
+                  className="
+                    flex
+                    flex-col
+                    items-center
+                    gap-6
+                  "
+                >
+
+                  <div
+                    className="
+                      flex
+                      items-center
+                      justify-center
+                      gap-8
+                    "
+                  >
+
+                    {/* HOME */}
+
+                    <div
+                      className="
+                        w-[220px]
+                        flex
+                        items-center
+                        justify-end
+                        gap-4
+                      "
+                    >
+
+                      <img
+                        src={`https://flagcdn.com/w320/${
+                          teams.find(
+                            (t) =>
+                              t.nome ===
+                              ultimaCravada.home_team
+                          )?.flag
+                        }.png`}
+                        alt=""
+                        className="
+                          w-14
+                          h-10
+                          object-cover
+                          rounded-md
+                        "
+                      />
+
+                      <p
+                        className="
+                          w-[70px]
+                          text-right
+                          text-3xl
+                          font-bold
+                        "
+                      >
+                        {ultimaCravada.home_team}
+                      </p>
+
+                    </div>
+
+                    {/* RESULTADO */}
+
+                    <div
+                      className="
+                        flex
+                        items-center
+                        gap-3
+                      "
+                    >
+
+                      <div
+                        className="
+                          w-14
+                          h-14
+                          bg-zinc-800
+                          rounded-[10px]
+                          flex
+                          items-center
+                          justify-center
+                          text-2xl
+                          font-bold
+                        "
+                      >
+                        {ultimaCravada.home_score}
+                      </div>
+
+                      <span
+                        className="
+                          text-white/70
+                          text-lg
+                          uppercase
+                          font-semibold
+                        "
+                      >
+                        vs
+                      </span>
+
+                      <div
+                        className="
+                          w-14
+                          h-14
+                          bg-zinc-800
+                          rounded-[10px]
+                          flex
+                          items-center
+                          justify-center
+                          text-2xl
+                          font-bold
+                        "
+                      >
+                        {ultimaCravada.away_score}
+                      </div>
+
+                    </div>
+
+                    {/* AWAY */}
+
+                    <div
+                      className="
+                        w-[220px]
+                        flex
+                        items-center
+                        justify-start
+                        gap-4
+                      "
+                    >
+
+                      <p
+                        className="
+                          w-[70px]
+                          text-left
+                          text-3xl
+                          font-bold
+                        "
+                      >
+                        {ultimaCravada.away_team}
+                      </p>
+
+                      <img
+                        src={`https://flagcdn.com/w320/${
+                          teams.find(
+                            (t) =>
+                              t.nome ===
+                              ultimaCravada.away_team
+                          )?.flag
+                        }.png`}
+                        alt=""
+                        className="
+                          w-14
+                          h-10
+                          object-cover
+                          rounded-md
+                        "
+                      />
+
+                    </div>
+
+                  </div>
+
+                  {/* DATA */}
+
+                  <p
+                    className="
+                      text-white/70
+                      text-center
+                    "
+                  >
+                    {new Date(
+                      ultimaCravada.match_date
+                    ).toLocaleString(
+                      'pt-BR',
+                      {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      }
+                    )}
+                  </p>
+
+                </div>
+
+              ) : (
+
+                <p
+                  className="
+                    text-center
+                    text-white/60
+                  "
+                >
+                  Nenhuma cravada ainda
+                </p>
+
+              )}
+
+            </div>
+
+          </div>
 
         </div>
 
-      ) : (
+      </div>
 
-        <p
+      {/* CLASSIFICAÇÃO */}
+
+      <div
+        className="
+          w-full
+          flex
+          justify-center
+          px-6
+          mt-32
+        "
+      >
+
+        <div
           className="
-            text-center
-            text-white/60
+            w-full
+            max-w-7xl
           "
         >
-          Nenhuma cravada ainda
-        </p>
 
-      )}
+          <RankingPreview
+            ranking={ranking}
+          />
 
-    </div>
+        </div>
 
-  </div>
-
-</div>
+      </div>
 
       {/* SAIR */}
-<br></br><br></br>
 
-<div
+      <div
         className="
           flex
           justify-center
@@ -739,13 +851,14 @@ export default function Home() {
       >
 
         <button
-            onClick={async () => {
+          onClick={async () => {
 
-              await supabase.auth.signOut()
+            await supabase.auth.signOut()
 
-              window.location.href = '/login'
+            window.location.href =
+              '/login'
 
-            }}
+          }}
           className="
             border
             border-white/10
@@ -759,9 +872,10 @@ export default function Home() {
             font-medium
             backdrop-blur-sm
           "
-          >
-            SAIR
-          </button>
+        >
+          SAIR
+        </button>
+
       </div>
 
     </main>

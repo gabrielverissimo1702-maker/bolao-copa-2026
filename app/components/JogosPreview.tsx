@@ -108,24 +108,26 @@ export default function JogosPreview({
               {/* LINHA JOGO */}
 
               <div
-                className="
-                  flex
-                  items-center
-                  justify-center
-                  gap-5
-                  flex-wrap
-                "
-              >
+  className="
+    w-full
+    flex
+    items-center
+    justify-center
+    gap-8
+  "
+>
 
                 {/* HOME */}
 
                 <div
-                  className="
-                    flex
-                    items-center
-                    gap-4
-                  "
-                >
+  className="
+    w-[220px]
+    flex
+    items-center
+    justify-end
+    gap-4
+  "
+>
 
                   <img
                     src={`https://flagcdn.com/w320/${homeTeam?.flag}.png`}
@@ -140,12 +142,14 @@ export default function JogosPreview({
                   />
 
                   <p
-                    className="
-                      text-3xl
-                      font-bold
-                      tracking-wide
-                    "
-                  >
+  className="
+    w-[70px]
+    text-right
+    text-3xl
+    font-bold
+    tracking-wide
+  "
+>
                     {game.home_team}
                   </p>
 
@@ -219,20 +223,24 @@ export default function JogosPreview({
                 {/* AWAY */}
 
                 <div
-                  className="
-                    flex
-                    items-center
-                    gap-4
-                  "
-                >
+  className="
+    w-[220px]
+    flex
+    items-center
+    justify-start
+    gap-4
+  "
+>
 
-                  <p
-                    className="
-                      text-3xl
-                      font-bold
-                      tracking-wide
-                    "
-                  >
+                 <p
+  className="
+    w-[70px]
+    text-left
+    text-3xl
+    font-bold
+    tracking-wide
+  "
+>
                     {game.away_team}
                   </p>
 
@@ -303,7 +311,7 @@ export default function JogosPreview({
             backdrop-blur-sm
           "
         >
-          Ver mais jogos
+          Ver todos os meus palpites
         </Link>
 
       </div>

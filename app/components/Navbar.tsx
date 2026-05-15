@@ -17,26 +17,10 @@ export default function Navbar({
         mt-16
         mb-32
         border-t
-        border-[#50f902]/30
+        border-[#50f902]/
         pt-12
       "
     >
-
-      {/* DEGRADÊ */}
-
-      <div
-        className="
-          absolute
-          inset-0
-          top-0
-          h-[500px]
-          bg-gradient-to-b
-          from-[#000000]/60
-          via-[#000000]/30
-          to-transparent
-          pointer-events-none
-        "
-      />
 
       {/* CONTEÚDO */}
 
