@@ -207,6 +207,7 @@ export default function Ranking() {
 
       </div>
 
+<br></br>
       {/* BOTÕES */}
       
             <div
