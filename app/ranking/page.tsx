@@ -300,7 +300,7 @@ export default function Ranking() {
                     md:w-auto
                     text-center
                     border
-                    border-white/10
+                    border-white/
                     bg-white/5
                     hover:bg-white/10
                     transition
