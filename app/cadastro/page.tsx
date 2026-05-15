@@ -17,16 +17,34 @@ export default function Cadastro() {
   const [senha, setSenha] =
     useState('')
 
+  const [loading, setLoading] =
+    useState(false)
+
   const cadastrar =
     async () => {
 
-      const { data, error } =
+      if (
+        !nome ||
+        !email ||
+        !senha
+      ) {
+        return
+      }
+
+      setLoading(true)
+
+      const {
+        data,
+        error
+      } =
         await supabase.auth.signUp({
           email,
           password: senha
         })
 
       if (error) {
+
+        setLoading(false)
 
         alert(error.message)
 
@@ -39,14 +57,17 @@ export default function Cadastro() {
 
       if (user) {
 
-       await supabase
-  .from('profiles')
-  .insert({
-    id: user.id,
-    nome: nome.toUpperCase()
-  })
+        await supabase
+          .from('profiles')
+          .insert({
+            id: user.id,
+            nome:
+              nome.toUpperCase()
+          })
 
       }
+
+      setLoading(false)
 
       alert(
         'Conta criada!'
@@ -66,122 +87,224 @@ export default function Cadastro() {
         items-center
         justify-center
         px-6
+        relative
+        overflow-hidden
       "
     >
 
+      {/* FUNDO */}
+
       <div
         className="
+          absolute
+          inset-0
+          bg-[radial-gradient(circle_at_top,#efb905,transparent_00%)]
+          pointer-events-none
+        "
+      />
+
+      {/* CARD */}
+
+      <div
+        className="
+          relative
+          z-10
           w-full
-          max-w-md
-          bg-zinc-900/20
+          max-w-[520px]
+          border
+          border-white/1
+          bg-zinc-900/40
+          backdrop-blur-xl
+          rounded-[30px]
           p-10
-          rounded-[10px]
-          flex
-          flex-col
-          gap-6
+          shadow-2xl
         "
       >
 
-        <div className="text-center">
+        {/* TÍTULO */}
+
+        <div className="text-center mb-12">
 
           <p
             className="
-              text-white/60
               uppercase
-              tracking-[0.3em]
+              tracking-[0.4em]
+              text-white/40
               text-xs
-              mb-3
+              mb-4
             "
           >
-            BOLÃO COPA DO MUNDO 2026
+            COPA DO MUNDO 2026
           </p>
 
           <h1
             className="
-              text-4xl
+              text-5xl
               font-bold
+              tracking-tight
+              mb-5
             "
           >
-            Criar Conta
+            CADASTRO
           </h1>
+
+          <p
+            className="
+              text-white/60
+              text-lg
+            "
+          >
+            CRIE SUA CONTA PARA PARTICIPAR
+          </p>
 
         </div>
 
-        <input
-          type="text"
-          placeholder="Nome"
-          value={nome}
-          onChange={(e) =>
-            setNome(
-              e.target.value
-            )
-          }
-          className="
-            bg-zinc-800
-            h-14
-            px-4
-            rounded-[4px]
-          "
-        />
+        {/* FORM */}
 
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) =>
-            setEmail(
-              e.target.value
-            )
-          }
-          className="
-            bg-zinc-800
-            h-14
-            px-4
-            rounded-[4px]
-          "
-        />
+        <form
+          onSubmit={(e) => {
 
-        <input
-          type="password"
-          placeholder="Senha"
-          value={senha}
-          onChange={(e) =>
-            setSenha(
-              e.target.value
-            )
-          }
-          className="
-            bg-zinc-800
-            h-14
-            px-4
-            rounded-[4px]
-          "
-        />
+            e.preventDefault()
 
-        <button
-          onClick={cadastrar}
+            cadastrar()
+
+          }}
           className="
-            bg-white
-            text-black
-            h-14
-            rounded-[4px]
-            font-bold
+            flex
+            flex-col
+            gap-8
           "
         >
-          Criar conta
-        </button>
 
-        <Link
-          href="/login"
+          {/* NOME */}
+
+          <input
+            type="text"
+            placeholder="Nome"
+            value={nome}
+            onChange={(e) =>
+              setNome(
+                e.target.value
+              )
+            }
+            className="
+              h-16
+              px-6
+              rounded-[8px]
+              bg-white/5
+              border
+              border-white/10
+              outline-none
+              text-lg
+              focus:border-[#efb905]
+              transition
+            "
+          />
+
+          {/* EMAIL */}
+
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) =>
+              setEmail(
+                e.target.value
+              )
+            }
+            className="
+              h-16
+              px-6
+              rounded-[8px]
+              bg-white/5
+              border
+              border-white/10
+              outline-none
+              text-lg
+              focus:border-[#efb905]
+              transition
+            "
+          />
+
+          {/* SENHA */}
+
+          <input
+            type="password"
+            placeholder="Senha"
+            value={senha}
+            onChange={(e) =>
+              setSenha(
+                e.target.value
+              )
+            }
+            className="
+              h-16
+              px-6
+              rounded-[8px]
+              bg-white/5
+              border
+              border-white/10
+              outline-none
+              text-lg
+              focus:border-[#efb905]
+              transition
+            "
+          />
+
+          {/* BOTÃO */}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="
+              h-16
+              rounded-[20px]
+              bg-[#efb905]
+              text-black
+              font-bold
+              text-lg
+              hover:scale-[1.01]
+              transition
+              disabled:opacity-50
+            "
+          >
+            {
+              loading
+                ? 'Criando conta...'
+                : 'CRIAR CONTA'
+            }
+          </button>
+
+        </form>
+
+        {/* LINK */}
+
+        <div
           className="
+            mt-10
             text-center
-            text-white/60
-            hover:text-white
-            transition
           "
         >
-          Já tenho conta
-        </Link>
+
+          <p className="text-white/50">
+            JÁ POSSUI UMA CONTA?
+          </p>
+
+          <Link
+            href="/login"
+            className="
+              inline-block
+              mt-3
+              text-[#50f902]
+              font-semibold
+              hover:opacity-70
+              transition
+            "
+          >
+            ENTRAR
+          </Link>
+
+        </div>
 
       </div>
 

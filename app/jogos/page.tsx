@@ -10,13 +10,17 @@ import Navbar from '../components/Navbar'
 
 export default function Jogos() {
 
-  const [perfil, setPerfil] = useState<any>(null)
+  const [perfil, setPerfil] =
+    useState<any>(null)
 
-  const [games, setGames] = useState<any[]>([])
+  const [games, setGames] =
+    useState<any[]>([])
 
-  const [teams, setTeams] = useState<any[]>([])
+  const [teams, setTeams] =
+    useState<any[]>([])
 
-  const [palpites, setPalpites] = useState<any>({})
+  const [palpites, setPalpites] =
+    useState<any>({})
 
   const [pagina, setPagina] =
     useState(1)
@@ -204,14 +208,16 @@ export default function Jogos() {
       />
 
       {/* JOGOS */}
-<br></br>
+
+      <br></br>
+
       <div
         className="
           w-full
           flex
           justify-center
           mt-10
-          px-6
+          px-4
         "
       >
 
@@ -224,67 +230,66 @@ export default function Jogos() {
 
           {/* PAGINAÇÃO TOPO */}
 
-<div
-  className="
-    flex
-    items-center
-    justify-center
-    gap-6
-    mb-10
-  "
->
+          <div
+            className="
+              flex
+              items-center
+              justify-center
+              gap-6
+              mb-10
+            "
+          >
 
-  <button
-    disabled={pagina === 1}
-    onClick={() =>
-      setPagina(pagina - 1)
-    }
-    className="
-      w-12
-      h-12
-      rounded-[10px]
-      bg-zinc-800
-      text-xl
-      font-bold
-      disabled:opacity-30
-    "
-  >
-    ←
-  </button>
+            <button
+              disabled={pagina === 1}
+              onClick={() =>
+                setPagina(pagina - 1)
+              }
+              className="
+                w-10
+                h-10
+                rounded-[8px]
+                bg-zinc-800
+                text-lg
+                font-bold
+                disabled:opacity-30
+              "
+            >
+              ←
+            </button>
 
-  <p
-    className="
-      text-white/70
-      uppercase
-      tracking-[0.2em]
-      text-sm
-    "
-  >
-    Página {pagina}
-  </p>
+            <p
+              className="
+                text-white/70
+                uppercase
+                tracking-[0.2em]
+                text-xs
+              "
+            >
+              Página {pagina}
+            </p>
 
-  <button
-    disabled={
-      pagina === totalPaginas
-    }
-    onClick={() =>
-      setPagina(pagina + 1)
-    }
-    className="
-      w-12
-      h-12
-      rounded-[10px]
-      bg-zinc-800
-      text-xl
-      font-bold
-      disabled:opacity-30
-    "
-  >
-    →
-  </button>
+            <button
+              disabled={
+                pagina === totalPaginas
+              }
+              onClick={() =>
+                setPagina(pagina + 1)
+              }
+              className="
+                w-10
+                h-10
+                rounded-[8px]
+                bg-zinc-800
+                text-lg
+                font-bold
+                disabled:opacity-30
+              "
+            >
+              →
+            </button>
 
-</div>
-
+          </div>
 <br></br>
           {/* LISTA */}
 
@@ -292,7 +297,7 @@ export default function Jogos() {
             className="
               flex
               flex-col
-              gap-8
+              gap-6
             "
           >
 
@@ -324,7 +329,7 @@ export default function Jogos() {
                   className="
                     bg-zinc-900/10
                     rounded-[10px]
-                    p-8
+                    p-5
                   "
                 >
 
@@ -332,11 +337,11 @@ export default function Jogos() {
 
                   <p
                     className="
-                      text-sm
+                      text-[10px]
                       uppercase
                       tracking-[0.3em]
                       text-white/70
-                      mb-6
+                      mb-5
                       text-center
                     "
                   >
@@ -348,24 +353,24 @@ export default function Jogos() {
                   {/* LINHA JOGO */}
 
                   <div
-                   className="
-                 w-full
-         flex
-          items-center
-               justify-center
-    gap-8
-  "
->
+                    className="
+                      w-full
+                      flex
+                      items-center
+                      justify-center
+                      gap-3
+                    "
+                  >
 
                     {/* HOME */}
 
                     <div
                       className="
-                       w-[240px]
-flex
-items-center
-justify-end
-gap-4
+                        w-[95px]
+                        flex
+                        items-center
+                        justify-end
+                        gap-2
                       "
                     >
 
@@ -373,23 +378,21 @@ gap-4
                         src={`https://flagcdn.com/w320/${homeTeam?.flag}.png`}
                         alt=""
                         className="
-                          w-14
-                          h-10
+                          w-8
+                          h-6
                           object-cover
-                          rounded-md
-                          shadow-lg
+                          rounded
                         "
                       />
 
                       <p
-  className="
-    w-[70px]
-    text-right
-    text-4xl
-    font-bold
-    tracking-wide
-  "
->
+                        className="
+                          w-[40px]
+                          text-right
+                          text-lg
+                          font-bold
+                        "
+                      >
                         {game.home_team}
                       </p>
 
@@ -402,12 +405,12 @@ gap-4
                       placeholder="0"
                       disabled={bloqueado}
                       className="
-                        w-14
-                        h-14
+                        w-10
+                        h-10
                         bg-zinc-800
-                        rounded-[10px]
+                        rounded-[8px]
                         text-center
-                        text-2xl
+                        text-sm
                         font-bold
                         disabled:opacity-40
                       "
@@ -428,13 +431,13 @@ gap-4
 
                     <span
                       className="
-                        text-white/70
-                        text-lg
+                        text-white/60
+                        text-xs
                         uppercase
                         font-semibold
                       "
                     >
-                      vs
+                      x
                     </span>
 
                     {/* INPUT AWAY */}
@@ -444,12 +447,12 @@ gap-4
                       placeholder="0"
                       disabled={bloqueado}
                       className="
-                        w-14
-                        h-14
+                        w-10
+                        h-10
                         bg-zinc-800
-                        rounded-[10px]
+                        rounded-[8px]
                         text-center
-                        text-2xl
+                        text-sm
                         font-bold
                         disabled:opacity-40
                       "
@@ -470,23 +473,22 @@ gap-4
 
                     <div
                       className="
-                        w-[240px]
-flex
-items-center
-justify-start
-gap-4
+                        w-[95px]
+                        flex
+                        items-center
+                        justify-start
+                        gap-2
                       "
                     >
 
                       <p
-  className="
-    w-[70px]
-    text-left
-    text-4xl
-    font-bold
-    tracking-wide
-  "
->
+                        className="
+                          w-[40px]
+                          text-left
+                          text-lg
+                          font-bold
+                        "
+                      >
                         {game.away_team}
                       </p>
 
@@ -494,11 +496,10 @@ gap-4
                         src={`https://flagcdn.com/w320/${awayTeam?.flag}.png`}
                         alt=""
                         className="
-                          w-14
-                          h-10
+                          w-8
+                          h-6
                           object-cover
-                          rounded-md
-                          shadow-lg
+                          rounded
                         "
                       />
 
@@ -510,9 +511,10 @@ gap-4
 
                   <p
                     className="
-                      text-white/70
+                      text-white/50
                       text-center
-                      mt-4
+                      mt-5
+                      text-xs
                     "
                   >
                     {new Date(
@@ -536,10 +538,10 @@ gap-4
                     <p
                       className="
                         text-red-400
-                        text-sm
+                        text-[10px]
                         uppercase
                         tracking-[0.2em]
-                        mt-2
+                        mt-3
                         text-center
                       "
                     >
@@ -556,7 +558,8 @@ gap-4
 
           </div>
 
-<br></br>
+          <br></br>
+
           {/* PAGINAÇÃO */}
 
           <div
@@ -569,8 +572,6 @@ gap-4
             "
           >
 
-            {/* ANTERIOR */}
-
             <button
               disabled={pagina === 1}
               onClick={() =>
@@ -579,11 +580,11 @@ gap-4
                 )
               }
               className="
-                w-14
-                h-14
-                rounded-[10px]
+                w-10
+                h-10
+                rounded-[8px]
                 bg-zinc-800
-                text-2xl
+                text-lg
                 font-bold
                 disabled:opacity-30
               "
@@ -591,20 +592,16 @@ gap-4
               ←
             </button>
 
-            {/* PÁGINA */}
-
             <p
               className="
                 text-white/70
                 uppercase
                 tracking-[0.2em]
-                text-sm
+                text-xs
               "
             >
               Página {pagina}
             </p>
-
-            {/* PRÓXIMA */}
 
             <button
               disabled={
@@ -617,11 +614,11 @@ gap-4
                 )
               }
               className="
-                w-14
-                h-14
-                rounded-[10px]
+                w-10
+                h-10
+                rounded-[8px]
                 bg-zinc-800
-                text-2xl
+                text-lg
                 font-bold
                 disabled:opacity-30
               "
@@ -635,7 +632,8 @@ gap-4
 
       </div>
 
-<br></br>
+      <br></br>
+
       {/* SALVAR */}
 
       <div
@@ -643,6 +641,7 @@ gap-4
           flex
           justify-center
           mt-16
+          px-4
         "
       >
 
@@ -654,10 +653,10 @@ gap-4
             bg-white/5
             hover:bg-white/10
             transition
-            px-16
-            py-6
-            rounded-[4px]
-            text-xl
+            px-10
+            py-5
+            rounded-[8px]
+            text-sm
             font-medium
             backdrop-blur-sm
           "
@@ -678,20 +677,21 @@ gap-4
           justify-center
           mt-24
           pb-20
-          px-6
+          px-4
         "
       >
 
         <div
-  className="
-    w-full
-    max-w-5xl
-    grid
-    grid-cols-3
-    gap-10
-    items-center
-    justify-items-center
-  "
+          className="
+            w-full
+            max-w-5xl
+            grid
+            grid-cols-1
+            md:grid-cols-3
+            gap-5
+            items-center
+            justify-items-center
+          "
         >
 
           {/* VOLTAR */}
@@ -699,15 +699,17 @@ gap-4
           <button
             onClick={() => history.back()}
             className="
+              w-full
+              md:w-auto
               border
-              border-white
+              border-white/10
               bg-white/5
               hover:bg-white/10
               transition
               px-10
               py-5
-              rounded-[4px]
-              text-lg
+              rounded-[8px]
+              text-sm
               font-medium
               backdrop-blur-sm
             "
@@ -722,22 +724,25 @@ gap-4
 
               await supabase.auth.signOut()
 
-              window.location.href = '/login'
+              window.location.href =
+                '/login'
 
             }}
-          className="
-            border
-            border-white/10
-            bg-white/5
-            hover:bg-white/10
-            transition
-            px-16
-            py-6
-            rounded-[4px]
-            text-xl
-            font-medium
-            backdrop-blur-sm
-          "
+            className="
+              w-full
+              md:w-auto
+              border
+              border-white/10
+              bg-white/5
+              hover:bg-white/10
+              transition
+              px-10
+              py-5
+              rounded-[8px]
+              text-sm
+              font-medium
+              backdrop-blur-sm
+            "
           >
             SAIR
           </button>
@@ -747,15 +752,18 @@ gap-4
           <Link
             href="/ranking"
             className="
+              w-full
+              md:w-auto
+              text-center
               border
-              border-white/1
+              border-white/10
               bg-white/5
               hover:bg-white/10
               transition
               px-10
               py-5
-              rounded-[4px]
-              text-lg
+              rounded-[8px]
+              text-sm
               font-medium
               backdrop-blur-sm
             "

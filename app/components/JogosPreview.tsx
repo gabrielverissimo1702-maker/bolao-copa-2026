@@ -20,10 +20,11 @@ export default function JogosPreview({
 
       {/* TÍTULO */}
 
+      <br></br>
+      <br></br>
+      <br></br>
 
       <div className="mb-8 text-center">
-
-<br></br><br></br><br></br>
 
         <p
           className="
@@ -63,7 +64,7 @@ export default function JogosPreview({
         "
       >
 
-        {games.slice(0, 3).map((game) => {
+        {games.slice(0, 4).map((game) => {
 
           const homeTeam =
             teams.find(
@@ -84,7 +85,7 @@ export default function JogosPreview({
               className="
                 bg-zinc-900/10
                 rounded-[10px]
-                p-6
+                p-5
               "
             >
 
@@ -92,7 +93,7 @@ export default function JogosPreview({
 
               <p
                 className="
-                  text-sm
+                  text-[10px]
                   uppercase
                   tracking-[0.3em]
                   text-white/70
@@ -108,48 +109,46 @@ export default function JogosPreview({
               {/* LINHA JOGO */}
 
               <div
-  className="
-    w-full
-    flex
-    items-center
-    justify-center
-    gap-8
-  "
->
+                className="
+                  w-full
+                  flex
+                  items-center
+                  justify-center
+                  gap-3
+                "
+              >
 
                 {/* HOME */}
 
                 <div
-  className="
-    w-[220px]
-    flex
-    items-center
-    justify-end
-    gap-4
-  "
->
+                  className="
+                    w-[95px]
+                    flex
+                    items-center
+                    justify-end
+                    gap-2
+                  "
+                >
 
                   <img
                     src={`https://flagcdn.com/w320/${homeTeam?.flag}.png`}
                     alt=""
                     className="
-                      w-14
-                      h-10
+                      w-8
+                      h-6
                       object-cover
-                      rounded-md
-                      shadow-lg
+                      rounded
                     "
                   />
 
                   <p
-  className="
-    w-[70px]
-    text-right
-    text-3xl
-    font-bold
-    tracking-wide
-  "
->
+                    className="
+                      w-[40px]
+                      text-right
+                      text-lg
+                      font-bold
+                    "
+                  >
                     {game.home_team}
                   </p>
 
@@ -161,12 +160,12 @@ export default function JogosPreview({
                   type="number"
                   placeholder="0"
                   className="
-                    w-14
-                    h-14
+                    w-10
+                    h-10
                     bg-zinc-800
-                    rounded-[10px]
+                    rounded-[8px]
                     text-center
-                    text-2xl
+                    text-sm
                     font-bold
                   "
                   value={
@@ -185,13 +184,13 @@ export default function JogosPreview({
 
                 <span
                   className="
-                    text-white/70
-                    text-lg
+                    text-white/60
+                    text-xs
                     uppercase
                     font-semibold
                   "
                 >
-                  vs
+                  x
                 </span>
 
                 {/* INPUT AWAY */}
@@ -200,12 +199,12 @@ export default function JogosPreview({
                   type="number"
                   placeholder="0"
                   className="
-                    w-14
-                    h-14
+                    w-10
+                    h-10
                     bg-zinc-800
-                    rounded-[10px]
+                    rounded-[8px]
                     text-center
-                    text-2xl
+                    text-sm
                     font-bold
                   "
                   value={
@@ -223,24 +222,23 @@ export default function JogosPreview({
                 {/* AWAY */}
 
                 <div
-  className="
-    w-[220px]
-    flex
-    items-center
-    justify-start
-    gap-4
-  "
->
+                  className="
+                    w-[95px]
+                    flex
+                    items-center
+                    justify-start
+                    gap-2
+                  "
+                >
 
-                 <p
-  className="
-    w-[70px]
-    text-left
-    text-3xl
-    font-bold
-    tracking-wide
-  "
->
+                  <p
+                    className="
+                      w-[40px]
+                      text-left
+                      text-lg
+                      font-bold
+                    "
+                  >
                     {game.away_team}
                   </p>
 
@@ -248,11 +246,10 @@ export default function JogosPreview({
                     src={`https://flagcdn.com/w320/${awayTeam?.flag}.png`}
                     alt=""
                     className="
-                      w-14
-                      h-10
+                      w-8
+                      h-6
                       object-cover
-                      rounded-md
-                      shadow-lg
+                      rounded
                     "
                   />
 
@@ -264,9 +261,10 @@ export default function JogosPreview({
 
               <p
                 className="
-                  text-white/70
+                  text-white/50
                   text-center
                   mt-5
+                  text-xs
                 "
               >
                 {new Date(
@@ -303,10 +301,10 @@ export default function JogosPreview({
             bg-white/5
             hover:bg-white/10
             transition
-            px-20
-            py-10
+            px-10
+            py-6
             rounded-[8px]
-            text-sm
+            text-xs
             font-medium
             backdrop-blur-sm
           "
