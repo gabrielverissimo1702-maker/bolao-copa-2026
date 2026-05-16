@@ -238,7 +238,7 @@ export default function RankingPreview({
             backdrop-blur-sm
           "
         >
-          Ver classificação completa
+          VER CLASSIFICAÇÃO COMPLETA
         </Link>
 
       </div>

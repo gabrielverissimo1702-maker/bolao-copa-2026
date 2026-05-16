@@ -64,7 +64,7 @@ export default function JogosPreview({
         "
       >
 
-        {games.slice(0, 3).map((game) => {
+        {games.slice(0, 4).map((game) => {
 
           const homeTeam =
             teams.find(
@@ -300,11 +300,11 @@ export default function JogosPreview({
             backdrop-blur-sm
           "
         >
-          Ver todos os meus palpites
+          VER TODOS OS MEUS PALPITES
         </Link>
 
       </div>
-
+<br></br>
     </section>
 
   )

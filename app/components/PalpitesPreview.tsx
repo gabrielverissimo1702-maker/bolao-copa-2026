@@ -269,6 +269,7 @@ export default function PalpitesPreview({
             }
           )}
         </p>
+        <br></br>
 
         {/* MEU PALPITE */}
 
@@ -359,12 +360,13 @@ export default function PalpitesPreview({
         )}
 
         {/* LINHA */}
+        <br></br>
 
         <div
           className="
             w-full
             h-px
-            bg-white/5
+            bg-white/
             my-6
           "
         />
@@ -505,7 +507,7 @@ export default function PalpitesPreview({
         </Link>
 
       </div>
-
+<br></br>
     </section>
 
   )
