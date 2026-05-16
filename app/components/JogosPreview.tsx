@@ -18,11 +18,11 @@ export default function JogosPreview({
 
     <section>
 
-      {/* TÍTULO */}
+      <br></br>
+      <br></br>
+      <br></br>
 
-      <br></br>
-      <br></br>
-      <br></br>
+      {/* TÍTULO */}
 
       <div className="mb-8 text-center">
 
@@ -77,6 +77,11 @@ export default function JogosPreview({
               (t) =>
                 t.nome === game.away_team
             )
+
+          const bloqueado =
+            new Date(
+              game.match_date
+            ) <= new Date()
 
           return (
 
@@ -157,28 +162,31 @@ export default function JogosPreview({
                 {/* INPUT HOME */}
 
                 <input
-                  type="number"
-                  placeholder="0"
-                  className="
-                    w-10
-                    h-10
-                    bg-zinc-800
-                    rounded-[8px]
-                    text-center
-                    text-sm
-                    font-bold
-                  "
-                  value={
-                    palpites[game.id]?.home ?? ''
-                  }
-                  onChange={(e) =>
-                    handleChange(
-                      game.id,
-                      'home',
-                      e.target.value
-                    )
-                  }
-                />
+  type="number"
+  placeholder="0"
+  disabled={bloqueado}
+  value={
+    palpites[game.id]?.home ?? ''
+  }
+  onChange={(e) =>
+    handleChange(
+      game.id,
+      'home',
+      e.target.value
+    )
+  }
+  className="
+    w-10
+    h-10
+    bg-zinc-800
+    rounded-[8px]
+    text-center
+    text-sm
+    font-bold
+    disabled:opacity-40
+    disabled:cursor-not-allowed
+  "
+/>
 
                 {/* VS */}
 
@@ -196,28 +204,31 @@ export default function JogosPreview({
                 {/* INPUT AWAY */}
 
                 <input
-                  type="number"
-                  placeholder="0"
-                  className="
-                    w-10
-                    h-10
-                    bg-zinc-800
-                    rounded-[8px]
-                    text-center
-                    text-sm
-                    font-bold
-                  "
-                  value={
-                    palpites[game.id]?.away ?? ''
-                  }
-                  onChange={(e) =>
-                    handleChange(
-                      game.id,
-                      'away',
-                      e.target.value
-                    )
-                  }
-                />
+  type="number"
+  placeholder="0"
+  disabled={bloqueado}
+  value={
+    palpites[game.id]?.away ?? ''
+  }
+  onChange={(e) =>
+    handleChange(
+      game.id,
+      'away',
+      e.target.value
+    )
+  }
+  className="
+    w-10
+    h-10
+    bg-zinc-800
+    rounded-[8px]
+    text-center
+    text-sm
+    font-bold
+    disabled:opacity-40
+    disabled:cursor-not-allowed
+  "
+/>
 
                 {/* AWAY */}
 
@@ -309,9 +320,8 @@ export default function JogosPreview({
             backdrop-blur-sm
           "
         >
-          Ver todos os meus palpites
+          VER TODOS OS MEUS PALPITES
         </Link>
-
       </div>
 
     </section>

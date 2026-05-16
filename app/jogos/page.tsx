@@ -211,6 +211,32 @@ export default function Jogos() {
 
       <br></br>
 
+      <div className="text-center mb-12">
+
+  <p
+    className="
+      text-white/70
+      uppercase
+      tracking-[0.3em]
+      text-xs
+      mb-3
+    "
+  >
+    Copa do Mundo 2026
+  </p>
+
+  <h1
+    className="
+      text-4xl
+      font-semibold
+      tracking-tight
+    "
+  >
+    Meus Palpites
+  </h1>
+
+</div>
+
       <div
         className="
           w-full

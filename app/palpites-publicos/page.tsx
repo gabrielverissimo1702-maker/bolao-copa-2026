@@ -190,7 +190,31 @@ export default function PalpitesPublicos() {
       <Navbar
         nome={perfil?.nome || ''}
       />
+<div className="text-center mb-12">
 
+  <p
+    className="
+      text-white/70
+      uppercase
+      tracking-[0.3em]
+      text-xs
+      mb-3
+    "
+  >
+    Copa do Mundo 2026
+  </p>
+
+  <h1
+    className="
+      text-4xl
+      font-semibold
+      tracking-tight
+    "
+  >
+    Palpites Adversários
+  </h1>
+
+</div>
       {/* CONTAINER */}
 
       <div

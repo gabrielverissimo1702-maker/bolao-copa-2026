@@ -38,6 +38,11 @@ export default function PalpitesPreview({
     return null
   }
 
+  const jogoLiberado =
+    new Date(
+      proximoJogo.match_date
+    ) <= new Date()
+
   const homeTeam =
     teams.find(
       (t) =>
@@ -67,25 +72,22 @@ export default function PalpitesPreview({
     )
 
   const outrosPalpites =
-
     betsDoJogo.filter(
       (bet) =>
         bet.user_id !==
         perfil?.id
     )
-const jogoLiberado =
-  new Date(
-    proximoJogo.match_date
-  ) <= new Date()
 
   return (
 
     <section>
 
+      <br></br>
+      <br></br>
+      <br></br>
+
       {/* TÍTULO */}
-<br></br>
-<br></br>
-<br></br>
+
       <div className="mb-8 text-center">
 
         <p
@@ -150,8 +152,8 @@ const jogoLiberado =
             <img
               src={`https://flagcdn.com/w320/${homeTeam?.flag}.png`}
               className="
-                w-9
-                h-7
+                w-8
+                h-6
                 object-cover
                 rounded
               "
@@ -159,9 +161,9 @@ const jogoLiberado =
 
             <p
               className="
-                w-[40px]
+                w-[35px]
                 text-right
-                text-xl
+                text-lg
                 font-bold
               "
             >
@@ -182,8 +184,8 @@ const jogoLiberado =
 
             <div
               className="
-                w-11
-                h-11
+                w-10
+                h-10
                 bg-zinc-800
                 rounded-[8px]
               "
@@ -192,7 +194,7 @@ const jogoLiberado =
             <span
               className="
                 text-white/60
-                text-sm
+                text-xs
                 font-semibold
               "
             >
@@ -201,8 +203,8 @@ const jogoLiberado =
 
             <div
               className="
-                w-11
-                h-11
+                w-10
+                h-10
                 bg-zinc-800
                 rounded-[8px]
               "
@@ -222,9 +224,9 @@ const jogoLiberado =
 
             <p
               className="
-                w-[40px]
+                w-[35px]
                 text-left
-                text-xl
+                text-lg
                 font-bold
               "
             >
@@ -234,8 +236,8 @@ const jogoLiberado =
             <img
               src={`https://flagcdn.com/w320/${awayTeam?.flag}.png`}
               className="
-                w-9
-                h-7
+                w-8
+                h-6
                 object-cover
                 rounded
               "
@@ -290,7 +292,7 @@ const jogoLiberado =
                 mb-2
               "
             >
-              Meu Palpite
+              MEU PALPITE
             </p>
 
             <div
@@ -314,7 +316,11 @@ const jogoLiberado =
                   font-bold
                 "
               >
-                {meuPalpite.home_guess}
+                {
+                  jogoLiberado
+                    ? meuPalpite.home_guess
+                    : ''
+                }
               </div>
 
               <span
@@ -339,7 +345,11 @@ const jogoLiberado =
                   font-bold
                 "
               >
-                {meuPalpite.away_guess}
+                {
+                  jogoLiberado
+                    ? meuPalpite.away_guess
+                    : ''
+                }
               </div>
 
             </div>
@@ -354,11 +364,11 @@ const jogoLiberado =
           className="
             w-full
             h-px
-            bg-white/
+            bg-white/5
             my-6
           "
         />
-<br></br>
+
         {/* PALPITES */}
 
         <div
@@ -423,11 +433,12 @@ const jogoLiberado =
                       font-bold
                     "
                   >
-{
-  jogoLiberado
-    ? bet.home_guess
-    : ''
-}                  </div>
+                    {
+                      jogoLiberado
+                        ? bet.home_guess
+                        : ''
+                    }
+                  </div>
 
                   <span
                     className="
@@ -451,11 +462,11 @@ const jogoLiberado =
                       font-bold
                     "
                   >
-                 {
-  jogoLiberado
-    ? bet.away_guess
-    : ''
-}
+                    {
+                      jogoLiberado
+                        ? bet.away_guess
+                        : ''
+                    }
                   </div>
 
                 </div>
@@ -482,20 +493,19 @@ const jogoLiberado =
             bg-white/5
             hover:bg-white/10
             transition
-            px-20
-            py-10
+            px-10
+            py-6
             rounded-[8px]
-            text-sm
+            text-xs
             font-medium
             backdrop-blur-sm
           "
         >
-          Ver todos os palpites
+          VER TODOS OS PALPITES
         </Link>
 
       </div>
-<br></br>
-<br></br>
+
     </section>
 
   )

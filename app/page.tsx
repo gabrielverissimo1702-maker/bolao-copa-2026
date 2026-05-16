@@ -570,243 +570,247 @@ export default function Home() {
 
           {/* ÚLTIMA CRAVADA */}
 
-          <div>
+<div>
 
-            <div className="text-center mb-8">
+  <div className="text-center mb-8">
 
-              <p
-                className="
-                  text-white/70
-                  uppercase
-                  tracking-[0.3em]
-                  text-xs
-                  mb-3
-                "
-              >
-                THE BEST
-              </p>
+    <p
+      className="
+        text-white/70
+        uppercase
+        tracking-[0.3em]
+        text-xs
+        mb-3
+      "
+    >
+      THE BEST
+    </p>
 
-              <h2
-                className="
-                  text-4xl
-                  font-semibold
-                  tracking-tight
-                "
-              >
-                Última Cravada
-              </h2>
+    <h2
+      className="
+        text-4xl
+        font-semibold
+        tracking-tight
+      "
+    >
+      Última Cravada
+    </h2>
 
-            </div>
+  </div>
+
+  <div
+    className="
+      bg-zinc-900/10
+      rounded-[10px]
+      p-8
+    "
+  >
+
+    {ultimaCravada ? (
+
+      <div
+        className="
+          flex
+          flex-col
+          items-center
+          gap-5
+        "
+      >
+
+        {/* JOGO */}
+
+        <div
+          className="
+            w-full
+            flex
+            items-center
+            justify-center
+            gap-3
+          "
+        >
+
+          {/* HOME */}
+
+          <div
+            className="
+              w-[95px]
+              flex
+              items-center
+              justify-end
+              gap-2
+            "
+          >
+
+            <img
+              src={`https://flagcdn.com/w320/${
+                teams.find(
+                  (t) =>
+                    t.nome ===
+                    ultimaCravada.home_team
+                )?.flag
+              }.png`}
+              alt=""
+              className="
+                w-8
+                h-6
+                object-cover
+                rounded
+              "
+            />
+
+            <p
+              className="
+                w-[40px]
+                text-right
+                text-lg
+                font-bold
+              "
+            >
+              {ultimaCravada.home_team}
+            </p>
+
+          </div>
+
+          {/* RESULTADO */}
+
+          <div
+            className="
+              flex
+              items-center
+              gap-2
+            "
+          >
 
             <div
               className="
-                bg-zinc-900/10
-                rounded-[10px]
-                p-10
+                w-10
+                h-10
+                bg-zinc-800
+                rounded-[8px]
+                flex
+                items-center
+                justify-center
+                text-sm
+                font-bold
               "
             >
+              {ultimaCravada.home_score}
+            </div>
 
-              {ultimaCravada ? (
+            <span
+              className="
+                text-white/60
+                text-xs
+                uppercase
+                font-semibold
+              "
+            >
+              x
+            </span>
 
-                <div
-                  className="
-                    flex
-                    flex-col
-                    items-center
-                    gap-6
-                  "
-                >
-
-                  <div
-                    className="
-                      flex
-                      items-center
-                      justify-center
-                      gap-8
-                    "
-                  >
-
-                    {/* HOME */}
-
-                    <div
-                      className="
-                        w-[220px]
-                        flex
-                        items-center
-                        justify-end
-                        gap-4
-                      "
-                    >
-
-                      <img
-                        src={`https://flagcdn.com/w320/${
-                          teams.find(
-                            (t) =>
-                              t.nome ===
-                              ultimaCravada.home_team
-                          )?.flag
-                        }.png`}
-                        alt=""
-                        className="
-                          w-14
-                          h-10
-                          object-cover
-                          rounded-md
-                        "
-                      />
-
-                      <p
-                        className="
-                          w-[70px]
-                          text-right
-                          text-3xl
-                          font-bold
-                        "
-                      >
-                        {ultimaCravada.home_team}
-                      </p>
-
-                    </div>
-
-                    {/* RESULTADO */}
-
-                    <div
-                      className="
-                        flex
-                        items-center
-                        gap-3
-                      "
-                    >
-
-                      <div
-                        className="
-                          w-14
-                          h-14
-                          bg-zinc-800
-                          rounded-[10px]
-                          flex
-                          items-center
-                          justify-center
-                          text-2xl
-                          font-bold
-                        "
-                      >
-                        {ultimaCravada.home_score}
-                      </div>
-
-                      <span
-                        className="
-                          text-white/70
-                          text-lg
-                          uppercase
-                          font-semibold
-                        "
-                      >
-                        vs
-                      </span>
-
-                      <div
-                        className="
-                          w-14
-                          h-14
-                          bg-zinc-800
-                          rounded-[10px]
-                          flex
-                          items-center
-                          justify-center
-                          text-2xl
-                          font-bold
-                        "
-                      >
-                        {ultimaCravada.away_score}
-                      </div>
-
-                    </div>
-
-                    {/* AWAY */}
-
-                    <div
-                      className="
-                        w-[220px]
-                        flex
-                        items-center
-                        justify-start
-                        gap-4
-                      "
-                    >
-
-                      <p
-                        className="
-                          w-[70px]
-                          text-left
-                          text-3xl
-                          font-bold
-                        "
-                      >
-                        {ultimaCravada.away_team}
-                      </p>
-
-                      <img
-                        src={`https://flagcdn.com/w320/${
-                          teams.find(
-                            (t) =>
-                              t.nome ===
-                              ultimaCravada.away_team
-                          )?.flag
-                        }.png`}
-                        alt=""
-                        className="
-                          w-14
-                          h-10
-                          object-cover
-                          rounded-md
-                        "
-                      />
-
-                    </div>
-
-                  </div>
-
-                  {/* DATA */}
-
-                  <p
-                    className="
-                      text-white/70
-                      text-center
-                    "
-                  >
-                    {new Date(
-                      ultimaCravada.match_date
-                    ).toLocaleString(
-                      'pt-BR',
-                      {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      }
-                    )}
-                  </p>
-
-                </div>
-
-              ) : (
-
-                <p
-                  className="
-                    text-center
-                    text-white/60
-                  "
-                >
-                  Nenhuma cravada ainda
-                </p>
-
-              )}
-
+            <div
+              className="
+                w-10
+                h-10
+                bg-zinc-800
+                rounded-[8px]
+                flex
+                items-center
+                justify-center
+                text-sm
+                font-bold
+              "
+            >
+              {ultimaCravada.away_score}
             </div>
 
           </div>
+
+          {/* AWAY */}
+
+          <div
+            className="
+              w-[95px]
+              flex
+              items-center
+              justify-start
+              gap-2
+            "
+          >
+
+            <p
+              className="
+                w-[40px]
+                text-left
+                text-lg
+                font-bold
+              "
+            >
+              {ultimaCravada.away_team}
+            </p>
+
+            <img
+              src={`https://flagcdn.com/w320/${
+                teams.find(
+                  (t) =>
+                    t.nome ===
+                    ultimaCravada.away_team
+                )?.flag
+              }.png`}
+              alt=""
+              className="
+                w-8
+                h-6
+                object-cover
+                rounded
+              "
+            />
+
+          </div>
+
+        </div>
+
+        {/* DATA */}
+
+        <p
+          className="
+            text-white/50
+            text-center
+            text-xs
+          "
+        >
+          {new Date(
+            ultimaCravada.match_date
+          ).toLocaleString(
+            'pt-BR',
+            {
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            }
+          )}
+        </p>
+
+      </div>
+
+    ) : (
+
+      <p
+        className="
+          text-center
+          text-white/60
+        "
+      >
+        Nenhuma cravada ainda
+      </p>
+
+    )}
+
+  </div>
+
+</div>
 
         </div>
 
