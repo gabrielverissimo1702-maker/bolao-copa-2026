@@ -64,7 +64,7 @@ export default function JogosPreview({
         "
       >
 
-        {games.slice(0, 4).map((game) => {
+        {games.slice(0, 3).map((game) => {
 
           const homeTeam =
             teams.find(
@@ -161,74 +161,54 @@ export default function JogosPreview({
 
                 {/* INPUT HOME */}
 
-                <input
-  type="number"
-  placeholder="0"
-  disabled={bloqueado}
-  value={
+    <div
+  className="
+    w-10
+    h-10
+    bg-zinc-800
+    rounded-[8px]
+    flex
+    items-center
+    justify-center
+    text-sm
+    font-bold
+    opacity-80
+  "
+>
+  {
     palpites[game.id]?.home ?? ''
   }
-  onChange={(e) =>
-    handleChange(
-      game.id,
-      'home',
-      e.target.value
-    )
-  }
+</div>
+
+<span
+  className="
+    text-white/60
+    text-xs
+    uppercase
+    font-semibold
+  "
+>
+  x
+</span>
+
+<div
   className="
     w-10
     h-10
     bg-zinc-800
     rounded-[8px]
-    text-center
+    flex
+    items-center
+    justify-center
     text-sm
     font-bold
-    disabled:opacity-40
-    disabled:cursor-not-allowed
+    opacity-80
   "
-/>
-
-                {/* VS */}
-
-                <span
-                  className="
-                    text-white/60
-                    text-xs
-                    uppercase
-                    font-semibold
-                  "
-                >
-                  x
-                </span>
-
-                {/* INPUT AWAY */}
-
-                <input
-  type="number"
-  placeholder="0"
-  disabled={bloqueado}
-  value={
+>
+  {
     palpites[game.id]?.away ?? ''
   }
-  onChange={(e) =>
-    handleChange(
-      game.id,
-      'away',
-      e.target.value
-    )
-  }
-  className="
-    w-10
-    h-10
-    bg-zinc-800
-    rounded-[8px]
-    text-center
-    text-sm
-    font-bold
-    disabled:opacity-40
-    disabled:cursor-not-allowed
-  "
-/>
+</div>
 
                 {/* AWAY */}
 
@@ -320,8 +300,9 @@ export default function JogosPreview({
             backdrop-blur-sm
           "
         >
-          VER TODOS OS MEUS PALPITES
+          Ver todos os meus palpites
         </Link>
+
       </div>
 
     </section>
