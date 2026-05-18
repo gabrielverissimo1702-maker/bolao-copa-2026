@@ -298,7 +298,7 @@ export default function Ranking() {
         px-2
         py-4
         rounded-[8px]
-        text-[18px]
+        text-[15px]
         font-xl
         whitespace-nowrap
         backdrop-blur-sm
