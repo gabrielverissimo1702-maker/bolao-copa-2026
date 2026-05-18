@@ -734,7 +734,7 @@ export default function Jogos() {
         px-2
         py-4
         rounded-[8px]
-        text-[18px]
+        text-[17px]
         font-xl
         whitespace-nowrap
         backdrop-blur-sm
@@ -758,7 +758,7 @@ export default function Jogos() {
         px-2
         py-4
         rounded-[8px]
-        text-[18px]
+        text-[17px]
         font-xl
         whitespace-nowrap
         backdrop-blur-sm
@@ -782,7 +782,7 @@ export default function Jogos() {
         px-2
         py-4
         rounded-[8px]
-        text-[18px]
+        text-[17px]
         font-xl
         whitespace-nowrap
         backdrop-blur-sm
