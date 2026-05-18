@@ -295,7 +295,7 @@ export default function JogosPreview({
             px-10
             py-6
             rounded-[8px]
-            text-xs
+            text-x
             font-medium
             backdrop-blur-sm
           "

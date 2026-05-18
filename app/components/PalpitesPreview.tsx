@@ -313,7 +313,7 @@ export default function PalpitesPreview({
                   flex
                   items-center
                   justify-center
-                  text-xs
+                  text-x
                   font-bold
                 "
               >
@@ -495,10 +495,10 @@ export default function PalpitesPreview({
             bg-white/5
             hover:bg-white/10
             transition
-            px-10
-            py-6
+            px-20
+            py-20
             rounded-[8px]
-            text-xs
+            text-x
             font-medium
             backdrop-blur-sm
           "

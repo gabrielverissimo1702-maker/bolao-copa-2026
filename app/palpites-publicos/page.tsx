@@ -190,6 +190,8 @@ export default function PalpitesPublicos() {
       <Navbar
         nome={perfil?.nome || ''}
       />
+
+      <br></br><br></br>
 <div className="text-center mb-12">
 
   <p
@@ -233,7 +235,7 @@ export default function PalpitesPublicos() {
             max-w-7xl
           "
         >
-<br></br>
+
           {/* PAGINAÇÃO TOPO */}
 
           <div
@@ -823,7 +825,7 @@ export default function PalpitesPublicos() {
 
       <br>
       </br>
-{/* BOTÕES */}
+  {/* BOTÕES */}
 
 <div
   className="
@@ -856,15 +858,15 @@ export default function PalpitesPublicos() {
         w-full
         text-center
         border
-        border-white/10
-        bg-white/5
-        hover:bg-white/10
+        border-white/
+        bg-black/50
+        hover:bg-white/2
         transition
         px-2
         py-4
         rounded-[8px]
-        text-[11px]
-        font-medium
+        text-[18px]
+        font-xl
         whitespace-nowrap
         backdrop-blur-sm
       "
@@ -872,52 +874,52 @@ export default function PalpitesPublicos() {
       HOME
     </Link>
 
-    {/* MEUS PALPITES */}
-
-    <Link
-      href="/jogos"
-      className="
-        w-full
-        text-center
-        border
-        border-white/10
-        bg-white/5
-        hover:bg-white/10
-        transition
-        px-2
-        py-4
-        rounded-[8px]
-        text-[11px]
-        font-medium
-        whitespace-nowrap
-        backdrop-blur-sm
-      "
-    >
-      MEUS PALPITES
-    </Link>
-
     {/* CLASSIFICAÇÃO */}
 
     <Link
       href="/ranking"
       className="
-        w-full
+         w-full
         text-center
         border
-        border-white/10
-        bg-white/5
-        hover:bg-white/10
+        border-white/
+        bg-black/50
+        hover:bg-white/2
         transition
         px-2
         py-4
         rounded-[8px]
-        text-[11px]
-        font-medium
+        text-[18px]
+        font-xl
         whitespace-nowrap
         backdrop-blur-sm
       "
     >
       CLASSIFICAÇÃO
+    </Link>
+
+    {/* PALPITES ADVERSÁRIOS */}
+
+    <Link
+      href="/palpites-publicos"
+      className="
+         w-full
+        text-center
+        border
+        border-white/
+        bg-black/50
+        hover:bg-white/2
+        transition
+        px-2
+        py-4
+        rounded-[8px]
+        text-[18px]
+        font-xl
+        whitespace-nowrap
+        backdrop-blur-sm
+      "
+    >
+      PALPITES ADVERSÁRIOS
     </Link>
 
   </div>

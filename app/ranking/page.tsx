@@ -210,7 +210,7 @@ export default function Ranking() {
 
 <br></br>
 <br></br>
-      {/* BOTÕES */}
+        {/* BOTÕES */}
 
 <div
   className="
@@ -243,15 +243,15 @@ export default function Ranking() {
         w-full
         text-center
         border
-        border-white/10
-        bg-white/5
-        hover:bg-white/10
+        border-white/
+        bg-black/50
+        hover:bg-white/2
         transition
         px-2
         py-4
         rounded-[8px]
-        text-[11px]
-        font-medium
+        text-[18px]
+        font-xl
         whitespace-nowrap
         backdrop-blur-sm
       "
@@ -264,18 +264,18 @@ export default function Ranking() {
     <Link
       href="/jogos"
       className="
-        w-full
+         w-full
         text-center
         border
-        border-white/10
-        bg-white/5
-        hover:bg-white/10
+        border-white/
+        bg-black/50
+        hover:bg-white/2
         transition
         px-2
         py-4
         rounded-[8px]
-        text-[11px]
-        font-medium
+        text-[18px]
+        font-xl
         whitespace-nowrap
         backdrop-blur-sm
       "
@@ -288,18 +288,18 @@ export default function Ranking() {
     <Link
       href="/palpites-publicos"
       className="
-        w-full
+         w-full
         text-center
         border
-        border-white/10
-        bg-white/5
-        hover:bg-white/10
+        border-white/
+        bg-black/50
+        hover:bg-white/2
         transition
         px-2
         py-4
         rounded-[8px]
-        text-[11px]
-        font-medium
+        text-[18px]
+        font-xl
         whitespace-nowrap
         backdrop-blur-sm
       "
@@ -310,9 +310,9 @@ export default function Ranking() {
   </div>
 
 </div>
-      
-          </main>
-      
-        )
-      
-      }
+
+    </main>
+
+  )
+
+}
