@@ -227,12 +227,12 @@ export default function RankingPreview({
           className="
             border
             border-white/10
-            bg-black/70
+            bg-black/75
             hover:bg-white/2
             transition
             px-20
             py-10
-            rounded-[8px]
+            rounded-[2px]
             text-xl
             font-medium
             backdrop-blur-sm

@@ -866,7 +866,7 @@ export default function Home() {
           className="
             border
             border-white/10
-            bg-white/5
+            bg-white/20
             hover:bg-white/10
             transition
             px-16

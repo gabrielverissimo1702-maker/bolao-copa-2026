@@ -178,7 +178,8 @@ export default function Ranking() {
       <Navbar
         nome={perfil?.nome || ''}
       />
-
+<br></br>
+<br></br>
       {/* CONTAINER */}
 
       <div
@@ -208,8 +209,6 @@ export default function Ranking() {
 
       </div>
 
-<br></br>
-<br></br>
         {/* BOTÕES */}
 
 <div

@@ -289,13 +289,13 @@ export default function JogosPreview({
           className="
             border
             border-white/10
-            bg-white/5
+            bg-black/75
             hover:bg-white/10
             transition
             px-10
             py-6
-            rounded-[8px]
-            text-x
+            rounded-[2px]
+            text-xl
             font-medium
             backdrop-blur-sm
           "
