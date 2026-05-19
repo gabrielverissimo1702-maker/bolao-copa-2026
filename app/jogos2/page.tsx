@@ -8,7 +8,7 @@ import { supabase } from '../../lib/supabase'
 
 import Navbar from '../components/Navbar'
 
-export default function Jogos2() {
+export default function Central() {
 
   const [perfil, setPerfil] =
     useState<any>(null)
@@ -27,9 +27,6 @@ export default function Jogos2() {
 
   const [profiles, setProfiles] =
     useState<any[]>([])
-
-  const [pagina, setPagina] =
-    useState(1)
 
   useEffect(() => {
 
@@ -116,7 +113,7 @@ export default function Jogos2() {
         setAllBets(allBetsData)
       }
 
-      /* TODOS OS PERFIS */
+      /* PERFIS */
 
       const { data: profilesData } =
         await supabase
@@ -132,30 +129,6 @@ export default function Jogos2() {
     carregar()
 
   }, [])
-
-  /* PAGINAÇÃO */
-
-  const jogosPorPagina = 8
-
-  const inicio =
-    (pagina - 1) *
-    jogosPorPagina
-
-  const fim =
-    inicio +
-    jogosPorPagina
-
-  const jogosPaginados =
-    games.slice(
-      inicio,
-      fim
-    )
-
-  const totalPaginas =
-    Math.ceil(
-      games.length /
-      jogosPorPagina
-    )
 
   return (
 
@@ -193,7 +166,7 @@ export default function Jogos2() {
             tracking-tight
           "
         >
-          Meus Palpites
+          Central de Comparações
         </h1>
 
       </div>
@@ -212,14 +185,14 @@ export default function Jogos2() {
         <div
           className="
             w-full
-            max-w-6xl
+            max-w-4xl
             flex
             flex-col
             gap-8
           "
         >
 
-          {jogosPaginados.map((game) => {
+          {games.map((game) => {
 
             const homeTeam =
               teams.find(
@@ -242,27 +215,32 @@ export default function Jogos2() {
                   game.id
               )
 
+            const meuPalpite =
+              palpites[game.id]
+
             return (
 
               <section
                 key={game.id}
                 className="
-                  bg-zinc-900/10
-                  rounded-[16px]
+                  bg-white/[0.03]
+                  border
+                  border-white/[0.06]
+                  backdrop-blur-xl
+                  rounded-[24px]
                   p-6
-                  overflow-x-auto
+                  shadow-2xl
                 "
               >
 
-                {/* JOGO */}
+                {/* TOPO */}
 
                 <div
                   className="
                     flex
                     items-center
-                    justify-center
-                    gap-3
-                    mb-8
+                    justify-between
+                    mb-6
                   "
                 >
 
@@ -279,8 +257,8 @@ export default function Jogos2() {
                     <img
                       src={`https://flagcdn.com/w320/${homeTeam?.flag}.png`}
                       className="
-                        w-8
-                        h-6
+                        w-9
+                        h-7
                         rounded
                         object-cover
                       "
@@ -297,61 +275,17 @@ export default function Jogos2() {
 
                   </div>
 
-                  {/* MEU PALPITE */}
+                  {/* VS */}
 
                   <div
                     className="
-                      flex
-                      items-center
-                      gap-2
+                      text-white/50
+                      text-sm
+                      uppercase
+                      tracking-[0.3em]
                     "
                   >
-
-                    <div
-                      className="
-                        w-10
-                        h-10
-                        bg-zinc-800
-                        rounded-[8px]
-                        flex
-                        items-center
-                        justify-center
-                        text-sm
-                        font-bold
-                      "
-                    >
-                      {
-                        palpites[game.id]?.home ?? ''
-                      }
-                    </div>
-
-                    <span
-                      className="
-                        text-white/60
-                        text-xs
-                      "
-                    >
-                      x
-                    </span>
-
-                    <div
-                      className="
-                        w-10
-                        h-10
-                        bg-zinc-800
-                        rounded-[8px]
-                        flex
-                        items-center
-                        justify-center
-                        text-sm
-                        font-bold
-                      "
-                    >
-                      {
-                        palpites[game.id]?.away ?? ''
-                      }
-                    </div>
-
+                    VS
                   </div>
 
                   {/* AWAY */}
@@ -376,8 +310,8 @@ export default function Jogos2() {
                     <img
                       src={`https://flagcdn.com/w320/${awayTeam?.flag}.png`}
                       className="
-                        w-8
-                        h-6
+                        w-9
+                        h-7
                         rounded
                         object-cover
                       "
@@ -387,100 +321,107 @@ export default function Jogos2() {
 
                 </div>
 
-                {/* TABELA */}
+                {/* MEU PALPITE */}
 
                 <div
                   className="
-                    flex
-                    gap-4
-                    overflow-x-auto
-                    pb-2
+                    bg-[#efb905]/10
+                    border
+                    border-[#efb905]/20
+                    rounded-[18px]
+                    p-5
+                    mb-6
                   "
                 >
 
-                  {/* MEU */}
+                  <p
+                    className="
+                      text-[#efb905]
+                      uppercase
+                      tracking-[0.3em]
+                      text-[10px]
+                      mb-4
+                    "
+                  >
+                    Meu Palpite
+                  </p>
 
                   <div
                     className="
-                      min-w-[100px]
                       flex
-                      flex-col
                       items-center
+                      justify-center
                       gap-3
                     "
                   >
 
-                    <p
+                    <div
                       className="
-                        text-[10px]
-                        uppercase
-                        tracking-[0.2em]
-                        text-white/50
+                        w-12
+                        h-12
+                        bg-black/40
+                        rounded-[12px]
+                        flex
+                        items-center
+                        justify-center
+                        text-lg
+                        font-bold
                       "
                     >
-                      Meu Palpite
-                    </p>
+                      {
+                        meuPalpite?.home ?? ''
+                      }
+                    </div>
+
+                    <span
+                      className="
+                        text-white/50
+                        text-sm
+                        font-semibold
+                      "
+                    >
+                      x
+                    </span>
 
                     <div
                       className="
+                        w-12
+                        h-12
+                        bg-black/40
+                        rounded-[12px]
                         flex
                         items-center
-                        gap-2
+                        justify-center
+                        text-lg
+                        font-bold
                       "
                     >
-
-                      <div
-                        className="
-                          w-9
-                          h-9
-                          bg-zinc-800
-                          rounded-[8px]
-                          flex
-                          items-center
-                          justify-center
-                          text-sm
-                          font-bold
-                        "
-                      >
-                        {
-                          palpites[game.id]?.home ?? ''
-                        }
-                      </div>
-
-                      <span
-                        className="
-                          text-white/50
-                          text-xs
-                        "
-                      >
-                        x
-                      </span>
-
-                      <div
-                        className="
-                          w-9
-                          h-9
-                          bg-zinc-800
-                          rounded-[8px]
-                          flex
-                          items-center
-                          justify-center
-                          text-sm
-                          font-bold
-                        "
-                      >
-                        {
-                          palpites[game.id]?.away ?? ''
-                        }
-                      </div>
-
+                      {
+                        meuPalpite?.away ?? ''
+                      }
                     </div>
 
                   </div>
 
-                  {/* OUTROS */}
+                </div>
+
+                {/* OUTROS PALPITES */}
+
+                <div
+                  className="
+                    grid
+                    grid-cols-2
+                    sm:grid-cols-3
+                    gap-3
+                  "
+                >
 
                   {betsDoJogo.map((bet) => {
+
+                    if (
+                      bet.user_id ===
+                      perfil?.id
+                    ) return null
 
                     const profile =
                       profiles.find(
@@ -489,49 +430,71 @@ export default function Jogos2() {
                           bet.user_id
                       )
 
-                    if (
-                      bet.user_id ===
-                      perfil?.id
-                    ) return null
+                    const igual =
+                      meuPalpite &&
+                      meuPalpite.home ==
+                      bet.home_guess &&
+                      meuPalpite.away ==
+                      bet.away_guess
 
                     return (
 
                       <div
                         key={bet.id}
-                        className="
-                          min-w-[90px]
-                          flex
-                          flex-col
-                          items-center
-                          gap-3
-                        "
+                        className={`
+                          rounded-[16px]
+                          p-4
+                          border
+                          backdrop-blur-md
+                          transition
+
+                          ${
+                            igual
+                              ? `
+                                bg-[#50f902]/10
+                                border-[#50f902]/20
+                              `
+                              : `
+                                bg-white/[0.03]
+                                border-white/[0.06]
+                              `
+                          }
+                        `}
                       >
+
+                        {/* NOME */}
 
                         <p
                           className="
-                            text-[10px]
+                            text-[11px]
                             uppercase
                             tracking-[0.2em]
-                            text-white/50
+                            text-white/60
+                            text-center
+                            mb-3
+                            truncate
                           "
                         >
                           {profile?.nome}
                         </p>
 
+                        {/* PLACAR */}
+
                         <div
                           className="
                             flex
                             items-center
+                            justify-center
                             gap-2
                           "
                         >
 
                           <div
                             className="
-                              w-9
-                              h-9
-                              bg-zinc-800
-                              rounded-[8px]
+                              w-10
+                              h-10
+                              bg-black/30
+                              rounded-[10px]
                               flex
                               items-center
                               justify-center
@@ -544,7 +507,7 @@ export default function Jogos2() {
 
                           <span
                             className="
-                              text-white/50
+                              text-white/40
                               text-xs
                             "
                           >
@@ -553,10 +516,10 @@ export default function Jogos2() {
 
                           <div
                             className="
-                              w-9
-                              h-9
-                              bg-zinc-800
-                              rounded-[8px]
+                              w-10
+                              h-10
+                              bg-black/30
+                              rounded-[10px]
                               flex
                               items-center
                               justify-center
@@ -568,6 +531,25 @@ export default function Jogos2() {
                           </div>
 
                         </div>
+
+                        {/* IGUAL */}
+
+                        {igual && (
+
+                          <p
+                            className="
+                              text-[#50f902]
+                              text-[9px]
+                              uppercase
+                              tracking-[0.2em]
+                              text-center
+                              mt-3
+                            "
+                          >
+                            Igual ao seu
+                          </p>
+
+                        )}
 
                       </div>
 
@@ -582,6 +564,93 @@ export default function Jogos2() {
             )
 
           })}
+
+        </div>
+
+      </div>
+
+      {/* BOTÕES */}
+
+      <div
+        className="
+          w-full
+          flex
+          justify-center
+          mt-24
+          pb-20
+          px-4
+        "
+      >
+
+        <div
+          className="
+            w-full
+            max-w-5xl
+            grid
+            grid-cols-3
+            gap-2
+          "
+        >
+
+          <Link
+            href="/"
+            className="
+              w-full
+              text-center
+              border
+              border-white/10
+              bg-white/5
+              hover:bg-white/10
+              transition
+              px-4
+              py-4
+              rounded-[12px]
+              text-sm
+              font-medium
+            "
+          >
+            HOME
+          </Link>
+
+          <Link
+            href="/jogos"
+            className="
+              w-full
+              text-center
+              border
+              border-white/10
+              bg-white/5
+              hover:bg-white/10
+              transition
+              px-4
+              py-4
+              rounded-[12px]
+              text-sm
+              font-medium
+            "
+          >
+            MEUS PALPITES
+          </Link>
+
+          <Link
+            href="/ranking"
+            className="
+              w-full
+              text-center
+              border
+              border-white/10
+              bg-white/5
+              hover:bg-white/10
+              transition
+              px-4
+              py-4
+              rounded-[12px]
+              text-sm
+              font-medium
+            "
+          >
+            CLASSIFICAÇÃO
+          </Link>
 
         </div>
 
