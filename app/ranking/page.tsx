@@ -285,7 +285,7 @@ export default function Ranking() {
     {/* PALPITES ADVERSÁRIOS */}
 
     <Link
-      href="/palpites-publicos"
+      href="/grupos"
       className="
          w-full
         text-center
@@ -303,7 +303,7 @@ export default function Ranking() {
         backdrop-blur-sm
       "
     >
-      PALPITES ADVERSÁRIOS
+      GRUPOS
     </Link>
 
   </div>
