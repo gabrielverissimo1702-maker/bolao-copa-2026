@@ -2,315 +2,471 @@
 
 import { useEffect, useState } from 'react'
 
-import Link from 'next/link'
+import Navbar from '../components/Navbar'
 
 import { supabase } from '../../lib/supabase'
 
-import Navbar from '../components/Navbar'
-import RankingCompleto from '../components/RankingCompleto'
-
-export default function Ranking() {
-
-  const [perfil, setPerfil] =
-    useState<any>(null)
+export default function RankingPage() {
 
   const [ranking, setRanking] =
     useState<any[]>([])
 
+  const [perfil, setPerfil] =
+    useState<any>(null)
+
+  const [mobile, setMobile] =
+    useState(false)
+
   useEffect(() => {
 
-    const carregar = async () => {
+    const checkMobile = () => {
 
-      const { data } =
-        await supabase.auth.getUser()
-
-      if (!data.user) {
-
-        window.location.href =
-          '/login'
-
-        return
-
-      }
-
-      const { data: meuPerfil } =
-        await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', data.user.id)
-          .single()
-
-      if (meuPerfil) {
-        setPerfil(meuPerfil)
-      }
-
-      const { data: profilesData } =
-        await supabase
-          .from('profiles')
-          .select('*')
-
-      const { data: allBets } =
-        await supabase
-          .from('bets')
-          .select('*')
-
-      const { data: gamesData } =
-        await supabase
-          .from('games')
-          .select('*')
-
-      if (
-        profilesData &&
-        allBets &&
-        gamesData
-      ) {
-
-        const rankingCalculado =
-          profilesData.map((profile) => {
-
-            let total = 0
-
-            let cravadas = 0
-
-            allBets.forEach((bet) => {
-
-              if (
-                bet.user_id !== profile.id
-              ) {
-                return
-              }
-
-              const jogo =
-                gamesData.find(
-                  (g) =>
-                    g.id === bet.game_id
-                )
-
-              if (!jogo) return
-
-              if (
-                jogo.home_score ===
-                  bet.home_guess &&
-                jogo.away_score ===
-                  bet.away_guess
-              ) {
-
-                total += 5
-                cravadas += 1
-
-                return
-
-              }
-
-              const resultadoReal =
-                jogo.home_score >
-                jogo.away_score
-                  ? 'casa'
-                  : jogo.home_score <
-                    jogo.away_score
-                  ? 'fora'
-                  : 'empate'
-
-              const resultadoPalpite =
-                bet.home_guess >
-                bet.away_guess
-                  ? 'casa'
-                  : bet.home_guess <
-                    bet.away_guess
-                  ? 'fora'
-                  : 'empate'
-
-              if (
-                resultadoReal ===
-                resultadoPalpite
-              ) {
-                total += 2
-              }
-
-            })
-
-            return {
-              nome: profile.nome,
-              pontos: total,
-              cravadas
-            }
-
-          })
-
-        rankingCalculado.sort((a, b) => {
-
-          if (
-            b.pontos !== a.pontos
-          ) {
-
-            return (
-              b.pontos - a.pontos
-            )
-
-          }
-
-          return (
-            b.cravadas -
-            a.cravadas
-          )
-
-        })
-
-        setRanking(rankingCalculado)
-
-      }
+      setMobile(
+        window.innerWidth <= 900
+      )
 
     }
 
+    checkMobile()
+
+    window.addEventListener(
+      'resize',
+      checkMobile
+    )
+
+    const carregar =
+      async () => {
+
+        const { data: authData } =
+          await supabase.auth.getUser()
+
+        if (!authData.user)
+          return
+
+        const user =
+          authData.user
+
+        /* PERFIL */
+
+        const { data: perfilData } =
+          await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', user.id)
+            .single()
+
+        if (perfilData)
+          setPerfil(perfilData)
+
+        /* RANKING */
+
+        const { data: rankingData } =
+          await supabase
+            .from('profiles')
+            .select('*')
+            .order('pontos', {
+              ascending: false
+            })
+
+        if (rankingData)
+          setRanking(rankingData)
+
+      }
+
     carregar()
+
+    return () => {
+
+      window.removeEventListener(
+        'resize',
+        checkMobile
+      )
+
+    }
 
   }, [])
 
   return (
 
-    <main
-      className="
-        min-h-screen
-        py-8
-      "
-    >
+    <>
 
-      <Navbar
-        nome={perfil?.nome || ''}
-      />
-<br></br>
-<br></br>
-      {/* CONTAINER */}
+      <Navbar />
 
-      <div
-        className="
-          w-full
-          flex
-          justify-center
-          px-4
-          md:px-6
-          mt-10
-        "
+      <main
+        style={{
+          marginLeft:
+            mobile
+              ? '0'
+              : '110px',
+
+          padding:
+            mobile
+              ? '18px'
+              : '28px',
+
+          paddingBottom:
+            mobile
+              ? '120px'
+              : '40px',
+
+          color: 'white',
+
+          minHeight: '100vh'
+        }}
       >
 
-        <div
-          className="
-            w-full
-            max-w-4xl
-          "
+        {/* HERO */}
+
+        <section
+          style={{
+            marginBottom: '30px'
+          }}
         >
 
-          <RankingCompleto
-            ranking={ranking}
-            completo={true}
-          />
+          <p
+            style={{
+              color: '#00ff9d',
+              letterSpacing: '0.28em',
+              fontSize: '10px',
+              marginBottom: '10px'
+            }}
+          >
+            COPA DO MUNDO 2026
+          </p>
 
-        </div>
+          <h1
+            className="fifa-title"
+            style={{
+              fontSize:
+                mobile
+                  ? '50px'
+                  : '74px',
 
-      </div>
+              lineHeight: 0.9,
 
-        {/* BOTÕES */}
+              marginBottom: '12px'
+            }}
+          >
+            CLASSIFICAÇÃO{' '}
 
-<div
-  className="
-    w-full
-    flex
-    justify-center
-    mt-24
-    pb-20
-    px-4
-  "
+            <span
+              style={{
+                color: '#00ff9d'
+              }}
+            >
+              GLOBAL
+            </span>
+
+          </h1>
+
+          <p
+            style={{
+              opacity: 0.7,
+              maxWidth: '520px',
+              lineHeight: 1.5
+            }}
+          >
+            Veja quem lidera o bolão
+            e acompanhe a disputa
+            pela primeira colocação.
+          </p>
+
+        </section>
+
+        {/* TABELA */}
+
+        <section
+          style={{
+            maxWidth: '820px',
+            margin: '0 auto'
+          }}
+        >
+
+          {/* HEADER */}
+
+          <div
+            style={{
+              display: 'grid',
+
+              gridTemplateColumns:
+                mobile
+                  ? '42px 1fr 70px 70px'
+                  : '60px 1fr 120px 120px',
+
+              padding:
+                mobile
+                  ? '10px 14px'
+                  : '12px 18px',
+
+              opacity: 0.4,
+
+              fontSize: '10px',
+
+              textTransform:
+                'uppercase',
+
+              marginBottom: '8px'
+            }}
+          >
+
+            <div>Pos</div>
+
+            <div>Jogador</div>
+
+            <div
+              style={{
+                textAlign: 'center'
+              }}
+            >
+              Pts
+            </div>
+
+            <div
+              style={{
+                textAlign: 'center'
+              }}
+            >
+              Crav
+            </div>
+
+          </div>
+
+          {/* LISTA */}
+
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+
+              gap: '8px'
+            }}
+          >
+
+            {ranking.map(
+              (
+                user: any,
+                index: number
+              ) => {
+
+              const eu =
+                perfil?.id === user.id
+
+              return (
+
+                <div
+                  key={user.id}
+
+                  style={{
+                    display: 'grid',
+
+                    gridTemplateColumns:
+                      mobile
+                        ? '42px 1fr 70px 70px'
+                        : '60px 1fr 120px 120px',
+
+                    alignItems: 'center',
+
+                    minHeight:
+                      mobile
+                        ? '58px'
+                        : '72px',
+
+                    padding:
+                      mobile
+                        ? '0 14px'
+                        : '0 18px',
+
+                    borderRadius:
+                      '14px',
+
+                    background:
+                      eu
+                        ? 'rgba(0,255,157,0.08)'
+                        : 'rgba(255,255,255,0.03)',
+
+                    border:
+                      eu
+                        ? '1px solid rgba(0,255,157,0.25)'
+                        : '1px solid rgba(255,255,255,0.06)',
+
+                    boxShadow:
+                      eu
+                        ? '0 0 24px rgba(0,255,157,0.08)'
+                        : 'none',
+
+                    backdropFilter:
+                      'blur(20px)'
+                  }}
+                >
+
+                  {/* POS */}
+
+                  <div
+                    style={{
+                      fontSize:
+                        mobile
+                          ? '18px'
+                          : '22px',
+
+                      fontWeight: 'bold',
+
+                      color:
+                        index === 0
+                          ? '#ffc400'
+                          : index === 1
+                          ? '#d9d9d9'
+                          : index === 2
+                          ? '#cd7f32'
+                          : '#00ff9d'
+                    }}
+                  >
+                    {index + 1}
+                  </div>
+
+                  {/* USER */}
+
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+
+                      gap:
+                        mobile
+                          ? '10px'
+                          : '14px',
+
+                      overflow: 'hidden'
+                    }}
+                  >
+
+                    {/* BOLINHA */}
+
+                    <div
+  style={{
+    display: 'flex',
+    alignItems: 'center',
+
+    gap: '10px'
+  }}
 >
 
+  {/* INICIAIS */}
+
   <div
-    className="
-      w-full
-      max-w-5xl
-      grid
-      grid-cols-3
-      gap-2
-      items-center
-      justify-items-center
-    "
+    style={{
+      minWidth: '32px',
+      height: '32px',
+
+      borderRadius: '999px',
+
+      background:
+        'rgba(0,255,157,0.1)',
+
+      border:
+        '1px solid rgba(0,255,157,0.18)',
+
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+
+      color: '#00ff9d',
+
+      fontWeight: 'bold',
+
+      fontSize: '12px'
+    }}
   >
-
-    {/* HOME */}
-
-    <Link
-      href="/"
-      className="
-        w-full
-        text-center
-        border
-        border-white/
-        bg-black/50
-        hover:bg-white/2
-        transition
-        px-2
-        py-4
-        rounded-[8px]
-        text-[17px]
-        font-xl
-        whitespace-nowrap
-        backdrop-blur-sm
-      "
-    >
-      HOME
-    </Link>
-
-    {/* CLASSIFICAÇÃO */}
-
-    <Link
-      href="/jogos"
-      className="
-         w-full
-        text-center
-        border
-        border-white/
-        bg-black/50
-        hover:bg-white/2
-        transition
-        px-2
-        py-4
-        rounded-[8px]
-        text-[17px]
-        font-xl
-        whitespace-nowrap
-        backdrop-blur-sm
-      "
-    >
-      MEUS PALPITES
-    </Link>
-
-    {/* PALPITES ADVERSÁRIOS */}
-
-    <Link
-      href="/grupos"
-      className="
-         w-full
-        text-center
-        border
-        border-white/
-        bg-black/50
-        hover:bg-white/2
-        transition
-        px-2
-        py-4
-        rounded-[8px]
-        text-[17px]
-        font-xl
-        whitespace-nowrap
-        backdrop-blur-sm
-      "
-    >
-      GRUPOS
-    </Link>
-
+    {user.iniciais}
   </div>
 
-</div>
+  {/* NOME */}
 
-    </main>
+   <div
+                      style={{
+                        overflow: 'hidden'
+                      }}
+                    >
+
+                      <p
+                        style={{
+                          fontSize:
+                            mobile
+                              ? '15px'
+                              : '22px',
+
+                          fontWeight: 'bold',
+
+                          whiteSpace:
+                            'nowrap',
+
+                          overflow:
+                            'hidden',
+
+                          textOverflow:
+                            'ellipsis'
+                        }}
+                      >
+                        {user.nome}
+                      </p>
+
+                    </div>
+
+</div>
+                    
+
+                  </div>
+
+                  {/* PTS */}
+
+                  <div
+                    style={{
+                      textAlign: 'center',
+
+                      fontSize:
+                        mobile
+                          ? '18px'
+                          : '26px',
+
+                      fontWeight: 'bold',
+
+                      color: '#00ff9d'
+                    }}
+                  >
+                    {user.pontos}
+                  </div>
+
+                  {/* CRAV */}
+
+                  <div
+                    style={{
+                      textAlign: 'center',
+
+                      fontSize:
+                        mobile
+                          ? '18px'
+                          : '26px',
+
+                      fontWeight: 'bold',
+
+                      color: '#ffc400'
+                    }}
+                  >
+                    {user.cravadas}
+                  </div>
+
+                </div>
+
+              )
+
+            })}
+
+          </div>
+
+        </section>
+
+      </main>
+
+    </>
 
   )
 

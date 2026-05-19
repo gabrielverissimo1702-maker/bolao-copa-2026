@@ -1,28 +1,35 @@
-import type { Metadata } from 'next'
-
-import {
-  Rajdhani
-} from 'next/font/google'
-
 import './globals.css'
 
-const rajdhani = Rajdhani({
-  subsets: ['latin'],
-  weight: [
-    '400',
-    '500',
-    '600',
-    '700'
-  ]
-})
+import {
+  Bebas_Neue,
+  Inter
+} from 'next/font/google'
 
-export const metadata: Metadata = {
-  title: 'Bolão da Copa',
-  description: 'Bolão da Copa do Mundo'
+const bebas =
+  Bebas_Neue({
+    subsets: ['latin'],
+    weight: '400',
+    variable: '--font-bebas'
+  })
+
+const inter =
+  Inter({
+    subsets: ['latin'],
+    variable: '--font-inter'
+  })
+
+export const metadata = {
+
+  title:
+    'Bolão Copa 2026',
+
+  description:
+    'Bolão oficial da Copa do Mundo 2026'
+
 }
 
 export default function RootLayout({
-  children,
+  children
 }: Readonly<{
   children: React.ReactNode
 }>) {
@@ -31,7 +38,13 @@ export default function RootLayout({
 
     <html lang="pt-BR">
 
-      <body className={rajdhani.className}>
+      <body
+        className={`
+          ${bebas.variable}
+          ${inter.variable}
+          antialiased
+        `}
+      >
 
         {children}
 

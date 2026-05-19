@@ -2,248 +2,339 @@ import Link from 'next/link'
 
 type Props = {
   ranking: any[]
+  completo?: boolean
 }
 
 export default function RankingPreview({
-  ranking
+  ranking,
+  completo = false
 }: Props) {
+
+  const lista =
+    completo
+      ? ranking
+      : ranking.slice(0, 10)
 
   return (
 
-    <section>
+    <section
+      className="
+        w-full
+         max-w-5xl
+         mx-auto
+      "
+    >
 
-      {/* TÍTULO */}
-
-      <br></br>
-
-      <div className="mb-8 text-center">
-
-        <p
-          className="
-            text-white/70
-            uppercase
-            tracking-[0.3em]
-            text-xs
-            mb-3
-          "
-        >
-          TOP 3
-        </p>
-
-        <Link
-          href="/ranking"
-          className="
-            text-4xl
-            font-semibold
-            tracking-tight
-            hover:text-white/80
-            transition
-            inline-block
-          "
-        >
-          Classificação
-        </Link>
-
-      </div>
-
-      {/* TABELA */}
+      {/* HEADER */}
 
       <div
         className="
-          bg-zinc-900/10
-          rounded-[10px]
-          overflow-hidden
+          flex
+          items-center
+          justify-between
+          mb-8
         "
       >
 
-        {/* HEADER */}
+        <div>
 
-        <div
-          className="
-            grid
-            grid-cols-[70px_1fr_80px_90px]
-            md:grid-cols-[100px_1fr_120px_140px]
-            px-3
-            md:px-6
-            py-4
-            border-b
-            border-white/10
-            text-white/60
-            uppercase
-            tracking-[0.2em]
-            text-[10px]
-            md:text-sm
-          "
-        >
+          <p
+            className="
+              text-white/40
+              uppercase
+              tracking-[0.35em]
+              text-[10px]
+              mb-2
+            "
+          >
+            Copa do Mundo 2026
+          </p>
 
-          <div className="text-center">
-            Pos
-          </div>
-
-          <div>
-            Nome
-          </div>
-
-          <div className="text-center">
-            Pts
-          </div>
-
-          <div className="text-center">
-            Crav.
-          </div>
+          <h2
+            className="
+              text-5xl
+              leading-none
+            "
+          >
+            Ranking
+          </h2>
 
         </div>
 
-        {/* TOP 3 */}
+        {!completo && (
 
-        {ranking.slice(0, 3).map((user, index) => (
-
-          <div
-            key={index}
+          <Link
+            href="/ranking"
             className="
-              grid
-              grid-cols-[70px_1fr_80px_90px]
-              md:grid-cols-[100px_1fr_120px_140px]
-              items-center
-              px-3
-              md:px-6
-              py-4
-              border-b
-              border-white/5
+              border
+              border-white/[0.08]
+              bg-white/[0.03]
+              hover:bg-white/[0.06]
+              transition
+              px-5
+              py-3
+              text-[11px]
+              uppercase
+              tracking-[0.25em]
             "
           >
+            Ver tudo
+          </Link>
 
-            {/* POSIÇÃO */}
+        )}
 
-            <div className="flex justify-center">
+      </div>
 
-              <div
-                className="
-                  w-10
-                  h-10
-                  md:w-12
-                  md:h-12
-                  bg-zinc-00
-                  rounded-[10px]
-                  flex
-                  items-center
-                  justify-center
-                  text-sm
-                  md:text-lg
-                  font-bold
-                "
-              >
-                {index + 1}
-              </div>
+      {/* LISTA */}
 
-            </div>
+      <div
+        className="
+          flex
+          flex-col
+          gap-3
+        "
+      >
 
-            {/* NOME */}
+        {lista.map((user, index) => {
+
+          const top3 =
+            index <= 2
+
+          return (
 
             <div
-              className="
-                min-w-0
-                pr-2
-              "
+              key={index}
+              className={`
+                relative
+                overflow-hidden
+                border
+                transition
+                px-4
+                py-4
+
+                ${
+                  top3
+
+                    ? `
+                      border-[#ffd000]/20
+                      bg-[#ffd000]/[0.04]
+                    `
+
+                    : `
+                      border-white/[0.06]
+                      bg-white/[0.02]
+                    `
+                }
+              `}
             >
 
-              <p
-                className="
-                  truncate
-                  text-sm
-                  md:text-xl
-                  font-semibold
-                "
-              >
-                {user.nome}
-              </p>
+              {/* GLOW */}
 
-            </div>
+              {top3 && (
 
-            {/* PTS */}
+                <div
+                  className="
+                    absolute
+                    top-0
+                    right-0
+                    w-32
+                    h-32
+                    bg-[#ffd000]/10
+                    blur-3xl
+                    pointer-events-none
+                  "
+                />
 
-            <div className="flex justify-center">
+              )}
+
+              {/* CONTEÚDO */}
 
               <div
                 className="
-                  min-w-[50px]
-                  md:min-w-[60px]
-                  h-10
-                  md:h-12
-                  px-2
-                  bg-zinc-00
-                  rounded-[10px]
+                  relative
+                  z-10
                   flex
                   items-center
-                  justify-center
-                  text-sm
-                  md:text-lg
-                  font-bold
+                  justify-between
+                  gap-4
                 "
               >
-                {user.pontos}
+
+                {/* ESQUERDA */}
+
+                <div
+                  className="
+                    flex
+                    items-center
+                    gap-4
+                    min-w-0
+                  "
+                >
+
+                  {/* POS */}
+
+                  <div
+                    className={`
+                      w-14
+                      h-14
+                      shrink-0
+                      flex
+                      items-center
+                      justify-center
+                      text-3xl
+                      leading-none
+                      border
+
+                      ${
+                        top3
+
+                          ? `
+                            border-[#ffd000]/30
+                            text-[#ffd000]
+                            bg-[#ffd000]/10
+                          `
+
+                          : `
+                            border-white/[0.06]
+                            text-white/70
+                            bg-white/[0.03]
+                          `
+                      }
+                    `}
+                  >
+                    {index + 1}
+                  </div>
+
+                  {/* NOME */}
+
+                  <div
+                    className="
+                      min-w-0
+                    "
+                  >
+
+                    <p
+                      className="
+                        text-white/40
+                        uppercase
+                        tracking-[0.25em]
+                        text-[9px]
+                        mb-1
+                      "
+                    >
+                      Jogador
+                    </p>
+
+                    <h3
+                      className="
+                        text-2xl
+                        leading-none
+                        truncate
+                      "
+                    >
+                      {user.nome}
+                    </h3>
+
+                  </div>
+
+                </div>
+
+                {/* DIREITA */}
+
+                <div
+                  className="
+                    flex
+                    items-center
+                    gap-3
+                    shrink-0
+                  "
+                >
+
+                  {/* PONTOS */}
+
+                  <div
+                    className="
+                      border
+                      border-[#00ffb7]/20
+                      bg-[#00ffb7]/10
+                      min-w-[90px]
+                      px-4
+                      py-3
+                      text-center
+                    "
+                  >
+
+                    <p
+                      className="
+                        text-[#00ffb7]
+                        uppercase
+                        tracking-[0.2em]
+                        text-[9px]
+                        mb-1
+                      "
+                    >
+                      Pts
+                    </p>
+
+                    <p
+                      className="
+                        text-2xl
+                        leading-none
+                      "
+                    >
+                      {user.pontos ?? 0}
+                    </p>
+
+                  </div>
+
+                  {/* CRAVADAS */}
+
+                  <div
+                    className="
+                      border
+                      border-[#ffd000]/20
+                      bg-[#ffd000]/10
+                      min-w-[90px]
+                      px-4
+                      py-3
+                      text-center
+                    "
+                  >
+
+                    <p
+                      className="
+                        text-[#ffd000]
+                        uppercase
+                        tracking-[0.2em]
+                        text-[9px]
+                        mb-1
+                      "
+                    >
+                      Cravadas
+                    </p>
+
+                    <p
+                      className="
+                        text-2xl
+                        leading-none
+                      "
+                    >
+                      {user.cravadas ?? 0}
+                    </p>
+
+                  </div>
+
+                </div>
+
               </div>
 
             </div>
 
-            {/* CRAVADAS */}
+          )
 
-            <div className="flex justify-center">
-
-              <div
-                className="
-                  min-w-[50px]
-                  md:min-w-[60px]
-                  h-10
-                  md:h-12
-                  px-2
-                  bg-zinc-00
-                  rounded-[10px]
-                  flex
-                  items-center
-                  justify-center
-                  text-sm
-                  md:text-lg
-                  font-bold
-                "
-              >
-                {user.cravadas}
-              </div>
-
-            </div>
-
-          </div>
-
-        ))}
+        })}
 
       </div>
-
-      {/* BOTÃO */}
-
-      <div className="flex justify-center mt-6">
-
-        <Link
-          href="/ranking"
-          className="
-            border
-            border-white/10
-            bg-black/75
-            hover:bg-white/2
-            transition
-            px-20
-            py-10
-            rounded-[2px]
-            text-xl
-            font-medium
-            backdrop-blur-sm
-          "
-        >
-          VER CLASSIFICAÇÃO COMPLETA
-        </Link>
-
-      </div>
-
-      <br></br>
 
     </section>
 

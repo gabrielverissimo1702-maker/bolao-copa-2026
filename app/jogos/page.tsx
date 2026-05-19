@@ -2,16 +2,11 @@
 
 import { useEffect, useState } from 'react'
 
-import Link from 'next/link'
+import Navbar from '../components/Navbar'
 
 import { supabase } from '../../lib/supabase'
 
-import Navbar from '../components/Navbar'
-
-export default function Jogos() {
-
-  const [perfil, setPerfil] =
-    useState<any>(null)
+export default function JogosPage() {
 
   const [games, setGames] =
     useState<any[]>([])
@@ -19,150 +14,179 @@ export default function Jogos() {
   const [teams, setTeams] =
     useState<any[]>([])
 
+  const [mobile, setMobile] =
+    useState(false)
+
   const [palpites, setPalpites] =
     useState<any>({})
 
   const [pagina, setPagina] =
     useState(1)
 
+  const jogosPorPagina = 10
+
   useEffect(() => {
 
-    const carregar = async () => {
+    const checkMobile = () => {
 
-      const { data } =
-        await supabase.auth.getUser()
-
-      if (!data.user) return
-
-      const user = data.user
-
-      /* PERFIL */
-
-      const { data: meuPerfil } =
-        await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', user.id)
-          .single()
-
-      if (meuPerfil) {
-        setPerfil(meuPerfil)
-      }
-
-      /* GAMES */
-
-      const { data: gamesData } =
-        await supabase
-          .from('games')
-          .select('*')
-          .order('match_date', {
-            ascending: true
-          })
-
-      if (gamesData) {
-        setGames(gamesData)
-      }
-
-      /* TEAMS */
-
-      const { data: teamsData } =
-        await supabase
-          .from('teams')
-          .select('*')
-
-      if (teamsData) {
-        setTeams(teamsData)
-      }
-
-      /* BETS */
-
-      const { data: betsData } =
-        await supabase
-          .from('bets')
-          .select('*')
-          .eq('user_id', user.id)
-
-      if (betsData) {
-
-        const formatado: any = {}
-
-        betsData.forEach((bet) => {
-
-          formatado[bet.game_id] = {
-            home: bet.home_guess,
-            away: bet.away_guess
-          }
-
-        })
-
-        setPalpites(formatado)
-
-      }
+      setMobile(
+        window.innerWidth <= 900
+      )
 
     }
 
+    checkMobile()
+
+    window.addEventListener(
+      'resize',
+      checkMobile
+    )
+
+    const carregar =
+      async () => {
+
+        const { data: authData } =
+          await supabase.auth.getUser()
+
+        if (!authData.user)
+          return
+
+        const user =
+          authData.user
+
+        /* GAMES */
+
+        const { data: gamesData } =
+          await supabase
+            .from('games')
+            .select('*')
+            .order('match_date', {
+              ascending: true
+            })
+
+        if (gamesData)
+          setGames(gamesData)
+
+        /* TEAMS */
+
+        const { data: teamsData } =
+          await supabase
+            .from('teams')
+            .select('*')
+
+        if (teamsData)
+          setTeams(teamsData)
+
+        /* BETS */
+
+        const { data: betsData } =
+          await supabase
+            .from('bets')
+            .select('*')
+            .eq('user_id', user.id)
+
+        if (betsData) {
+
+          const formatado: any = {}
+
+          betsData.forEach(
+            (bet: any) => {
+
+              formatado[bet.game_id] = {
+                home_guess:
+                  bet.home_guess,
+
+                away_guess:
+                  bet.away_guess
+              }
+
+            }
+          )
+
+          setPalpites(formatado)
+
+        }
+
+      }
+
     carregar()
+
+    return () => {
+
+      window.removeEventListener(
+        'resize',
+        checkMobile
+      )
+
+    }
 
   }, [])
 
-  const handleChange = (
-    gameId: number,
-    field: string,
-    value: string
-  ) => {
+  /* TIMES */
 
-    setPalpites({
-      ...palpites,
-      [gameId]: {
-        ...palpites[gameId],
-        [field]: value
-      }
-    })
+  const getTeam =
+    (sigla: string) => {
 
-  }
+      return teams.find(
+        (t: any) =>
+          t.nome === sigla
+      )
 
-  const jogoBloqueado = (
-    dataJogo: string
-  ) => {
+    }
 
-    return (
-      new Date(dataJogo) <=
-      new Date()
+  /* PAGINAÇÃO */
+
+  const inicio =
+    (pagina - 1) * jogosPorPagina
+
+  const fim =
+    inicio + jogosPorPagina
+
+  const jogosPagina =
+    games.slice(inicio, fim)
+
+  const totalPaginas =
+    Math.ceil(
+      games.length / jogosPorPagina
     )
 
-  }
+  /* SALVAR TODOS */
 
   const salvarPalpites =
     async () => {
 
-      const { data } =
+      const { data: authData } =
         await supabase.auth.getUser()
 
-      if (!data.user) return
+      if (!authData.user)
+        return
 
-      const user = data.user
+      const user =
+        authData.user
 
-      for (const gameId in palpites) {
+      const payload =
+        Object.entries(palpites)
+          .map(
+            ([gameId, value]: any) => ({
 
-        const palpite =
-          palpites[gameId]
+              user_id:
+                user.id,
 
-        await supabase
-          .from('bets')
-          .upsert({
-            user_id: user.id,
-            game_id: Number(gameId),
-            home_guess:
-              Number(
-                palpite.home
-              ),
-            away_guess:
-              Number(
-                palpite.away
-              )
-          })
+              game_id:
+                Number(gameId),
 
-      }
+              home_guess:
+                Number(value.home_guess),
+
+              away_guess:
+                Number(value.away_guess)
+
+            })
+          )
+
+      await supabase
+        .from('bets')
+        .upsert(payload)
 
       alert(
         'Palpites salvos!'
@@ -170,364 +194,509 @@ export default function Jogos() {
 
     }
 
-  /* PAGINAÇÃO */
-
-  const jogosPorPagina = 12
-
-  const inicio =
-    (pagina - 1) *
-    jogosPorPagina
-
-  const fim =
-    inicio +
-    jogosPorPagina
-
-  const jogosPaginados =
-    games.slice(
-      inicio,
-      fim
-    )
-
-  const totalPaginas =
-    Math.ceil(
-      games.length /
-      jogosPorPagina
-    )
-
   return (
 
-    <main
-      className="
-        min-h-screen
-        py-8
-      "
-    >
+    <>
 
-      <Navbar
-        nome={perfil?.nome || ''}
-      />
+      <Navbar />
 
-      {/* JOGOS */}
+      <main
+        style={{
+          marginLeft:
+            mobile
+              ? '0'
+              : '110px',
 
-      <br></br>
+          padding:
+            mobile
+              ? '18px'
+              : '28px',
 
-      <div className="text-center mb-12">
+          paddingBottom:
+            mobile
+              ? '120px'
+              : '40px',
 
-  <p
-    className="
-      text-white/70
-      uppercase
-      tracking-[0.3em]
-      text-xs
-      mb-3
-    "
-  >
-    Copa do Mundo 2026
-  </p>
+          color: 'white',
 
-  <h1
-    className="
-      text-4xl
-      font-semibold
-      tracking-tight
-    "
-  >
-    Meus Palpites
-  </h1>
-
-</div>
-
-      <div
-        className="
-          w-full
-          flex
-          justify-center
-          mt-10
-          px-4
-        "
+          minHeight: '100vh'
+        }}
       >
 
-        <div
-          className="
-            w-full
-            max-w-5xl
-          "
+        {/* HERO */}
+
+        <section
+          style={{
+            marginBottom: '28px'
+          }}
         >
 
-          {/* PAGINAÇÃO TOPO */}
-
-          <div
-            className="
-              flex
-              items-center
-              justify-center
-              gap-6
-              mb-10
-            "
+          <p
+            style={{
+              color: '#00ff9d',
+              letterSpacing: '0.28em',
+              fontSize: '10px',
+              marginBottom: '10px'
+            }}
           >
+            COPA DO MUNDO 2026
+          </p>
+
+          <h1
+            className="fifa-title"
+            style={{
+              fontSize:
+                mobile
+                  ? '54px'
+                  : '72px',
+
+              lineHeight: 0.9,
+
+              marginBottom: '12px'
+            }}
+          >
+            TODOS{' '}
+
+            <span
+              style={{
+                color: '#00ff9d'
+              }}
+            >
+              OS JOGOS
+            </span>
+
+          </h1>
+
+          <p
+            style={{
+              opacity: 0.7,
+              maxWidth: '520px',
+              lineHeight: 1.5
+            }}
+          >
+            Faça seus palpites
+            e acompanhe todas
+            as partidas da Copa.
+          </p>
+
+        </section>
+
+        {/* PAGINAÇÃO TOPO */}
+
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+
+            gap: '8px',
+
+            marginBottom: '18px',
+
+            flexWrap: 'wrap'
+          }}
+        >
+
+          {Array.from({
+            length: totalPaginas
+          }).map((_, index) => (
 
             <button
-              disabled={pagina === 1}
+              key={index}
+
               onClick={() =>
-                setPagina(pagina - 1)
+                setPagina(index + 1)
               }
-              className="
-                w-10
-                h-10
-                rounded-[8px]
-                bg-zinc-000
-                text-lg
-                font-bold
-                disabled:opacity-30
-              "
+
+              style={{
+                width: '42px',
+                height: '42px',
+
+                borderRadius: '12px',
+
+                border:
+                  pagina === index + 1
+                    ? '1px solid #00ff9d'
+                    : '1px solid rgba(255,255,255,0.08)',
+
+                background:
+                  pagina === index + 1
+                    ? 'rgba(0,255,157,0.12)'
+                    : 'rgba(255,255,255,0.03)',
+
+                color:
+                  pagina === index + 1
+                    ? '#00ff9d'
+                    : 'white',
+
+                fontWeight: 'bold',
+
+                cursor: 'pointer'
+              }}
             >
-              ←
+              {index + 1}
             </button>
 
-            <p
-              className="
-                text-white/70
-                uppercase
-                tracking-[0.2em]
-                text-xs
-              "
-            >
-              Página {pagina}
-            </p>
+          ))}
 
-            <button
-              disabled={
-                pagina === totalPaginas
-              }
-              onClick={() =>
-                setPagina(pagina + 1)
-              }
-              className="
-                w-10
-                h-10
-                rounded-[8px]
-                bg-zinc-000
-                text-lg
-                font-bold
-                disabled:opacity-30
-              "
-            >
-              →
-            </button>
+        </div>
 
-          </div>
-<br></br>
-          {/* LISTA */}
+        {/* LISTA */}
 
-          <div
-            className="
-              flex
-              flex-col
-              gap-6
-            "
-          >
+        <section
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
 
-            {jogosPaginados.map((game) => {
+            gap: '16px',
 
-              const homeTeam =
-                teams.find(
-                  (t) =>
-                    t.nome ===
-                    game.home_team
-                )
+            maxWidth: '700px',
 
-              const awayTeam =
-                teams.find(
-                  (t) =>
-                    t.nome ===
-                    game.away_team
-                )
+            margin: '0 auto'
+          }}
+        >
 
-              const bloqueado =
-                jogoBloqueado(
-                  game.match_date
-                )
+          {jogosPagina.map(
+            (game: any) => {
 
-              return (
+            const home =
+              getTeam(
+                game.home_team
+              )
 
-                <section
-                  key={game.id}
-                  className="
-                    bg-zinc-900/10
-                    rounded-[10px]
-                    p-5
-                  "
+            const away =
+              getTeam(
+                game.away_team
+              )
+
+            const bloqueado =
+              new Date(
+                game.match_date
+              ) < new Date()
+
+            return (
+
+              <div
+                key={game.id}
+
+                style={{
+                  border:
+                    '1px solid rgba(0,255,157,0.18)',
+
+                  background:
+                    'rgba(0,0,0,0.45)',
+
+                  boxShadow:
+                    '0 0 30px rgba(0,255,157,0.06)',
+
+                  borderRadius: '18px',
+
+                  overflow: 'hidden'
+                }}
+              >
+
+                {/* BODY */}
+
+                <div
+                  style={{
+                    padding:
+                      mobile
+                        ? '18px 14px'
+                        : '20px 22px'
+                  }}
                 >
 
-                  {/* GRUPO */}
-
-                  <p
-                    className="
-                      text-[10px]
-                      uppercase
-                      tracking-[0.3em]
-                      text-white/70
-                      mb-5
-                      text-center
-                    "
-                  >
-                    {game.group_name}
-                    {' • '}
-                    {game.round}ª Rodada
-                  </p>
-
-                  {/* LINHA JOGO */}
+                  {/* LINHA */}
 
                   <div
-                    className="
-                      w-full
-                      flex
-                      items-center
-                      justify-center
-                      gap-3
-                    "
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+
+                      gap:
+                        mobile
+                          ? '8px'
+                          : '14px'
+                    }}
                   >
 
                     {/* HOME */}
 
                     <div
-                      className="
-                        w-[95px]
-                        flex
-                        items-center
-                        justify-end
-                        gap-2
-                      "
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+
+                        gap: '8px',
+
+                        minWidth:
+                          mobile
+                            ? '85px'
+                            : '110px',
+
+                        justifyContent:
+                          'flex-end'
+                      }}
                     >
 
-                      <img
-                        src={`https://flagcdn.com/w320/${homeTeam?.flag}.png`}
-                        alt=""
-                        className="
-                          w-8
-                          h-6
-                          object-cover
-                          rounded
-                        "
-                      />
-
                       <p
-                        className="
-                          w-[40px]
-                          text-right
-                          text-lg
-                          font-bold
-                        "
+                        style={{
+                          fontSize:
+                            mobile
+                              ? '22px'
+                              : '30px',
+
+                          fontWeight: 'bold'
+                        }}
                       >
-                        {game.home_team}
+                        {home?.nome}
                       </p>
+
+                      <img
+                        src={`https://flagcdn.com/w80/${home?.flag}.png`}
+                        alt=""
+
+                        style={{
+                          width:
+                            mobile
+                              ? '28px'
+                              : '36px',
+
+                          height:
+                            mobile
+                              ? '28px'
+                              : '36px',
+
+                          borderRadius:
+                            '999px',
+
+                          objectFit: 'cover'
+                        }}
+                      />
 
                     </div>
 
-                    {/* INPUT HOME */}
+                    {/* SCORE */}
 
-                    <input
-                      type="number"
-                      placeholder="0"
-                      disabled={bloqueado}
-                      className="
-                        w-10
-                        h-10
-                        bg-zinc-800
-                        rounded-[8px]
-                        text-center
-                        text-sm
-                        font-bold
-                        disabled:opacity-40
-                      "
-                      value={
-                        palpites[game.id]
-                          ?.home ?? ''
-                      }
-                      onChange={(e) =>
-                        handleChange(
-                          game.id,
-                          'home',
-                          e.target.value
-                        )
-                      }
-                    />
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
 
-                    {/* VS */}
-
-                    <span
-                      className="
-                        text-white/60
-                        text-xs
-                        uppercase
-                        font-semibold
-                      "
+                        gap:
+                          mobile
+                            ? '6px'
+                            : '10px'
+                      }}
                     >
-                      x
-                    </span>
 
-                    {/* INPUT AWAY */}
+                      {/* HOME */}
 
-                    <input
-                      type="number"
-                      placeholder="0"
-                      disabled={bloqueado}
-                      className="
-                        w-10
-                        h-10
-                        bg-zinc-800
-                        rounded-[8px]
-                        text-center
-                        text-sm
-                        font-bold
-                        disabled:opacity-40
-                      "
-                      value={
-                        palpites[game.id]
-                          ?.away ?? ''
-                      }
-                      onChange={(e) =>
-                        handleChange(
-                          game.id,
-                          'away',
-                          e.target.value
-                        )
-                      }
-                    />
+                      <input
+                        type="number"
+
+                        disabled={
+                          bloqueado
+                        }
+
+                        value={
+                          palpites[
+                            game.id
+                          ]?.home_guess ?? ''
+                        }
+
+                        onChange={(e) => {
+
+                          setPalpites({
+                            ...palpites,
+
+                            [game.id]: {
+
+                              ...palpites[
+                                game.id
+                              ],
+
+                              home_guess:
+                                e.target.value
+                            }
+                          })
+
+                        }}
+
+                        style={{
+                          width:
+                            mobile
+                              ? '42px'
+                              : '52px',
+
+                          height:
+                            mobile
+                              ? '42px'
+                              : '52px',
+
+                          borderRadius:
+                            '10px',
+
+                          border:
+                            '1px solid #00ff9d',
+
+                          background:
+                            bloqueado
+                              ? 'rgba(255,255,255,0.04)'
+                              : 'rgba(0,255,157,0.08)',
+
+                          color:
+                            bloqueado
+                              ? '#888'
+                              : '#00ff9d',
+
+                          textAlign: 'center',
+
+                          fontSize:
+                            mobile
+                              ? '22px'
+                              : '28px',
+
+                          fontWeight: 'bold'
+                        }}
+                      />
+
+                      <span
+                        style={{
+                          fontSize:
+                            mobile
+                              ? '18px'
+                              : '24px',
+
+                          opacity: 0.7
+                        }}
+                      >
+                        x
+                      </span>
+
+                      {/* AWAY */}
+
+                      <input
+                        type="number"
+
+                        disabled={
+                          bloqueado
+                        }
+
+                        value={
+                          palpites[
+                            game.id
+                          ]?.away_guess ?? ''
+                        }
+
+                        onChange={(e) => {
+
+                          setPalpites({
+                            ...palpites,
+
+                            [game.id]: {
+
+                              ...palpites[
+                                game.id
+                              ],
+
+                              away_guess:
+                                e.target.value
+                            }
+                          })
+
+                        }}
+
+                        style={{
+                          width:
+                            mobile
+                              ? '42px'
+                              : '52px',
+
+                          height:
+                            mobile
+                              ? '42px'
+                              : '52px',
+
+                          borderRadius:
+                            '10px',
+
+                          border:
+                            '1px solid #00ff9d',
+
+                          background:
+                            bloqueado
+                              ? 'rgba(255,255,255,0.04)'
+                              : 'rgba(0,255,157,0.08)',
+
+                          color:
+                            bloqueado
+                              ? '#888'
+                              : '#00ff9d',
+
+                          textAlign: 'center',
+
+                          fontSize:
+                            mobile
+                              ? '22px'
+                              : '28px',
+
+                          fontWeight: 'bold'
+                        }}
+                      />
+
+                    </div>
 
                     {/* AWAY */}
 
                     <div
-                      className="
-                        w-[95px]
-                        flex
-                        items-center
-                        justify-start
-                        gap-2
-                      "
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+
+                        gap: '8px',
+
+                        minWidth:
+                          mobile
+                            ? '85px'
+                            : '110px'
+                      }}
                     >
 
-                      <p
-                        className="
-                          w-[40px]
-                          text-left
-                          text-lg
-                          font-bold
-                        "
-                      >
-                        {game.away_team}
-                      </p>
-
                       <img
-                        src={`https://flagcdn.com/w320/${awayTeam?.flag}.png`}
+                        src={`https://flagcdn.com/w80/${away?.flag}.png`}
                         alt=""
-                        className="
-                          w-8
-                          h-6
-                          object-cover
-                          rounded
-                        "
+
+                        style={{
+                          width:
+                            mobile
+                              ? '28px'
+                              : '36px',
+
+                          height:
+                            mobile
+                              ? '28px'
+                              : '36px',
+
+                          borderRadius:
+                            '999px',
+
+                          objectFit: 'cover'
+                        }}
                       />
+
+                      <p
+                        style={{
+                          fontSize:
+                            mobile
+                              ? '22px'
+                              : '30px',
+
+                          fontWeight: 'bold'
+                        }}
+                      >
+                        {away?.nome}
+                      </p>
 
                     </div>
 
@@ -535,267 +704,193 @@ export default function Jogos() {
 
                   {/* DATA */}
 
-                  <p
-                    className="
-                      text-white/50
-                      text-center
-                      mt-5
-                      text-xs
-                    "
+                  <div
+                    style={{
+                      marginTop: '14px',
+
+                      textAlign: 'center',
+
+                      fontSize: '12px',
+
+                      opacity: 0.7,
+
+                      letterSpacing: '0.04em'
+                    }}
                   >
-                    {new Date(
-                      game.match_date
-                    ).toLocaleString(
-                      'pt-BR',
-                      {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      }
-                    )}
-                  </p>
+                    {
+                      new Date(
+                        game.match_date
+                      ).toLocaleDateString(
+                        'pt-BR',
+                        {
+                          day: '2-digit',
+                          month: '2-digit'
+                        }
+                      )
+                    }
+
+                    {' • '}
+
+                    {
+                      new Date(
+                        game.match_date
+                      ).toLocaleTimeString(
+                        'pt-BR',
+                        {
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        }
+                      )
+                    }
+                  </div>
 
                   {/* BLOQUEADO */}
 
                   {bloqueado && (
 
-                    <p
-                      className="
-                        text-red-400
-                        text-[10px]
-                        uppercase
-                        tracking-[0.2em]
-                        mt-3
-                        text-center
-                      "
+                    <div
+                      style={{
+                        marginTop: '14px',
+
+                        textAlign: 'center',
+
+                        fontSize: '11px',
+
+                        color: '#ff5a5a',
+
+                        letterSpacing: '0.06em',
+
+                        textTransform:
+                          'uppercase'
+                      }}
                     >
                       Palpites encerrados
-                    </p>
+                    </div>
 
                   )}
 
-                </section>
+                </div>
 
-              )
+              </div>
 
-            })}
+            )
 
-          </div>
+          })}
 
-          <br></br>
+        </section>
 
-          {/* PAGINAÇÃO */}
+        {/* PAGINAÇÃO BAIXO */}
 
-          <div
-            className="
-              flex
-              items-center
-              justify-center
-              gap-6
-              mt-10
-            "
-          >
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
 
-            <button
-              disabled={pagina === 1}
-              onClick={() =>
-                setPagina(
-                  pagina - 1
-                )
-              }
-              className="
-                w-10
-                h-10
-                rounded-[8px]
-                bg-zinc-000
-                text-lg
-                font-bold
-                disabled:opacity-30
-              "
-            >
-              ←
-            </button>
+            gap: '8px',
 
-            <p
-              className="
-                text-white/70
-                uppercase
-                tracking-[0.2em]
-                text-xs
-              "
-            >
-              Página {pagina}
-            </p>
+            marginTop: '24px',
+
+            flexWrap: 'wrap'
+          }}
+        >
+
+          {Array.from({
+            length: totalPaginas
+          }).map((_, index) => (
 
             <button
-              disabled={
-                pagina ===
-                totalPaginas
-              }
+              key={index}
+
               onClick={() =>
-                setPagina(
-                  pagina + 1
-                )
+                setPagina(index + 1)
               }
-              className="
-                w-10
-                h-10
-                rounded-[8px]
-                bg-zinc-000
-                text-lg
-                font-bold
-                disabled:opacity-30
-              "
+
+              style={{
+                width: '42px',
+                height: '42px',
+
+                borderRadius: '12px',
+
+                border:
+                  pagina === index + 1
+                    ? '1px solid #00ff9d'
+                    : '1px solid rgba(255,255,255,0.08)',
+
+                background:
+                  pagina === index + 1
+                    ? 'rgba(0,255,157,0.12)'
+                    : 'rgba(255,255,255,0.03)',
+
+                color:
+                  pagina === index + 1
+                    ? '#00ff9d'
+                    : 'white',
+
+                fontWeight: 'bold',
+
+                cursor: 'pointer'
+              }}
             >
-              →
+              {index + 1}
             </button>
 
-          </div>
+          ))}
 
         </div>
 
-      </div>
+        {/* SALVAR */}
 
-      <br></br>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
 
-      {/* SALVAR */}
-
-      <div
-        className="
-          flex
-          justify-center
-          mt-16
-          px-4
-        "
-      >
-
-        <button
-          onClick={salvarPalpites}
-          className="
-            border
-            border-white/
-            bg-black/70
-            hover:bg-white/5
-            transition
-            px-2
-            py-4
-            rounded-[4px]
-            text-xl
-            font-medium
-            backdrop-blur-sm
-          "
+            marginTop: '24px'
+          }}
         >
-          SALVAR PALPITES
-        </button>
 
-      </div>
+          <button
+            onClick={
+              salvarPalpites
+            }
 
-      <br></br>
+            style={{
+              width: '100%',
 
-      {/* BOTÕES */}
+              maxWidth: '700px',
 
-<div
-  className="
-    w-full
-    flex
-    justify-center
-    mt-24
-    pb-20
-    px-4
-  "
->
+              height: '58px',
 
-  <div
-    className="
-      w-full
-      max-w-5xl
-      grid
-      grid-cols-3
-      gap-2
-      items-center
-      justify-items-center
-    "
-  >
+              borderRadius: '16px',
 
-    {/* HOME */}
+              border: 'none',
 
-    <Link
-      href="/"
-      className="
-        w-full
-        text-center
-        border
-        border-white/
-        bg-black/50
-        hover:bg-white/2
-        transition
-        px-2
-        py-4
-        rounded-[8px]
-        text-[17px]
-        font-xl
-        whitespace-nowrap
-        backdrop-blur-sm
-      "
-    >
-      HOME
-    </Link>
+              background:
+                'linear-gradient(90deg,#00ff9d,#00c3ff)',
 
-    {/* CLASSIFICAÇÃO */}
+              color: 'black',
 
-    <Link
-      href="/ranking"
-      className="
-         w-full
-        text-center
-        border
-        border-white/
-        bg-black/50
-        hover:bg-white/2
-        transition
-        px-2
-        py-4
-        rounded-[8px]
-        text-[17px]
-        font-xl
-        whitespace-nowrap
-        backdrop-blur-sm
-      "
-    >
-      CLASSIFICAÇÃO
-    </Link>
+              fontWeight: 'bold',
 
-    {/* PALPITES ADVERSÁRIOS */}
+              fontSize: '13px',
 
-    <Link
-      href="/palpites-publicos"
-      className="
-         w-full
-        text-center
-        border
-        border-white/
-        bg-black/50
-        hover:bg-white/2
-        transition
-        px-2
-        py-4
-        rounded-[8px]
-        text-[17px]
-        font-xl
-        whitespace-nowrap
-        backdrop-blur-sm
-      "
-    >
-      PALPITES ADVERSÁRIOS
-    </Link>
+              letterSpacing:
+                '0.08em',
 
-  </div>
+              textTransform:
+                'uppercase',
 
-</div>
+              cursor: 'pointer'
+            }}
+          >
+            Salvar palpites
+          </button>
 
-    </main>
+        </div>
+
+      </main>
+
+    </>
 
   )
 

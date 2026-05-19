@@ -3,80 +3,207 @@
 /* RESET */
 
 * {
+
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+
+}
+
+html,
+body {
+
+  min-height: 100vh;
+
+  overflow-x: hidden;
+
 }
 
 /* BODY */
 
 body {
+
+  font-family:
+    var(--font-inter);
+
   background:
     radial-gradient(
       circle at top left,
-      rgba(210, 170, 10, 0.15),
-      transparent 50%
+      rgba(0,255,180,0.10),
+      transparent 25%
     ),
 
     radial-gradient(
       circle at top right,
-      rgba(210, 170, 10, 0.15),
-      transparent 50%
+      rgba(120,0,255,0.12),
+      transparent 30%
     ),
 
     radial-gradient(
       circle at bottom,
-      rgba(210, 170, 10, 0.15),
-      transparent 50%
+      rgba(255,0,80,0.08),
+      transparent 30%
     ),
 
-    #000000;
+    #050505;
 
-  color: #efb905;
+  color: white;
 
-  min-height: 100vh;
-
-  overflow-x: hidden;
 }
+
 /* LINKS */
 
+a {
 
-  a {
   text-decoration: none;
   color: inherit;
-};
+
+}
 
 /* INPUTS */
 
 input,
 button {
+
   border: none;
   outline: none;
-}
 
-/* REMOVE SETINHAS */
-
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-input[type=number] {
-  appearance: textfield;
 }
 
 /* SCROLL */
 
 ::-webkit-scrollbar {
+
   width: 8px;
+
 }
 
 ::-webkit-scrollbar-track {
-  background: #D3AF37;
+
+  background: #050505;
+
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #D3AF37;
+
+  background: #202020;
   border-radius: 999px;
+
+}
+
+/* TITLES */
+
+h1,
+h2,
+h3 {
+
+  font-family:
+    var(--font-bebas);
+
+  letter-spacing:
+    0.03em;
+
+}
+
+/* BACKGROUND LIGHTS */
+
+.bg-lights {
+
+  position: fixed;
+
+  inset: 0;
+
+  overflow: hidden;
+
+  pointer-events: none;
+
+  z-index: -1;
+
+}
+
+.bg-lights::before {
+
+  content: '';
+
+  position: absolute;
+
+  width: 700px;
+  height: 700px;
+
+  top: -250px;
+  left: -200px;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(0,255,180,0.18),
+      transparent 70%
+    );
+
+  filter:
+    blur(90px);
+
+}
+
+.bg-lights::after {
+
+  content: '';
+
+  position: absolute;
+
+  width: 700px;
+  height: 700px;
+
+  bottom: -300px;
+  right: -250px;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(120,0,255,0.18),
+      transparent 70%
+    );
+
+  filter:
+    blur(100px);
+
+}
+
+/* GLASS */
+
+.glass {
+
+  background:
+    rgba(255,255,255,0.03);
+
+  border:
+    1px solid rgba(255,255,255,0.08);
+
+  backdrop-filter:
+    blur(18px);
+
+  box-shadow:
+    0 0 40px rgba(0,0,0,0.25);
+
+}
+
+.fifa-title {
+  font-family: var(--font-bebas);
+  letter-spacing: 0.03em;
+}
+
+.glass-card {
+
+  background:
+    rgba(0,0,0,0.45);
+
+  border:
+    1px solid rgba(0,255,157,0.18);
+
+  box-shadow:
+    0 0 30px rgba(0,255,157,0.06);
+
+  backdrop-filter:
+    blur(20px);
+
 }

@@ -1,17 +1,12 @@
 'use client'
 
-import Link from 'next/link'
+import { useEffect, useState } from 'react'
 
-import { useEffect, useMemo, useState } from 'react'
+import Navbar from '../components/Navbar'
 
-import Navbar from '@/app/components/Navbar'
+import { supabase } from '../../lib/supabase'
 
-import { supabase } from '@/lib/supabase'
-
-export default function PalpitesPublicos() {
-
-  const [perfil, setPerfil] =
-    useState<any>(null)
+export default function PlacaresPage() {
 
   const [games, setGames] =
     useState<any[]>([])
@@ -19,914 +14,1076 @@ export default function PalpitesPublicos() {
   const [bets, setBets] =
     useState<any[]>([])
 
+  const [teams, setTeams] =
+    useState<any[]>([])
+
   const [profiles, setProfiles] =
     useState<any[]>([])
 
-  const [teams, setTeams] =
-    useState<any[]>([])
+  const [mobile, setMobile] =
+    useState(false)
 
   const [pagina, setPagina] =
     useState(1)
 
+  const [userId, setUserId] =
+    useState<string | null>(null)
+
+  const jogosPorPagina = 8
+
   useEffect(() => {
+
+    const checkMobile = () => {
+
+      setMobile(
+        window.innerWidth <= 900
+      )
+
+    }
+
+    checkMobile()
+
+    window.addEventListener(
+      'resize',
+      checkMobile
+    )
+
+    const carregar =
+      async () => {
+
+        const { data: authData } =
+          await supabase.auth.getUser()
+
+        if (authData.user)
+          setUserId(authData.user.id)
+
+        const { data: gamesData } =
+          await supabase
+            .from('games')
+            .select('*')
+            .order('match_date', {
+              ascending: true
+            })
+
+        if (gamesData)
+          setGames(gamesData)
+
+        const { data: betsData } =
+          await supabase
+            .from('bets')
+            .select('*')
+
+        if (betsData)
+          setBets(betsData)
+
+        const { data: teamsData } =
+          await supabase
+            .from('teams')
+            .select('*')
+
+        if (teamsData)
+          setTeams(teamsData)
+
+        const { data: profilesData } =
+          await supabase
+            .from('profiles')
+            .select('*')
+
+        if (profilesData)
+          setProfiles(profilesData)
+
+      }
 
     carregar()
 
-  }, [])
+    return () => {
 
-  const carregar = async () => {
-
-    const { data } =
-      await supabase.auth.getUser()
-
-    if (!data.user) {
-
-      window.location.href =
-        '/login'
-
-      return
-
-    }
-
-    const user = data.user
-
-    /* PERFIL */
-
-    const { data: meuPerfil } =
-      await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single()
-
-    if (meuPerfil) {
-      setPerfil(meuPerfil)
-    }
-
-    /* GAMES */
-
-    const { data: gamesData } =
-      await supabase
-        .from('games')
-        .select('*')
-        .order('match_date', {
-          ascending: true
-        })
-
-    if (gamesData) {
-      setGames(gamesData)
-    }
-
-    /* BETS */
-
-    const { data: betsData } =
-      await supabase
-        .from('bets')
-        .select('*')
-
-    if (betsData) {
-      setBets(betsData)
-    }
-
-    /* PROFILES */
-
-    const { data: profilesData } =
-      await supabase
-        .from('profiles')
-        .select('*')
-
-    if (profilesData) {
-      setProfiles(profilesData)
-    }
-
-    /* TEAMS */
-
-    const { data: teamsData } =
-      await supabase
-        .from('teams')
-        .select('*')
-
-    if (teamsData) {
-      setTeams(teamsData)
-    }
-
-  }
-
-  const jogoLiberado = (
-    matchDate: string
-  ) => {
-
-    return (
-      new Date(matchDate)
-      <= new Date()
-    )
-
-  }
-
-  /* PÁGINA INICIAL */
-
-  const paginaInicial =
-    useMemo(() => {
-
-      const index =
-        games.findIndex(
-          (game) =>
-            new Date(
-              game.match_date
-            ) > new Date()
-        )
-
-      if (index === -1) {
-        return 1
-      }
-
-      return (
-        Math.floor(index / 6) + 1
+      window.removeEventListener(
+        'resize',
+        checkMobile
       )
 
-    }, [games])
-
-  useEffect(() => {
-
-    if (pagina === 1) {
-      setPagina(paginaInicial)
     }
 
-  }, [paginaInicial])
+  }, [])
 
-  /* PAGINAÇÃO */
+  const getTeam =
+    (sigla: string) => {
 
-  const jogosPorPagina = 6
+      return teams.find(
+        (t: any) =>
+          t.nome === sigla
+      )
+
+    }
+
+  const getBets =
+    (gameId: number) => {
+
+      return bets.filter(
+        (b: any) =>
+          b.game_id === gameId
+      )
+
+    }
+
+  const getProfile =
+    (id: string) => {
+
+      return profiles.find(
+        (p: any) =>
+          p.id === id
+      )
+
+    }
 
   const inicio =
-    (pagina - 1) *
-    jogosPorPagina
+    (pagina - 1) * jogosPorPagina
 
   const fim =
-    inicio +
-    jogosPorPagina
+    inicio + jogosPorPagina
 
-  const jogosPaginados =
-    games.slice(
-      inicio,
-      fim
-    )
+  const jogosPagina =
+    games.slice(inicio, fim)
 
   const totalPaginas =
     Math.ceil(
-      games.length /
-      jogosPorPagina
+      games.length / jogosPorPagina
     )
 
   return (
 
-    <main
-      className="
-        min-h-screen
-        py-8
-      "
-    >
+    <>
 
-      <Navbar
-        nome={perfil?.nome || ''}
-      />
+      <Navbar />
 
-      <br></br><br></br>
-<div className="text-center mb-12">
+      <main
+        style={{
+          marginLeft:
+            mobile
+              ? '0'
+              : '110px',
 
-  <p
-    className="
-      text-white/70
-      uppercase
-      tracking-[0.3em]
-      text-xs
-      mb-3
-    "
-  >
-    Copa do Mundo 2026
-  </p>
+          padding:
+            mobile
+              ? '18px'
+              : '28px',
 
-  <h1
-    className="
-      text-4xl
-      font-semibold
-      tracking-tight
-    "
-  >
-    Palpites Adversários
-  </h1>
+          paddingBottom:
+            mobile
+              ? '120px'
+              : '40px',
 
-</div>
-      {/* CONTAINER */}
+          color: 'white',
 
-      <div
-        className="
-          w-full
-          flex
-          justify-center
-          px-6
-          mt-10
-        "
+          minHeight: '100vh'
+        }}
       >
 
-        <div
-          className="
-            w-full
-            max-w-7xl
-          "
+        {/* HERO */}
+
+        <section
+          style={{
+            marginBottom: '30px'
+          }}
         >
 
-          {/* PAGINAÇÃO TOPO */}
-
-          <div
-            className="
-              flex
-              items-center
-              justify-center
-              gap-6
-              mb-10
-            "
+          <p
+            style={{
+              color: '#00ff9d',
+              letterSpacing: '0.28em',
+              fontSize: '10px',
+              marginBottom: '10px'
+            }}
           >
+            COPA DO MUNDO 2026
+          </p>
+
+          <h1
+            className="fifa-title"
+            style={{
+              fontSize:
+                mobile
+                  ? '46px'
+                  : '72px',
+
+              lineHeight: 0.9,
+
+              marginBottom: '12px'
+            }}
+          >
+            CENTRAL{' '}
+
+            <span
+              style={{
+                color: '#00ff9d'
+              }}
+            >
+              DE PLACARES
+            </span>
+
+          </h1>
+
+          <p
+            style={{
+              opacity: 0.7,
+              maxWidth: '520px',
+              lineHeight: 1.5
+            }}
+          >
+            Veja os palpites
+            de todos os jogadores
+            em tempo real.
+          </p>
+
+        </section>
+
+        {/* PAGINAÇÃO */}
+
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+
+            gap: '8px',
+
+            marginBottom: '20px',
+
+            flexWrap: 'wrap'
+          }}
+        >
+
+          {Array.from({
+            length: totalPaginas
+          }).map((_, index) => (
 
             <button
-              disabled={pagina === 1}
+              key={index}
+
               onClick={() =>
-                setPagina(
-                  pagina - 1
-                )
+                setPagina(index + 1)
               }
-              className="
-                w-12
-                h-12
-                rounded-[10px]
-                bg-zinc-00
-                text-xl
-                font-bold
-                disabled:opacity-30
-              "
+
+              style={{
+                width: '42px',
+                height: '42px',
+
+                borderRadius: '12px',
+
+                border:
+                  pagina === index + 1
+                    ? '1px solid #00ff9d'
+                    : '1px solid rgba(255,255,255,0.08)',
+
+                background:
+                  pagina === index + 1
+                    ? 'rgba(0,255,157,0.12)'
+                    : 'rgba(255,255,255,0.03)',
+
+                color:
+                  pagina === index + 1
+                    ? '#00ff9d'
+                    : 'white',
+
+                fontWeight: 'bold',
+
+                cursor: 'pointer'
+              }}
             >
-              ←
+              {index + 1}
             </button>
 
-            <p
-              className="
-                text-white/70
-                uppercase
-                tracking-[0.2em]
-                text-sm
-              "
-            >
-              Página {pagina}
-            </p>
+          ))}
 
-            <button
-              disabled={
-                pagina ===
-                totalPaginas
-              }
-              onClick={() =>
-                setPagina(
-                  pagina + 1
-                )
-              }
-              className="
-                w-12
-                h-12
-                rounded-[10px]
-                bg-zinc-00
-                text-xl
-                font-bold
-                disabled:opacity-30
-              "
-            >
-              →
-            </button>
+        </div>
 
-          </div>
-<br></br>
-          {/* GRID */}
+        {/* LISTA */}
 
-          <div
-            className="
-              grid
-              grid-cols-1
-              md:grid-cols-2
-              xl:grid-cols-3
-              gap-8
-            "
-          >
+        <section
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
 
-            {jogosPaginados.map((game) => {
+            gap: '18px',
 
-              const liberado =
-                jogoLiberado(
-                  game.match_date
-                )
+            maxWidth: '760px',
 
-              const homeTeam =
-                teams.find(
-                  (t) =>
-                    t.nome ===
-                    game.home_team
-                )
+            margin: '0 auto'
+          }}
+        >
 
-              const awayTeam =
-                teams.find(
-                  (t) =>
-                    t.nome ===
-                    game.away_team
-                )
+          {jogosPagina.map(
+            (game: any) => {
 
-              const betsDoJogo =
-                bets.filter(
-                  (bet) =>
-                    bet.game_id ===
-                    game.id
-                )
+            const home =
+              getTeam(
+                game.home_team
+              )
 
-              const meuPalpite =
-                betsDoJogo.find(
-                  (bet) =>
-                    bet.user_id ===
-                    perfil?.id
-                )
+            const away =
+              getTeam(
+                game.away_team
+              )
 
-              const outrosPalpites =
-                betsDoJogo.filter(
-                  (bet) =>
-                    bet.user_id !==
-                    perfil?.id
-                )
+            const agora =
+              new Date().getTime()
 
-              return (
+            const horarioJogo =
+              new Date(
+                game.match_date
+              ).getTime()
 
-                <section
-                  key={game.id}
-                  className="
-                    bg-zinc-900/10
-                    rounded-[16px]
-                    p-6
-                  "
+            const liberar =
+              agora >= horarioJogo
+
+            const palpites =
+              getBets(game.id)
+
+            const meuPalpite =
+              palpites.find(
+                (b: any) =>
+                  b.user_id === userId
+              )
+
+            return (
+
+              <div
+                key={game.id}
+
+                style={{
+                  border:
+                    '1px solid rgba(0,255,157,0.18)',
+
+                  background:
+                    'rgba(0,0,0,0.45)',
+
+                  boxShadow:
+                    '0 0 30px rgba(0,255,157,0.06)',
+
+                  borderRadius: '20px',
+
+                  overflow: 'hidden'
+                }}
+              >
+
+                {/* TOPO */}
+
+                <div
+                  style={{
+                    padding:
+                      mobile
+                        ? '22px 14px'
+                        : '24px'
+                  }}
                 >
 
-                  {/* HEADER */}
+                  {/* JOGO */}
 
                   <div
-                    className="
-                      flex
-                      items-center
-                      justify-center
-                      gap-3
-                    "
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center'
+                    }}
                   >
-                    {/* HOME */}
 
                     <div
-                      className="
-                        flex
-                        items-center
-                        gap-2
-                      "
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+
+                        gap:
+                          mobile
+                            ? '10px'
+                            : '18px',
+
+                        width: '100%'
+                      }}
                     >
 
-                      <img
-                        src={`https://flagcdn.com/w320/${homeTeam?.flag}.png`}
-                        className="
-                          w-9
-                          h-7
-                          object-cover
-                          rounded
-                        "
-                      />
-
-                      <p
-                        className="
-                          w-[40px]
-                          text-right
-                          text-xl
-                          font-bold
-                        "
-                      >
-                        {game.home_team}
-                      </p>
-
-                    </div>
-
-                    {/* RESULTADO */}
-
-                    <div
-                      className="
-                        flex
-                        items-center
-                        gap-2
-                      "
-                    >
+                      {/* HOME */}
 
                       <div
-                        className="
-                          w-11
-                          h-11
-                          bg-zinc-800
-                          rounded-[8px]
-                          flex
-                          items-center
-                          justify-center
-                          text-lg
-                          font-bold
-                        "
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+
+                          gap: '8px',
+
+                          minWidth:
+                            mobile
+                              ? '90px'
+                              : '130px',
+
+                          justifyContent: 'flex-end'
+                        }}
                       >
-                        {
-                          liberado
-                            ? game.home_score
-                            : ''
-                        }
+
+                        <p
+                          style={{
+                            fontSize:
+                              mobile
+                                ? '20px'
+                                : '28px',
+
+                            fontWeight: 'bold'
+                          }}
+                        >
+                          {home?.nome}
+                        </p>
+
+                        <img
+                          src={`https://flagcdn.com/w80/${home?.flag}.png`}
+                          alt=""
+
+                          style={{
+                            width:
+                              mobile
+                                ? '30px'
+                                : '38px',
+
+                            height:
+                              mobile
+                                ? '30px'
+                                : '38px',
+
+                            borderRadius:
+                              '999px',
+
+                            objectFit:
+                              'cover'
+                          }}
+                        />
+
                       </div>
 
-                      <span
-                        className="
-                          text-white/60
-                          text-sm
-                          font-semibold
-                        "
-                      >
-                        x
-                      </span>
+                      {/* SCORE */}
 
                       <div
-                        className="
-                          w-11
-                          h-11
-                          bg-zinc-800
-                          rounded-[8px]
-                          flex
-                          items-center
-                          justify-center
-                          text-lg
-                          font-bold
-                        "
-                      >
-                        {
-                          liberado
-                            ? game.away_score
-                            : ''
-                        }
-                      </div>
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
 
-                    </div>
-
-                    {/* AWAY */}
-
-                    <div
-                      className="
-                        flex
-                        items-center
-                        gap-2
-                      "
-                    >
-
-                      <p
-                        className="
-                          w-[40px]
-                          text-left
-                          text-xl
-                          font-bold
-                        "
-                      >
-                        {game.away_team}
-                      </p>
-
-                      <img
-                        src={`https://flagcdn.com/w320/${awayTeam?.flag}.png`}
-                        className="
-                          w-9
-                          h-7
-                          object-cover
-                          rounded
-                        "
-                      />
-
-                    </div>
-
-                  </div>
-
-                  {/* DATA */}
-
-                  <p
-                    className="
-                      text-center
-                      text-white/40
-                      text-xs
-                      mt-4
-                    "
-                  >
-                    {new Date(
-                      game.match_date
-                    ).toLocaleString(
-                      'pt-BR',
-                      {
-                        day: '2-digit',
-                        month: '2-digit',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      }
-                    )}
-                  </p>
-
-                  {/* MEU PALPITE */}
-
-                  {meuPalpite && (
-
-                    <div
-                      className="
-                        mt-6
-                        flex
-                        flex-col
-                        items-center
-                      "
-                    >
-
-                      <p
-                        className="
-                          text-[10px]
-                          uppercase
-                          tracking-[0.2em]
-                          text-white/40
-                          mb-2
-                        "
-                      >
-                        Meu Palpite
-                      </p>
-
-                      <div
-                        className="
-                          flex
-                          items-center
-                          gap-2
-                        "
+                          gap: '8px'
+                        }}
                       >
 
                         <div
-                          className="
-                            w-8
-                            h-8
-                            bg-zinc-800
-                            rounded-[6px]
-                            flex
-                            items-center
-                            justify-center
-                            text-xs
-                            font-bold
-                          "
+                          style={{
+                            width:
+                              mobile
+                                ? '42px'
+                                : '48px',
+
+                            height:
+                              mobile
+                                ? '42px'
+                                : '48px',
+
+                            borderRadius:
+                              '12px',
+
+                            border:
+                              '1px solid rgba(255,255,255,0.08)',
+
+                            background:
+                              'rgba(255,255,255,0.03)',
+
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+
+                            fontSize:
+                              mobile
+                                ? '24px'
+                                : '28px',
+
+                            fontWeight: 'bold'
+                          }}
                         >
-                          {
-                            liberado
-                              ? meuPalpite.home_guess
-                              : ''
-                          }
+                          {game.home_score ?? '-'}
                         </div>
 
                         <span
-                          className="
-                            text-white/50
-                            text-xs
-                          "
+                          style={{
+                            opacity: 0.5
+                          }}
                         >
                           x
                         </span>
 
                         <div
-                          className="
-                            w-8
-                            h-8
-                            bg-zinc-800
-                            rounded-[6px]
-                            flex
-                            items-center
-                            justify-center
-                            text-xs
-                            font-bold
-                          "
+                          style={{
+                            width:
+                              mobile
+                                ? '42px'
+                                : '48px',
+
+                            height:
+                              mobile
+                                ? '42px'
+                                : '48px',
+
+                            borderRadius:
+                              '12px',
+
+                            border:
+                              '1px solid rgba(255,255,255,0.08)',
+
+                            background:
+                              'rgba(255,255,255,0.03)',
+
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+
+                            fontSize:
+                              mobile
+                                ? '24px'
+                                : '28px',
+
+                            fontWeight: 'bold'
+                          }}
                         >
-                          {
-                            liberado
-                              ? meuPalpite.away_guess
-                              : ''
-                          }
+                          {game.away_score ?? '-'}
                         </div>
+
+                      </div>
+
+                      {/* AWAY */}
+
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+
+                          gap: '8px',
+
+                          minWidth:
+                            mobile
+                              ? '90px'
+                              : '130px'
+                        }}
+                      >
+
+                        <img
+                          src={`https://flagcdn.com/w80/${away?.flag}.png`}
+                          alt=""
+
+                          style={{
+                            width:
+                              mobile
+                                ? '30px'
+                                : '38px',
+
+                            height:
+                              mobile
+                                ? '30px'
+                                : '38px',
+
+                            borderRadius:
+                              '999px',
+
+                            objectFit:
+                              'cover'
+                          }}
+                        />
+
+                        <p
+                          style={{
+                            fontSize:
+                              mobile
+                                ? '20px'
+                                : '28px',
+
+                            fontWeight: 'bold'
+                          }}
+                        >
+                          {away?.nome}
+                        </p>
 
                       </div>
 
                     </div>
 
-                  )}
-                  <br></br>
-                  {/* LINHA */}
+                    {/* DATA */}
+
+                    <div
+                      style={{
+                        marginTop: '12px',
+
+                        fontSize: '11px',
+
+                        opacity: 0.6
+                      }}
+                    >
+                      {
+                        new Date(
+                          game.match_date
+                        ).toLocaleDateString(
+                          'pt-BR',
+                          {
+                            day: '2-digit',
+                            month: '2-digit'
+                          }
+                        )
+                      }
+
+                      {' • '}
+
+                      {
+                        new Date(
+                          game.match_date
+                        ).toLocaleTimeString(
+                          'pt-BR',
+                          {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          }
+                        )
+                      }
+                    </div>
+
+                  </div>
+
+                </div>
+
+                {/* PALPITES */}
+
+                {liberar && (
 
                   <div
-                    className="
-                      w-full
-                      h-px
-                      bg-white/
-                      my-10
-                    "
-                  />
+                    style={{
+                      borderTop:
+                        '1px solid rgba(255,255,255,0.06)',
 
-                  {/* PALPITES */}
-
-                  <div
-                    className="
-                      flex
-                      flex-col
-                      gap-5
-                    "
+                      padding:
+                        mobile
+                          ? '18px 12px'
+                          : '22px'
+                    }}
                   >
 
-                    {outrosPalpites.map((bet) => {
+                    {/* MEU PALPITE */}
 
-                      const profile =
-                        profiles.find(
-                          (p) =>
-                            p.id ===
-                            bet.user_id
-                        )
+                    {meuPalpite && (
 
-                      return (
+                      <div
+                        style={{
+                          marginBottom: '22px'
+                        }}
+                      >
+
+                        <p
+                          style={{
+                            textAlign: 'center',
+
+                            fontSize: '11px',
+
+                            letterSpacing:
+                              '0.08em',
+
+                            opacity: 0.55,
+
+                            marginBottom: '14px',
+
+                            textTransform:
+                              'uppercase'
+                          }}
+                        >
+                          Meu palpite
+                        </p>
 
                         <div
-                          key={bet.id}
-                          className="
-                            flex
-                            flex-col
-                            items-center
-                          "
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+
+                            gap: '10px',
+
+                            marginBottom: '14px'
+                          }}
                         >
 
-                          <p
-                            className="
-                              text-sm
-                              font-semibold
-                              uppercase
-                              mb-2
-                            "
+                          <div
+                            style={{
+                              width: '28px',
+                              height: '28px',
+
+                              borderRadius:
+                                '999px',
+
+                              background:
+                                'rgba(0,255,157,0.1)',
+
+                              border:
+                                '1px solid rgba(0,255,157,0.2)',
+
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+
+                              color: '#00ff9d',
+
+                              fontWeight: 'bold',
+
+                              fontSize: '11px'
+                            }}
                           >
-                            {profile?.nome}
-                          </p>
+                            {
+                              getProfile(
+                                meuPalpite.user_id
+                              )?.iniciais
+                            }
+                          </div>
 
                           <div
-                            className="
-                              flex
-                              items-center
-                              gap-2
-                            "
+                            style={{
+                              fontSize: '14px',
+
+                              fontWeight: 'bold'
+                            }}
                           >
-
-                            <div
-                              className="
-                                w-9
-                                h-9
-                                bg-zinc-800
-                                rounded-[8px]
-                                flex
-                                items-center
-                                justify-center
-                                text-sm
-                                font-bold
-                              "
-                            >
-                              {
-                                liberado
-                                  ? bet.home_guess
-                                  : ''
-                              }
-                            </div>
-
-                            <span
-                              className="
-                                text-white/60
-                                text-xs
-                              "
-                            >
-                              x
-                            </span>
-
-                            <div
-                              className="
-                                w-9
-                                h-9
-                                bg-zinc-800
-                                rounded-[8px]
-                                flex
-                                items-center
-                                justify-center
-                                text-sm
-                                font-bold
-                              "
-                            >
-                              {
-                                liberado
-                                  ? bet.away_guess
-                                  : ''
-                              }
-                            </div>
-
+                            {
+                              getProfile(
+                                meuPalpite.user_id
+                              )?.nome
+                            }
                           </div>
 
                         </div>
 
-                      )
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
 
-                    })}
+                            gap: '8px'
+                          }}
+                        >
+
+                          <div
+                            style={{
+                              width:
+                                mobile
+                                  ? '42px'
+                                  : '48px',
+
+                              height:
+                                mobile
+                                  ? '42px'
+                                  : '48px',
+
+                              borderRadius:
+                                '12px',
+
+                              border:
+                                '1px solid #00ff9d',
+
+                              background:
+                                'rgba(0,255,157,0.1)',
+
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+
+                              fontSize:
+                                mobile
+                                  ? '24px'
+                                  : '28px',
+
+                              fontWeight: 'bold',
+
+                              color: '#00ff9d'
+                            }}
+                          >
+                            {meuPalpite.home_guess}
+                          </div>
+
+                          <span
+                            style={{
+                              opacity: 0.5
+                            }}
+                          >
+                            x
+                          </span>
+
+                          <div
+                            style={{
+                              width:
+                                mobile
+                                  ? '42px'
+                                  : '48px',
+
+                              height:
+                                mobile
+                                  ? '42px'
+                                  : '48px',
+
+                              borderRadius:
+                                '12px',
+
+                              border:
+                                '1px solid #00ff9d',
+
+                              background:
+                                'rgba(0,255,157,0.1)',
+
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+
+                              fontSize:
+                                mobile
+                                  ? '24px'
+                                  : '28px',
+
+                              fontWeight: 'bold',
+
+                              color: '#00ff9d'
+                            }}
+                          >
+                            {meuPalpite.away_guess}
+                          </div>
+
+                        </div>
+
+                      </div>
+
+                    )}
+
+                    {/* ADVERSÁRIOS */}
+
+                    <p
+                      style={{
+                        textAlign: 'center',
+
+                        fontSize: '11px',
+
+                        letterSpacing:
+                          '0.08em',
+
+                        opacity: 0.55,
+
+                        marginBottom: '14px',
+
+                        textTransform:
+                          'uppercase'
+                      }}
+                    >
+                      Palpites da rodada
+                    </p>
+
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+
+                        justifyContent: 'center',
+
+                        gap: '10px'
+                      }}
+                    >
+
+                      {palpites
+                        .filter(
+                          (b: any) =>
+                            b.user_id !== userId
+                        )
+                        .map(
+                          (
+                            bet: any,
+                            index: number
+                          ) => {
+
+                          const nome =
+                            getProfile(
+                              bet.user_id
+                            )?.nome
+
+                          return (
+
+                            <div
+                              key={index}
+
+                              style={{
+                                width:
+                                  mobile
+                                    ? '100%'
+                                    : '220px',
+
+                                borderRadius:
+                                  '14px',
+
+                                padding:
+                                  '14px 12px',
+
+                                background:
+                                  'rgba(255,255,255,0.03)',
+
+                                border:
+                                  '1px solid rgba(255,255,255,0.05)'
+                              }}
+                            >
+
+                              {/* NOME */}
+
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+
+                                  gap: '10px',
+
+                                  marginBottom: '12px'
+                                }}
+                              >
+
+                                <div
+                                  style={{
+                                    width: '28px',
+                                    height: '28px',
+
+                                    borderRadius:
+                                      '999px',
+
+                                    background:
+                                      'rgba(0,255,157,0.1)',
+
+                                    border:
+                                      '1px solid rgba(0,255,157,0.2)',
+
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+
+                                    color: '#00ff9d',
+
+                                    fontWeight: 'bold',
+
+                                    fontSize: '11px'
+                                  }}
+                                >
+                                  {
+                                    getProfile(
+                                      bet.user_id
+                                    )?.iniciais
+                                  }
+                                </div>
+
+                                <div
+                                  style={{
+                                    fontSize: '14px',
+
+                                    fontWeight: 'bold'
+                                  }}
+                                >
+                                  {nome}
+                                </div>
+
+                              </div>
+
+                              {/* SCORE */}
+
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+
+                                  gap: '6px'
+                                }}
+                              >
+
+                                <div
+                                  style={{
+                                    width: '36px',
+                                    height: '36px',
+
+                                    borderRadius:
+                                      '10px',
+
+                                    border:
+                                      '1px solid rgba(255,255,255,0.08)',
+
+                                    background:
+                                      'rgba(255,255,255,0.03)',
+
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+
+                                    fontSize: '20px',
+
+                                    fontWeight: 'bold'
+                                  }}
+                                >
+                                  {bet.home_guess}
+                                </div>
+
+                                <span
+                                  style={{
+                                    opacity: 0.5
+                                  }}
+                                >
+                                  x
+                                </span>
+
+                                <div
+                                  style={{
+                                    width: '36px',
+                                    height: '36px',
+
+                                    borderRadius:
+                                      '10px',
+
+                                    border:
+                                      '1px solid rgba(255,255,255,0.08)',
+
+                                    background:
+                                      'rgba(255,255,255,0.03)',
+
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+
+                                    fontSize: '20px',
+
+                                    fontWeight: 'bold'
+                                  }}
+                                >
+                                  {bet.away_guess}
+                                </div>
+
+                              </div>
+
+                            </div>
+
+                          )
+
+                        })}
+
+                    </div>
 
                   </div>
 
-                </section>
+                )}
 
-              )
+              </div>
 
-            })}
+            )
 
-          </div>
+          })}
 
-          {/* PAGINAÇÃO BAIXO */}
+        </section>
 
-          <br></br>
+      </main>
 
-          <div
-            className="
-              flex
-              items-center
-              justify-center
-              gap-6
-              mt-10
-            "
-          >
-
-            <button
-              disabled={pagina === 1}
-              onClick={() =>
-                setPagina(
-                  pagina - 1
-                )
-              }
-              className="
-                w-12
-                h-12
-                rounded-[10px]
-                bg-zinc-00
-                text-xl
-                font-bold
-                disabled:opacity-30
-              "
-            >
-              ←
-            </button>
-
-            <p
-              className="
-                text-white/70
-                uppercase
-                tracking-[0.2em]
-                text-sm
-              "
-            >
-              Página {pagina}
-            </p>
-
-            <button
-              disabled={
-                pagina ===
-                totalPaginas
-              }
-              onClick={() =>
-                setPagina(
-                  pagina + 1
-                )
-              }
-              className="
-                w-12
-                h-12
-                rounded-[10px]
-                bg-zinc-00
-                text-xl
-                font-bold
-                disabled:opacity-30
-              "
-            >
-              →
-            </button>
-
-            
-
-          </div>
-
-        </div>
-
-      </div>
-
-      <br>
-      </br>
-  {/* BOTÕES */}
-
-<div
-  className="
-    w-full
-    flex
-    justify-center
-    mt-24
-    pb-20
-    px-4
-  "
->
-
-  <div
-    className="
-      w-full
-      max-w-5xl
-      grid
-      grid-cols-3
-      gap-2
-      items-center
-      justify-items-center
-    "
-  >
-
-    {/* HOME */}
-
-    <Link
-      href="/"
-      className="
-        w-full
-        text-center
-        border
-        border-white/
-        bg-black/50
-        hover:bg-white/2
-        transition
-        px-2
-        py-4
-        rounded-[8px]
-        text-[17px]
-        font-xl
-        whitespace-nowrap
-        backdrop-blur-sm
-      "
-    >
-      HOME
-    </Link>
-
-    {/* CLASSIFICAÇÃO */}
-
-    <Link
-      href="/ranking"
-      className="
-         w-full
-        text-center
-        border
-        border-white/
-        bg-black/50
-        hover:bg-white/2
-        transition
-        px-2
-        py-4
-        rounded-[8px]
-        text-[17px]
-        font-xl
-        whitespace-nowrap
-        backdrop-blur-sm
-      "
-    >
-      CLASSIFICAÇÃO
-    </Link>
-
-    {/* PALPITES ADVERSÁRIOS */}
-
-    <Link
-      href="/jogos2"
-      className="
-         w-full
-        text-center
-        border
-        border-white/
-        bg-black/50
-        hover:bg-white/2
-        transition
-        px-2
-        py-4
-        rounded-[8px]
-        text-[17px]
-        font-xl
-        whitespace-nowrap
-        backdrop-blur-sm
-      "
-    >
-      MEUS PALPITES
-    </Link>
-
-  </div>
-
-</div>
-
-    </main>
+    </>
 
   )
 

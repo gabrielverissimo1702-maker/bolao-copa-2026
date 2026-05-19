@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from 'react'
 
-import Link from 'next/link'
+import Navbar from '../components/Navbar'
+
+import { supabase } from '../../lib/supabase'
 
 import {
   DndContext,
@@ -12,20 +14,22 @@ import {
 import {
   SortableContext,
   verticalListSortingStrategy,
-  useSortable,
   arrayMove
+} from '@dnd-kit/sortable'
+
+import {
+  useSortable
 } from '@dnd-kit/sortable'
 
 import {
   CSS
 } from '@dnd-kit/utilities'
 
-import { supabase } from '../../lib/supabase'
-
-import Navbar from '../components/Navbar'
-
-function SortableItem({
-  team
+function SortableTeam({
+  id,
+  index,
+  mobile,
+  teamsData
 }: any) {
 
   const {
@@ -34,82 +38,162 @@ function SortableItem({
     setNodeRef,
     transform,
     transition
-  } = useSortable({
-    id: team.nome
-  })
+  } = useSortable({ id })
 
   const style = {
-
     transform:
       CSS.Transform.toString(
         transform
       ),
 
     transition
-
   }
+
+  const team =
+    teamsData.find(
+      (t: any) =>
+        t.nome === id
+    )
 
   return (
 
     <div
       ref={setNodeRef}
-      style={style}
+
+      style={{
+        ...style,
+
+        height:
+          mobile
+            ? '56px'
+            : '64px',
+
+        borderRadius:
+          '14px',
+
+        border:
+          '1px solid rgba(255,255,255,0.06)',
+
+        background:
+          'rgba(255,255,255,0.03)',
+
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+
+        padding:
+          '0 16px',
+
+        cursor: 'grab'
+      }}
+
       {...attributes}
       {...listeners}
-      className="
-        h-14
-        border
-        border-white/10
-        bg-white/[0.03]
-        hover:bg-white/[0.05]
-        transition
-        flex
-        items-center
-        justify-between
-        px-4
-        cursor-grab
-        active:cursor-grabbing
-      "
     >
 
-      {/* ESQUERDA */}
+      {/* LEFT */}
 
       <div
-        className="
-          flex
-          items-center
-          gap-3
-        "
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+
+          gap: '12px'
+        }}
       >
 
+        {/* POS */}
+
+        <div
+          style={{
+            width:
+              mobile
+                ? '28px'
+                : '34px',
+
+            height:
+              mobile
+                ? '28px'
+                : '34px',
+
+            borderRadius:
+              '999px',
+
+            background:
+              'rgba(0,255,157,0.08)',
+
+            border:
+              '1px solid rgba(0,255,157,0.2)',
+
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+
+            fontSize:
+              mobile
+                ? '12px'
+                : '14px',
+
+            fontWeight: 'bold',
+
+            color: '#00ff9d'
+          }}
+        >
+          {index + 1}
+        </div>
+
+        {/* FLAG */}
+
         <img
-          src={`https://flagcdn.com/w320/${team.flag}.png`}
-          className="
-            w-7
-            h-5
-            object-cover
-          "
+          src={`https://flagcdn.com/w80/${team?.flag}.png`}
+          alt=""
+
+          style={{
+            width:
+              mobile
+                ? '28px'
+                : '34px',
+
+            height:
+              mobile
+                ? '28px'
+                : '34px',
+
+            borderRadius:
+              '999px',
+
+            objectFit: 'cover'
+          }}
         />
 
-        <p
-          className="
-            text-sm
-            font-medium
-          "
+        {/* TEAM */}
+
+        <div
+          style={{
+            fontSize:
+              mobile
+                ? '18px'
+                : '22px',
+
+            fontWeight: 'bold'
+          }}
         >
-          {team.nome}
-        </p>
+          {id}
+        </div>
 
       </div>
 
-      {/* ÍCONE */}
+      {/* DRAG */}
 
       <div
-        className="
-          text-white/30
-          text-lg
-          leading-none
-        "
+        style={{
+          opacity: 0.35,
+
+          fontSize:
+            mobile
+              ? '18px'
+              : '22px'
+        }}
       >
         ☰
       </div>
@@ -120,227 +204,245 @@ function SortableItem({
 
 }
 
-export default function Grupos() {
+export default function GruposPage() {
 
-  const [perfil, setPerfil] =
-    useState<any>(null)
-
-  const [teams, setTeams] =
-    useState<any[]>([])
+  const [mobile, setMobile] =
+    useState(false)
 
   const [groups, setGroups] =
     useState<any>({})
 
-  const bloqueado =
-    new Date() >=
-    new Date('2026-06-11T16:00:00')
+  const [teamsData, setTeamsData] =
+  useState<any[]>([])  
+    
+
+  const [userId, setUserId] =
+    useState<string | null>(null)
 
   useEffect(() => {
 
-    const carregar = async () => {
+    const checkMobile = () => {
 
-      const { data } =
-        await supabase.auth.getUser()
-
-      if (!data.user) return
-
-      const user = data.user
-
-      /* PERFIL */
-
-      const { data: meuPerfil } =
-        await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', user.id)
-          .single()
-
-      if (meuPerfil) {
-        setPerfil(meuPerfil)
-      }
-
-      /* TEAMS */
-
-      const { data: teamsData } =
-        await supabase
-          .from('teams')
-          .select('*')
-          .order('nome')
-
-      if (teamsData) {
-
-        setTeams(teamsData)
-
-        const gruposFormatados: any = {}
-
-        const letras = [
-          'A','B','C','D',
-          'E','F','G','H',
-          'I','J','K','L'
-        ]
-
-        letras.forEach((grupo) => {
-
-          gruposFormatados[grupo] =
-            teamsData.filter(
-              (team) =>
-                team.group_name === grupo
-            )
-
-        })
-
-        /* BUSCAR PALPITES */
-
-        const { data: predictions } =
-          await supabase
-            .from('group_predictions')
-            .select('*')
-            .eq('user_id', user.id)
-
-        if (
-          predictions &&
-          predictions.length > 0
-        ) {
-
-          predictions.forEach((item) => {
-
-            gruposFormatados[
-              item.group_name
-            ] = [
-
-              teamsData.find(
-                (t) =>
-                  t.nome ===
-                  item.first_place
-              ),
-
-              teamsData.find(
-                (t) =>
-                  t.nome ===
-                  item.second_place
-              ),
-
-              teamsData.find(
-                (t) =>
-                  t.nome ===
-                  item.third_place
-              ),
-
-              teamsData.find(
-                (t) =>
-                  t.nome ===
-                  item.fourth_place
-              )
-
-            ].filter(Boolean)
-
-          })
-
-        }
-
-        setGroups(
-          gruposFormatados
-        )
-
-      }
+      setMobile(
+        window.innerWidth <= 900
+      )
 
     }
 
+    checkMobile()
+
+    window.addEventListener(
+      'resize',
+      checkMobile
+    )
+
+    const carregar =
+      async () => {
+
+        /* USER */
+
+        const { data: authData } =
+          await supabase.auth.getUser()
+
+        if (authData.user)
+          setUserId(authData.user.id)
+
+        /* TEAMS */
+
+        const { data: teamsData } =
+          await supabase
+            .from('teams')
+            .select('*')
+            .order('nome')
+
+        if (!teamsData)
+          return
+
+        setTeamsData(teamsData)
+
+        const agrupados: any = {}
+
+        teamsData.forEach(
+          (team: any) => {
+
+            if (
+              !agrupados[
+                team.group_name
+              ]
+            ) {
+
+              agrupados[
+                team.group_name
+              ] = []
+
+            }
+
+            agrupados[
+              team.group_name
+            ].push(team.nome)
+
+          }
+        )
+
+        /* PREDICTIONS */
+
+        if (authData.user) {
+
+          const {
+            data: predictions
+          } = await supabase
+            .from(
+              'group_predictions'
+            )
+            .select('*')
+            .eq(
+              'user_id',
+              authData.user.id
+            )
+
+          if (
+            predictions &&
+            predictions.length > 0
+          ) {
+
+            predictions.forEach(
+              (p: any) => {
+
+                agrupados[
+                  p.group_name
+                ] = [
+
+                  p.first_place,
+
+                  p.second_place,
+
+                  p.third_place,
+
+                  p.fourth_place
+
+                ]
+
+              }
+            )
+
+          }
+
+        }
+
+        setGroups(agrupados)
+
+      }
+
     carregar()
+
+    return () => {
+
+      window.removeEventListener(
+        'resize',
+        checkMobile
+      )
+
+    }
 
   }, [])
 
+  /* BLOQUEIO */
+
+  const bloqueado =
+    new Date() >=
+    new Date(
+      '2026-06-11T16:00:00'
+    )
+
   /* DRAG */
 
-  const handleDragEnd = (
-    event: any,
-    grupo: string
-  ) => {
+  const handleDragEnd =
+    (
+      event: any,
+      groupName: string
+    ) => {
 
-    const {
-      active,
-      over
-    } = event
+      const {
+        active,
+        over
+      } = event
 
-    if (
-      !over ||
-      active.id === over.id
-    ) return
-
-    const items =
-      groups[grupo]
-
-    const oldIndex =
-      items.findIndex(
-        (item: any) =>
-          item.nome === active.id
+      if (
+        !over ||
+        active.id === over.id
       )
+        return
 
-    const newIndex =
-      items.findIndex(
-        (item: any) =>
-          item.nome === over.id
-      )
+      const items =
+        groups[groupName]
 
-    setGroups({
+      const oldIndex =
+        items.indexOf(
+          active.id
+        )
 
-      ...groups,
+      const newIndex =
+        items.indexOf(
+          over.id
+        )
 
-      [grupo]:
+      const novo =
         arrayMove(
           items,
           oldIndex,
           newIndex
         )
 
-    })
+      setGroups({
+        ...groups,
 
-  }
+        [groupName]:
+          novo
+      })
 
-  /* SALVAR */
+    }
+
+  /* SAVE */
 
   const salvar =
     async () => {
 
-      const { data } =
-        await supabase.auth.getUser()
+      if (!userId)
+        return
 
-      if (!data.user) return
+      const payload =
+        Object.entries(groups)
+          .map(
+            (
+              [group, teams]: any
+            ) => ({
 
-      const user = data.user
+              user_id:
+                userId,
 
-      for (const grupo in groups) {
+              group_name:
+                group,
 
-        const lista =
-          groups[grupo]
+              first_place:
+                teams[0],
 
-        if (
-          lista.length !== 4
-        ) continue
+              second_place:
+                teams[1],
 
-        await supabase
-          .from('group_predictions')
-          .upsert({
+              third_place:
+                teams[2],
 
-            user_id: user.id,
+              fourth_place:
+                teams[3]
 
-            group_name: grupo,
+            })
+          )
 
-            first_place:
-              lista[0]?.nome,
-
-            second_place:
-              lista[1]?.nome,
-
-            third_place:
-              lista[2]?.nome,
-
-            fourth_place:
-              lista[3]?.nome
-
-          })
-
-      }
+      await supabase
+        .from(
+          'group_predictions'
+        )
+        .upsert(payload)
 
       alert(
         'Grupos salvos!'
@@ -348,378 +450,361 @@ export default function Grupos() {
 
     }
 
-  const listaGrupos = [
-    'A','B','C','D',
-    'E','F','G','H',
-    'I','J','K','L'
-  ]
-
   return (
 
-    <main
-      className="
-        min-h-screen
-        py-8
-      "
-    >
+    <>
 
-      <Navbar
-        nome={perfil?.nome || ''}
-      />
+      <Navbar />
 
-      {/* TÍTULO */}
+      <main
+        style={{
+          marginLeft:
+            mobile
+              ? '0'
+              : '110px',
 
-      <div className="text-center mb-16">
+          padding:
+            mobile
+              ? '18px'
+              : '28px',
 
-        <p
-          className="
-            text-white/50
-            uppercase
-            tracking-[0.35em]
-            text-[10px]
-            mb-4
-          "
-        >
-          Copa do Mundo 2026
-        </p>
+          paddingBottom:
+            mobile
+              ? '120px'
+              : '40px',
 
-        <h1
-          className="
-            text-4xl
-            font-semibold
-            tracking-tight
-          "
-        >
-          Grupos
-        </h1>
+          color: 'white',
 
-      </div>
-
-      {/* GRID */}
-
-      <div
-        className="
-          w-full
-          flex
-          justify-center
-          px-4
-        "
+          minHeight: '100vh'
+        }}
       >
 
-        <div
-          className="
-            w-full
-            max-w-7xl
-            grid
-            grid-cols-1
-            sm:grid-cols-2
-            xl:grid-cols-3
-            gap-5
-          "
+        {/* HERO */}
+
+        <section
+          style={{
+            marginBottom: '30px'
+          }}
         >
 
-          {listaGrupos.map((grupo) => (
+          <p
+            style={{
+              color: '#00ff9d',
+              letterSpacing:
+                '0.28em',
 
-            <section
-              key={grupo}
-              className="
-                border
-                border-white/[0.06]
-                bg-white/[0.02]
-                backdrop-blur-xl
-                p-5
-              "
+              fontSize: '10px',
+
+              marginBottom: '10px'
+            }}
+          >
+            COPA DO MUNDO 2026
+          </p>
+
+          <h1
+            className="fifa-title"
+
+            style={{
+              fontSize:
+                mobile
+                  ? '48px'
+                  : '72px',
+
+              lineHeight: 0.9,
+
+              marginBottom: '12px'
+            }}
+          >
+            FASE{' '}
+
+            <span
+              style={{
+                color: '#00ff9d'
+              }}
             >
+              DE GRUPOS
+            </span>
 
-              {/* HEADER */}
+          </h1>
+
+          <p
+            style={{
+              opacity: 0.7,
+
+              maxWidth: '520px',
+
+              lineHeight: 1.5
+            }}
+          >
+            Arraste as seleções
+            para montar sua
+            classificação final.
+          </p>
+
+        </section>
+
+        {/* BLOQUEADO */}
+
+        {bloqueado && (
+
+          <div
+            style={{
+              marginBottom: '22px',
+
+              borderRadius:
+                '16px',
+
+              border:
+                '1px solid rgba(255,80,80,0.2)',
+
+              background:
+                'rgba(255,80,80,0.06)',
+
+              padding:
+                '18px',
+
+              textAlign:
+                'center',
+
+              color: '#ff8080',
+
+              fontWeight: 'bold'
+            }}
+          >
+            Palpites encerrados
+          </div>
+
+        )}
+
+        {/* GROUPS */}
+
+        <section
+          style={{
+            display: 'grid',
+
+            gridTemplateColumns:
+              mobile
+                ? '1fr'
+                : '1fr 1fr',
+
+            gap: '18px'
+          }}
+        >
+
+          {Object.keys(groups)
+            .sort()
+            .map(
+              (groupName) => (
 
               <div
-                className="
-                  flex
-                  items-center
-                  justify-between
-                  mb-5
-                "
+                key={groupName}
+
+                style={{
+                  border:
+                    '1px solid rgba(0,255,157,0.18)',
+
+                  background:
+                    'rgba(0,0,0,0.45)',
+
+                  boxShadow:
+                    '0 0 30px rgba(0,255,157,0.06)',
+
+                  borderRadius:
+                    '20px',
+
+                  overflow:
+                    'hidden'
+                }}
               >
 
-                <div>
+                {/* HEADER */}
 
-                  <p
-                    className="
-                      text-white/40
-                      uppercase
-                      tracking-[0.3em]
-                      text-[9px]
-                      mb-1
-                    "
-                  >
-                    Grupo
-                  </p>
+                <div
+                  style={{
+                    height: '68px',
+
+                    borderBottom:
+                      '1px solid rgba(255,255,255,0.05)',
+
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent:
+                      'space-between',
+
+                    padding:
+                      '0 18px'
+                  }}
+                >
 
                   <h2
-                    className="
-                      text-3xl
-                      font-semibold
-                    "
+                    className="fifa-title"
+
+                    style={{
+                      fontSize:
+                        mobile
+                          ? '28px'
+                          : '34px'
+                    }}
                   >
-                    {grupo}
+                    GRUPO{' '}
+
+                    <span
+                      style={{
+                        color:
+                          '#00ff9d'
+                      }}
+                    >
+                      {groupName}
+                    </span>
+
                   </h2>
 
                 </div>
 
+                {/* LIST */}
+
                 <div
-                  className="
-                    text-white/20
-                    text-5xl
-                    font-bold
-                  "
+                  style={{
+                    padding:
+                      '14px',
+
+                    display: 'flex',
+                    flexDirection:
+                      'column',
+
+                    gap: '10px',
+
+                    opacity:
+                      bloqueado
+                        ? 0.6
+                        : 1,
+
+                    pointerEvents:
+                      bloqueado
+                        ? 'none'
+                        : 'all'
+                  }}
                 >
-                  {grupo}
+
+                  <DndContext
+                    collisionDetection={
+                      closestCenter
+                    }
+
+                    onDragEnd={
+                      (event) =>
+                        handleDragEnd(
+                          event,
+                          groupName
+                        )
+                    }
+                  >
+
+                    <SortableContext
+                      items={
+                        groups[
+                          groupName
+                        ]
+                      }
+
+                      strategy={
+                        verticalListSortingStrategy
+                      }
+                    >
+
+                      {
+                        groups[
+                          groupName
+                        ]?.map(
+                          (
+                            team: string,
+                            index: number
+                          ) => (
+
+                          <SortableTeam
+  key={team}
+
+  id={team}
+
+  index={index}
+
+  mobile={mobile}
+
+  teamsData={teamsData}
+/>
+                        ))
+                      }
+
+                    </SortableContext>
+
+                  </DndContext>
+
                 </div>
 
               </div>
 
-              {/* LISTA */}
+            ))}
 
-              <DndContext
-                collisionDetection={
-                  closestCenter
-                }
-                onDragEnd={(e) =>
-                  handleDragEnd(
-                    e,
-                    grupo
-                  )
-                }
-              >
+        </section>
 
-                <SortableContext
-                  items={
-                    groups[grupo]
-                      ?.map(
-                        (t: any) =>
-                          t.nome
-                      ) || []
-                  }
-                  strategy={
-                    verticalListSortingStrategy
-                  }
-                >
+        {/* SAVE */}
 
-                  <div
-                    className="
-                      flex
-                      flex-col
-                      gap-2
-                    "
-                  >
+        {!bloqueado && (
 
-                    {groups[grupo]
-                      ?.map(
-                        (
-                          team: any,
-                          index: number
-                        ) => (
+          <div
+            style={{
+              display: 'flex',
+              justifyContent:
+                'center',
 
-                        <div
-                          key={team.nome}
-                          className="
-                            flex
-                            items-center
-                            gap-2
-                          "
-                        >
-
-                          {/* POS */}
-
-                          <div
-                            className="
-                              w-9
-                              h-9
-                              border
-                              border-white/10
-                              bg-black/20
-                              flex
-                              items-center
-                              justify-center
-                              text-xs
-                              font-bold
-                              text-white/50
-                              shrink-0
-                            "
-                          >
-                            {index + 1}°
-                          </div>
-
-                          {/* ITEM */}
-
-                          <div className="w-full">
-
-                            <SortableItem
-                              team={team}
-                            />
-
-                          </div>
-
-                        </div>
-
-                      ))}
-
-                  </div>
-
-                </SortableContext>
-
-              </DndContext>
-
-            </section>
-
-          ))}
-
-        </div>
-
-      </div>
-
-      {/* BLOQUEADO */}
-
-      {bloqueado && (
-
-        <div className="text-center mt-10">
-
-          <p
-            className="
-              text-red-400
-              uppercase
-              tracking-[0.2em]
-              text-xs
-            "
+              marginTop: '28px'
+            }}
           >
-            Palpites encerrados
-          </p>
 
-        </div>
+            <button
+              onClick={salvar}
 
-      )}
+              style={{
+                width: '100%',
 
-      {/* SALVAR */}
+                maxWidth: '720px',
 
-      {!bloqueado && (
+                height: '58px',
 
-        <div
-          className="
-            flex
-            justify-center
-            mt-16
-            px-4
-          "
-        >
+                borderRadius:
+                  '16px',
 
-          <button
-            onClick={salvar}
-            className="
-              border
-              border-white/10
-              bg-white/[0.03]
-              hover:bg-white/[0.06]
-              transition
-              px-8
-              py-4
-              text-sm
-              uppercase
-              tracking-[0.2em]
-            "
-          >
-            Salvar grupos
-          </button>
+                border: 'none',
 
-        </div>
+                background:
+                  'linear-gradient(90deg,#00ff9d,#00c3ff)',
 
-      )}
+                color: 'black',
 
-      {/* BOTÕES */}
+                fontWeight:
+                  'bold',
 
-      <div
-        className="
-          w-full
-          flex
-          justify-center
-          mt-24
-          pb-20
-          px-4
-        "
-      >
+                fontSize: '13px',
 
-        <div
-          className="
-            w-full
-            max-w-5xl
-            grid
-            grid-cols-3
-            gap-2
-          "
-        >
+                letterSpacing:
+                  '0.08em',
 
-          <Link
-            href="/"
-            className="
-              w-full
-              text-center
-              border
-              border-white/10
-              bg-white/[0.03]
-              hover:bg-white/[0.06]
-              transition
-              px-4
-              py-4
-              text-sm
-              font-medium
-            "
-          >
-            HOME
-          </Link>
+                textTransform:
+                  'uppercase',
 
-          <Link
-            href="/jogos"
-            className="
-              w-full
-              text-center
-              border
-              border-white/10
-              bg-white/[0.03]
-              hover:bg-white/[0.06]
-              transition
-              px-4
-              py-4
-              text-sm
-              font-medium
-            "
-          >
-            PALPITES
-          </Link>
+                cursor: 'pointer'
+              }}
+            >
+              Salvar grupos
+            </button>
 
-          <Link
-            href="/ranking"
-            className="
-              w-full
-              text-center
-              border
-              border-white/10
-              bg-white/[0.03]
-              hover:bg-white/[0.06]
-              transition
-              px-4
-              py-4
-              text-sm
-              font-medium
-            "
-          >
-            CLASSIFICAÇÃO
-          </Link>
+          </div>
 
-        </div>
+        )}
 
-      </div>
+      </main>
 
-    </main>
+    </>
 
   )
 
