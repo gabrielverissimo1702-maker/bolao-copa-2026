@@ -901,7 +901,7 @@ export default function PalpitesPublicos() {
     {/* PALPITES ADVERSÁRIOS */}
 
     <Link
-      href="/jogos"
+      href="/jogos2"
       className="
          w-full
         text-center
