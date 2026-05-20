@@ -7,6 +7,7 @@ import Navbar from './components/Navbar'
 import { supabase } from '../lib/supabase'
 
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 export default function HomePage() {
 
@@ -770,6 +771,52 @@ export default function HomePage() {
 
         </section>
 
+        <div
+  style={{
+    display: 'flex',
+    justifyContent: 'center',
+
+    marginTop: '18px'
+  }}
+>
+
+  <button
+    onClick={() =>
+      router.push('/ranking')
+    }
+
+    style={{
+      border:
+        '1px solid rgba(0,255,157,0.2)',
+
+      background:
+        'rgba(0,255,157,0.08)',
+
+      color: '#00ff9d',
+
+      padding:
+        mobile
+          ? '12px 18px'
+          : '14px 24px',
+
+      borderRadius: '14px',
+
+      fontWeight: 'bold',
+
+      cursor: 'pointer',
+
+      fontSize:
+        mobile
+          ? '12px'
+          : '14px',
+
+      transition: '0.2s'
+    }}
+  >
+    VER CLASSIFICAÇÃO COMPLETA
+  </button>
+
+</div>
 
             </div>
 
@@ -1083,6 +1130,9 @@ export default function HomePage() {
               >
 
                 <button
+                onClick={() =>
+      router.push('/jogos')
+    }
                   style={{
                     width: '100%',
 

@@ -1080,6 +1080,64 @@ export default function PlacaresPage() {
           })}
 
         </section>
+{/* PAGINAÇÃO BAIXO */}
+
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+
+            gap: '8px',
+
+            marginTop: '24px',
+
+            flexWrap: 'wrap'
+          }}
+        >
+
+          {Array.from({
+            length: totalPaginas
+          }).map((_, index) => (
+
+            <button
+              key={index}
+
+              onClick={() =>
+                setPagina(index + 1)
+              }
+
+              style={{
+                width: '42px',
+                height: '42px',
+
+                borderRadius: '12px',
+
+                border:
+                  pagina === index + 1
+                    ? '1px solid #00ff9d'
+                    : '1px solid rgba(255,255,255,0.08)',
+
+                background:
+                  pagina === index + 1
+                    ? 'rgba(0,255,157,0.12)'
+                    : 'rgba(255,255,255,0.03)',
+
+                color:
+                  pagina === index + 1
+                    ? '#00ff9d'
+                    : 'white',
+
+                fontWeight: 'bold',
+
+                cursor: 'pointer'
+              }}
+            >
+              {index + 1}
+            </button>
+
+          ))}
+
+        </div>
 
       </main>
 
