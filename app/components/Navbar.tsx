@@ -7,7 +7,8 @@ import {
   Trophy,
   Swords,
   Scale,
-  Group
+  Group,
+  LogOut
 } from 'lucide-react'
 
 import { useEffect, useState } from 'react'
@@ -238,10 +239,10 @@ if (profile.iniciais)
 
            <div
             style={{
-              width: '58px',
-              height: '58px',
+              width: '40px',
+              height: '40px',
 
-              borderRadius: '16px',
+              borderRadius: '10px',
 
               border:
                 '1px solid rgba(255,255,255,0.08)',
@@ -254,7 +255,9 @@ if (profile.iniciais)
               justifyContent: 'center'
             }}
           >
-            <Home size={24} />
+            <Home 
+            size={24}
+ />
 
   <div
     style={{
@@ -348,10 +351,10 @@ if (profile.iniciais)
 
             <div
             style={{
-              width: '58px',
-              height: '58px',
+              width: '40px',
+              height: '40px',
 
-              borderRadius: '16px',
+              borderRadius: '10px',
 
               border:
                 '1px solid rgba(255,255,255,0.08)',
@@ -428,10 +431,10 @@ if (profile.iniciais)
 
            <div
             style={{
-              width: '58px',
-              height: '58px',
+              width: '40px',
+              height: '40px',
 
-              borderRadius: '16px',
+              borderRadius: '10px',
 
               border:
                 '1px solid rgba(255,255,255,0.08)',
@@ -513,10 +516,10 @@ if (profile.iniciais)
             {/* ÍCONE */}
 <div
             style={{
-              width: '58px',
-              height: '58px',
+              width: '40px',
+              height: '40px',
 
-              borderRadius: '16px',
+              borderRadius: '10px',
 
               border:
                 '1px solid rgba(255,255,255,0.08)',
@@ -597,10 +600,10 @@ if (profile.iniciais)
 
   <div
     style={{
-      width: '58px',
-      height: '58px',
+      width: '40px',
+      height: '40px',
 
-      borderRadius: '16px',
+      borderRadius: '10px',
 
       border:
         pathname === '/grupos'
@@ -748,7 +751,7 @@ if (profile.iniciais)
               fontSize: '18px'
             }}
           >
-            ↪
+            <LogOut></LogOut>
           </button>
 
         </div>
