@@ -623,8 +623,6 @@ if (profile.iniciais)
     <Group
       size={24}
 
-      strokeWidth={2.2}
-
       color={
         pathname === '/grupos'
           ? '#00ff9d'
