@@ -6,6 +6,8 @@ import Navbar from './components/Navbar'
 
 import { supabase } from '../lib/supabase'
 
+import { useRouter } from 'next/navigation'
+
 export default function Home() {
 
   const [perfil, setPerfil] =
@@ -31,6 +33,8 @@ export default function Home() {
 
   useEffect(() => {
 
+    const router = useRouter()
+
     const checkMobile = () => {
 
       setMobile(
@@ -53,7 +57,9 @@ export default function Home() {
           await supabase.auth.getUser()
 
         if (!authData.user)
+        { router.push('/login')
           return
+        }
 
         const user =
           authData.user
