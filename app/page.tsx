@@ -8,7 +8,9 @@ import { supabase } from '../lib/supabase'
 
 import { useRouter } from 'next/navigation'
 
-export default function Home() {
+export default function HomePage() {
+
+  const router = useRouter()
 
   const [perfil, setPerfil] =
     useState<any>(null)
@@ -33,8 +35,6 @@ export default function Home() {
 
   useEffect(() => {
 
-    const router = useRouter()
-
     const checkMobile = () => {
 
       setMobile(
@@ -57,7 +57,7 @@ export default function Home() {
           await supabase.auth.getUser()
 
         if (!authData.user)
-        { router.push('/login')
+        { router.replace('/login')
           return
         }
 
