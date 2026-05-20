@@ -186,7 +186,8 @@ export default function JogosPage() {
 
       await supabase
         .from('bets')
-        .upsert(payload)
+        .upsert(payload, {onConflict: 'user_id,game_id'
+})
 
       alert(
         'Palpites salvos!'
@@ -493,7 +494,9 @@ export default function JogosPage() {
                       {/* HOME */}
 
                       <input
-                        type="number"
+                        type="text"
+                        inputMode='numeric'
+                        pattern='[0-20]*'
 
                         disabled={
                           bloqueado
@@ -576,8 +579,10 @@ export default function JogosPage() {
 
                       {/* AWAY */}
 
-                      <input
-                        type="number"
+                       <input
+                        type="text"
+                        inputMode='numeric'
+                        pattern='[0-20]*'
 
                         disabled={
                           bloqueado
