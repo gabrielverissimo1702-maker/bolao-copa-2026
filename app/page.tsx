@@ -877,55 +877,63 @@ export default function HomePage() {
 
             </section>
 
-        <div
-  style={{
-    display: 'flex',
-    justifyContent: 'center',
+            <div
+              style={{
+                display: 'flex',
 
-    marginTop: '18px'
-  }}
->
+                justifyContent:
+                  'center',
 
-  <button
-    onClick={() =>
-      router.push('/ranking')
-    }
+                marginTop: '18px'
+              }}
+            >
 
-    style={{
-      border:
-        '1px solid rgba(0,255,157,0.2)',
+              <button
+                onClick={() =>
+                  router.push(
+                    '/ranking'
+                  )
+                }
 
-      background:
-        'rgba(0,255,157,0.08)',
+                style={{
+                  border:
+                    '1px solid rgba(0,255,157,0.2)',
 
-      color: '#00ff9d',
+                  background:
+                    'rgba(0,255,157,0.08)',
 
-      padding:
-        mobile
-          ? '12px 18px'
-          : '14px 24px',
+                  color:
+                    '#00ff9d',
 
-      borderRadius: '14px',
+                  padding:
+                    mobile
+                      ? '12px 18px'
+                      : '14px 24px',
 
-      fontWeight: 'bold',
+                  borderRadius:
+                    '14px',
 
-      cursor: 'pointer',
+                  fontWeight:
+                    'bold',
 
-      fontSize:
-        mobile
-          ? '12px'
-          : '14px',
+                  cursor:
+                    'pointer',
 
-      transition: '0.2s'
-    }}
-  >
-    VER CLASSIFICAÇÃO COMPLETA
-  </button>
+                  fontSize:
+                    mobile
+                      ? '12px'
+                      : '14px',
 
-</div>
+                  transition:
+                    '0.2s'
+                }}
+              >
+                VER CLASSIFICAÇÃO COMPLETA
+              </button>
 
             </div>
 
+          </div>
 
           {/* DIREITA */}
 
@@ -934,30 +942,48 @@ export default function HomePage() {
               paddingTop:
                 mobile
                   ? '24px'
-                  : '120px'
+                  : '120px',
+
+              minWidth: 0,
+
+              overflow:
+                'hidden'
             }}
           >
-                    {/* TITULO */}
+
+            {/* TITULO */}
 
             <div
               style={{
                 display: 'flex',
-                justifyContent: 'center',
-                marginBottom: '16px'
+
+                justifyContent:
+                  'center',
+
+                marginBottom:
+                  '16px'
               }}
             >
 
               <h2
                 className="fifa-title"
+
                 style={{
-                  fontSize: '38px'
+                  fontSize:
+                    mobile
+                      ? '32px'
+                      : '38px',
+
+                  textAlign:
+                    'center'
                 }}
               >
                 MEUS{' '}
 
                 <span
                   style={{
-                    color: '#00ff9d'
+                    color:
+                      '#00ff9d'
                   }}
                 >
                   PALPITES
@@ -971,30 +997,49 @@ export default function HomePage() {
 
             <div
               style={{
+
                 border:
                   '1px solid rgba(0,255,157,0.25)',
 
-                borderRadius: '16px',
+                borderRadius:
+                  '16px',
 
-                overflow: 'hidden',
+                overflow:
+                  'hidden',
 
                 background:
                   'rgba(0,0,0,0.45)',
 
-                maxWidth: '520px',
+                width: '100%',
 
-                margin: '0 auto'
+                maxWidth:
+                  mobile
+                    ? '100%'
+                    : '520px',
+
+                margin:
+                  '0 auto',
+
+                boxSizing:
+                  'border-box'
               }}
             >
 
               {games.map(
-                (game: any, index: number) => {
+                (
+                  game: any,
+                  index: number
+                ) => {
 
                 const home =
-                  getTeam(game.home_team)
+                  getTeam(
+                    game.home_team
+                  )
 
                 const away =
-                  getTeam(game.away_team)
+                  getTeam(
+                    game.away_team
+                  )
 
                 const bet =
                   getBet(game.id)
@@ -1003,11 +1048,17 @@ export default function HomePage() {
 
                   <div
                     key={game.id}
+
                     style={{
-                      padding: '14px 16px',
+                      padding:
+                        mobile
+                          ? '14px 10px'
+                          : '14px 16px',
 
                       borderBottom:
-                        index !== games.length - 1
+                        index !==
+                        games.length - 1
+
                           ? '1px solid rgba(255,255,255,0.06)'
                           : 'none'
                     }}
@@ -1015,11 +1066,17 @@ export default function HomePage() {
 
                     <div
                       style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
+                        display:
+                          'flex',
 
-                        padding: '12px 0px'
+                        flexDirection:
+                          'column',
+
+                        alignItems:
+                          'center',
+
+                        padding:
+                          '12px 0px'
                       }}
                     >
 
@@ -1027,11 +1084,25 @@ export default function HomePage() {
 
                       <div
                         style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
+                          display:
+                            'flex',
 
-                          gap: '10px'
+                          alignItems:
+                            'center',
+
+                          justifyContent:
+                            'center',
+
+                          gap:
+                            mobile
+                              ? '6px'
+                              : '10px',
+
+                          width:
+                            '100%',
+
+                          overflow:
+                            'hidden'
                         }}
                       >
 
@@ -1039,19 +1110,46 @@ export default function HomePage() {
 
                         <div
                           style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '6px',
+                            display:
+                              'flex',
 
-                            minWidth: '90px',
-                            justifyContent: 'flex-end'
+                            alignItems:
+                              'center',
+
+                            gap:
+                              '6px',
+
+                            minWidth:
+                              0,
+
+                            flex: 1,
+
+                            justifyContent:
+                              'flex-end',
+
+                            overflow:
+                              'hidden'
                           }}
                         >
 
                           <p
                             style={{
-                              fontSize: '24px',
-                              fontWeight: 'bold'
+                              fontSize:
+                                mobile
+                                  ? '15px'
+                                  : '24px',
+
+                              fontWeight:
+                                'bold',
+
+                              overflow:
+                                'hidden',
+
+                              textOverflow:
+                                'ellipsis',
+
+                              whiteSpace:
+                                'nowrap'
                             }}
                           >
                             {home?.nome}
@@ -1059,15 +1157,28 @@ export default function HomePage() {
 
                           <img
                             src={`https://flagcdn.com/w80/${home?.flag}.png`}
+
                             alt=""
+
                             style={{
-                              width: '28px',
-                              height: '28px',
+                              width:
+                                mobile
+                                  ? '24px'
+                                  : '28px',
+
+                              height:
+                                mobile
+                                  ? '24px'
+                                  : '28px',
 
                               borderRadius:
                                 '999px',
 
-                              objectFit: 'cover'
+                              objectFit:
+                                'cover',
+
+                              flexShrink:
+                                0
                             }}
                           />
 
@@ -1077,16 +1188,33 @@ export default function HomePage() {
 
                         <div
                           style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '8px'
+                            display:
+                              'flex',
+
+                            alignItems:
+                              'center',
+
+                            gap:
+                              mobile
+                                ? '5px'
+                                : '8px',
+
+                            flexShrink:
+                              0
                           }}
                         >
 
                           <div
                             style={{
-                              width: '36px',
-                              height: '36px',
+                              width:
+                                mobile
+                                  ? '30px'
+                                  : '36px',
+
+                              height:
+                                mobile
+                                  ? '30px'
+                                  : '36px',
 
                               border:
                                 '1px solid #00ff9d',
@@ -1094,23 +1222,42 @@ export default function HomePage() {
                               borderRadius:
                                 '8px',
 
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
+                              display:
+                                'flex',
 
-                              color: '#00ff9d',
+                              alignItems:
+                                'center',
 
-                              fontSize: '24px',
-                              fontWeight: 'bold'
+                              justifyContent:
+                                'center',
+
+                              color:
+                                '#00ff9d',
+
+                              fontSize:
+                                mobile
+                                  ? '18px'
+                                  : '24px',
+
+                              fontWeight:
+                                'bold'
                             }}
                           >
-                            {bet?.home_guess ?? '-'}
+                            {
+                              bet?.home_guess
+                              ?? '-'
+                            }
                           </div>
 
                           <div
                             style={{
-                              fontSize: '18px',
-                              fontWeight: 'bold'
+                              fontSize:
+                                mobile
+                                  ? '15px'
+                                  : '18px',
+
+                              fontWeight:
+                                'bold'
                             }}
                           >
                             x
@@ -1118,8 +1265,15 @@ export default function HomePage() {
 
                           <div
                             style={{
-                              width: '36px',
-                              height: '36px',
+                              width:
+                                mobile
+                                  ? '30px'
+                                  : '36px',
+
+                              height:
+                                mobile
+                                  ? '30px'
+                                  : '36px',
 
                               border:
                                 '1px solid #00ff9d',
@@ -1127,17 +1281,31 @@ export default function HomePage() {
                               borderRadius:
                                 '8px',
 
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
+                              display:
+                                'flex',
 
-                              color: '#00ff9d',
+                              alignItems:
+                                'center',
 
-                              fontSize: '24px',
-                              fontWeight: 'bold'
+                              justifyContent:
+                                'center',
+
+                              color:
+                                '#00ff9d',
+
+                              fontSize:
+                                mobile
+                                  ? '18px'
+                                  : '24px',
+
+                              fontWeight:
+                                'bold'
                             }}
                           >
-                            {bet?.away_guess ?? '-'}
+                            {
+                              bet?.away_guess
+                              ?? '-'
+                            }
                           </div>
 
                         </div>
@@ -1146,32 +1314,70 @@ export default function HomePage() {
 
                         <div
                           style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '6px',
+                            display:
+                              'flex',
 
-                            minWidth: '90px'
+                            alignItems:
+                              'center',
+
+                            gap:
+                              '6px',
+
+                            minWidth:
+                              0,
+
+                            flex: 1,
+
+                            overflow:
+                              'hidden'
                           }}
                         >
 
                           <img
                             src={`https://flagcdn.com/w80/${away?.flag}.png`}
+
                             alt=""
+
                             style={{
-                              width: '28px',
-                              height: '28px',
+                              width:
+                                mobile
+                                  ? '24px'
+                                  : '28px',
+
+                              height:
+                                mobile
+                                  ? '24px'
+                                  : '28px',
 
                               borderRadius:
                                 '999px',
 
-                              objectFit: 'cover'
+                              objectFit:
+                                'cover',
+
+                              flexShrink:
+                                0
                             }}
                           />
 
                           <p
                             style={{
-                              fontSize: '24px',
-                              fontWeight: 'bold'
+                              fontSize:
+                                mobile
+                                  ? '15px'
+                                  : '24px',
+
+                              fontWeight:
+                                'bold',
+
+                              overflow:
+                                'hidden',
+
+                              textOverflow:
+                                'ellipsis',
+
+                              whiteSpace:
+                                'nowrap'
                             }}
                           >
                             {away?.nome}
@@ -1185,9 +1391,16 @@ export default function HomePage() {
 
                       <div
                         style={{
-                          marginTop: '8px',
-                          fontSize: '11px',
-                          opacity: 0.65
+                          marginTop:
+                            '8px',
+
+                          fontSize:
+                            mobile
+                              ? '10px'
+                              : '11px',
+
+                          opacity:
+                            0.65
                         }}
                       >
                         {
@@ -1196,8 +1409,11 @@ export default function HomePage() {
                           ).toLocaleDateString(
                             'pt-BR',
                             {
-                              day: '2-digit',
-                              month: '2-digit'
+                              day:
+                                '2-digit',
+
+                              month:
+                                '2-digit'
                             }
                           )
                         }
@@ -1210,8 +1426,11 @@ export default function HomePage() {
                           ).toLocaleTimeString(
                             'pt-BR',
                             {
-                              hour: '2-digit',
-                              minute: '2-digit'
+                              hour:
+                                '2-digit',
+
+                              minute:
+                                '2-digit'
                             }
                           )
                         }
@@ -1229,18 +1448,24 @@ export default function HomePage() {
 
               <div
                 style={{
-                  padding: '14px',
+                  padding:
+                    '14px',
+
                   borderTop:
                     '1px solid rgba(255,255,255,0.05)'
                 }}
               >
 
                 <button
-                onClick={() =>
-      router.push('/jogos')
-    }
+                  onClick={() =>
+                    router.push(
+                      '/jogos'
+                    )
+                  }
+
                   style={{
-                    width: '100%',
+                    width:
+                      '100%',
 
                     background:
                       'transparent',
@@ -1248,7 +1473,8 @@ export default function HomePage() {
                     border:
                       '1px solid rgba(0,255,157,0.25)',
 
-                    color: '#00ff9d',
+                    color:
+                      '#00ff9d',
 
                     padding:
                       '12px',
@@ -1256,14 +1482,17 @@ export default function HomePage() {
                     borderRadius:
                       '12px',
 
-                    fontSize: '11px',
+                    fontSize:
+                      '11px',
 
-                    fontWeight: 'bold',
+                    fontWeight:
+                      'bold',
 
                     textTransform:
                       'uppercase',
 
-                    cursor: 'pointer'
+                    cursor:
+                      'pointer'
                   }}
                 >
                   Ver todos
@@ -1276,9 +1505,11 @@ export default function HomePage() {
           </div>
 
         </section>
-<br></br>
-<br></br>
-<br></br>
+
+        <br />
+        <br />
+        <br />
+
       </main>
 
     </>
