@@ -195,25 +195,30 @@ export default function HomePage() {
         style={{
 
           marginLeft:
-            mobile
-              ? '0'
-              : '110px',
+  mobile
+    ? 0
+    : '110px',
 
-          minHeight: '100vh',
+minHeight: '100vh',
 
-          padding:
-            mobile
-              ? '18px'
-              : '28px',
+padding:
+  mobile
+    ? '18px 14px 90px'
+    : '28px',
 
-          color: 'white',
+color: 'white',
 
-          overflowX: 'hidden',
+overflowX: 'hidden',
 
-          width: '100%',
+width:
+  mobile
+    ? '100vw'
+    : 'calc(100vw - 110px)',
 
-          boxSizing:
-            'border-box'
+maxWidth: '100%',
+
+boxSizing:
+  'border-box'
         }}
       >
 
@@ -233,6 +238,8 @@ export default function HomePage() {
             alignItems: 'start',
 
             width: '100%',
+
+maxWidth: '100%',
 
             overflow: 'hidden'
           }}
