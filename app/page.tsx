@@ -877,14 +877,408 @@ export default function HomePage() {
 
             </section>
 
+        <div
+  style={{
+    display: 'flex',
+    justifyContent: 'center',
+
+    marginTop: '18px'
+  }}
+>
+
+  <button
+    onClick={() =>
+      router.push('/ranking')
+    }
+
+    style={{
+      border:
+        '1px solid rgba(0,255,157,0.2)',
+
+      background:
+        'rgba(0,255,157,0.08)',
+
+      color: '#00ff9d',
+
+      padding:
+        mobile
+          ? '12px 18px'
+          : '14px 24px',
+
+      borderRadius: '14px',
+
+      fontWeight: 'bold',
+
+      cursor: 'pointer',
+
+      fontSize:
+        mobile
+          ? '12px'
+          : '14px',
+
+      transition: '0.2s'
+    }}
+  >
+    VER CLASSIFICAÇÃO COMPLETA
+  </button>
+
+</div>
+
+            </div>
+
+
+          {/* DIREITA */}
+
+          <div
+            style={{
+              paddingTop:
+                mobile
+                  ? '24px'
+                  : '120px'
+            }}
+          >
+                    {/* TITULO */}
+
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                marginBottom: '16px'
+              }}
+            >
+
+              <h2
+                className="fifa-title"
+                style={{
+                  fontSize: '38px'
+                }}
+              >
+                MEUS{' '}
+
+                <span
+                  style={{
+                    color: '#00ff9d'
+                  }}
+                >
+                  PALPITES
+                </span>
+
+              </h2>
+
+            </div>
+
+            {/* CARD */}
+
+            <div
+              style={{
+                border:
+                  '1px solid rgba(0,255,157,0.25)',
+
+                borderRadius: '16px',
+
+                overflow: 'hidden',
+
+                background:
+                  'rgba(0,0,0,0.45)',
+
+                maxWidth: '520px',
+
+                margin: '0 auto'
+              }}
+            >
+
+              {games.map(
+                (game: any, index: number) => {
+
+                const home =
+                  getTeam(game.home_team)
+
+                const away =
+                  getTeam(game.away_team)
+
+                const bet =
+                  getBet(game.id)
+
+                return (
+
+                  <div
+                    key={game.id}
+                    style={{
+                      padding: '14px 16px',
+
+                      borderBottom:
+                        index !== games.length - 1
+                          ? '1px solid rgba(255,255,255,0.06)'
+                          : 'none'
+                    }}
+                  >
+
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+
+                        padding: '12px 0px'
+                      }}
+                    >
+
+                      {/* LINHA */}
+
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+
+                          gap: '10px'
+                        }}
+                      >
+
+                        {/* HOME */}
+
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+
+                            minWidth: '90px',
+                            justifyContent: 'flex-end'
+                          }}
+                        >
+
+                          <p
+                            style={{
+                              fontSize: '24px',
+                              fontWeight: 'bold'
+                            }}
+                          >
+                            {home?.nome}
+                          </p>
+
+                          <img
+                            src={`https://flagcdn.com/w80/${home?.flag}.png`}
+                            alt=""
+                            style={{
+                              width: '28px',
+                              height: '28px',
+
+                              borderRadius:
+                                '999px',
+
+                              objectFit: 'cover'
+                            }}
+                          />
+
+                        </div>
+
+                        {/* SCORE */}
+
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px'
+                          }}
+                        >
+
+                          <div
+                            style={{
+                              width: '36px',
+                              height: '36px',
+
+                              border:
+                                '1px solid #00ff9d',
+
+                              borderRadius:
+                                '8px',
+
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+
+                              color: '#00ff9d',
+
+                              fontSize: '24px',
+                              fontWeight: 'bold'
+                            }}
+                          >
+                            {bet?.home_guess ?? '-'}
+                          </div>
+
+                          <div
+                            style={{
+                              fontSize: '18px',
+                              fontWeight: 'bold'
+                            }}
+                          >
+                            x
+                          </div>
+
+                          <div
+                            style={{
+                              width: '36px',
+                              height: '36px',
+
+                              border:
+                                '1px solid #00ff9d',
+
+                              borderRadius:
+                                '8px',
+
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+
+                              color: '#00ff9d',
+
+                              fontSize: '24px',
+                              fontWeight: 'bold'
+                            }}
+                          >
+                            {bet?.away_guess ?? '-'}
+                          </div>
+
+                        </div>
+
+                        {/* AWAY */}
+
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+
+                            minWidth: '90px'
+                          }}
+                        >
+
+                          <img
+                            src={`https://flagcdn.com/w80/${away?.flag}.png`}
+                            alt=""
+                            style={{
+                              width: '28px',
+                              height: '28px',
+
+                              borderRadius:
+                                '999px',
+
+                              objectFit: 'cover'
+                            }}
+                          />
+
+                          <p
+                            style={{
+                              fontSize: '24px',
+                              fontWeight: 'bold'
+                            }}
+                          >
+                            {away?.nome}
+                          </p>
+
+                        </div>
+
+                      </div>
+
+                      {/* DATA */}
+
+                      <div
+                        style={{
+                          marginTop: '8px',
+                          fontSize: '11px',
+                          opacity: 0.65
+                        }}
+                      >
+                        {
+                          new Date(
+                            game.match_date
+                          ).toLocaleDateString(
+                            'pt-BR',
+                            {
+                              day: '2-digit',
+                              month: '2-digit'
+                            }
+                          )
+                        }
+
+                        {' • '}
+
+                        {
+                          new Date(
+                            game.match_date
+                          ).toLocaleTimeString(
+                            'pt-BR',
+                            {
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            }
+                          )
+                        }
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                )
+
+              })}
+
+              {/* BTN */}
+
+              <div
+                style={{
+                  padding: '14px',
+                  borderTop:
+                    '1px solid rgba(255,255,255,0.05)'
+                }}
+              >
+
+                <button
+                onClick={() =>
+      router.push('/jogos')
+    }
+                  style={{
+                    width: '100%',
+
+                    background:
+                      'transparent',
+
+                    border:
+                      '1px solid rgba(0,255,157,0.25)',
+
+                    color: '#00ff9d',
+
+                    padding:
+                      '12px',
+
+                    borderRadius:
+                      '12px',
+
+                    fontSize: '11px',
+
+                    fontWeight: 'bold',
+
+                    textTransform:
+                      'uppercase',
+
+                    cursor: 'pointer'
+                  }}
+                >
+                  Ver todos
+                </button>
+
+              </div>
+
+            </div>
+
           </div>
 
         </section>
-
-        <br />
-        <br />
-        <br />
-
+<br></br>
+<br></br>
+<br></br>
       </main>
 
     </>
