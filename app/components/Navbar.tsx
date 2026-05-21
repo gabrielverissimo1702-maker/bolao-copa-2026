@@ -6,8 +6,7 @@ import {
   Swords,
   Group,
   Ungroup,
-  LayoutPanelTop,
-  LogOut
+  LayoutPanelTop
 } from 'lucide-react'
 
 import {
@@ -103,18 +102,6 @@ export default function Navbar() {
 
   }, [])
 
-  const sair =
-    async () => {
-
-      await supabase.auth
-        .signOut()
-
-      router.replace(
-        '/login'
-      )
-
-    }
-
   const itemStyle = (
     active: boolean
   ) => ({
@@ -129,7 +116,7 @@ export default function Navbar() {
 
     gap:
       mobile
-        ? '3px'
+        ? '0px'
         : '6px',
 
     cursor: 'pointer'
@@ -141,12 +128,12 @@ export default function Navbar() {
 
     width:
       mobile
-        ? '40px'
+        ? '36px'
         : '58px',
 
     height:
       mobile
-        ? '40px'
+        ? '36px'
         : '58px',
 
     borderRadius:
@@ -175,17 +162,16 @@ export default function Navbar() {
       'center' as const,
 
     transition:
-      '0.2s'
+      '0.2s',
+
+    flexShrink: 0
   })
 
   const textStyle = (
     active: boolean
   ) => ({
 
-    fontSize:
-      mobile
-        ? '9px'
-        : '12px',
+    fontSize: '11px',
 
     color: active
 
@@ -198,82 +184,116 @@ export default function Navbar() {
 
   return (
 
-    <nav
-      style={{
+    <>
 
-        position: 'fixed',
+      {/* PERFIL FLUTUANTE MOBILE */}
 
-        bottom:
-          mobile
-            ? 0
-            : 'unset',
+      {
+        mobile && (
 
-        top:
-          mobile
-            ? 'unset'
-            : 0,
+          <div
+            onClick={() =>
+              router.push(
+                '/perfil'
+              )
+            }
 
-        left: 0,
+            style={{
 
-        right:
-          mobile
-            ? 0
-            : 'unset',
+              position: 'fixed',
 
-        width:
-          mobile
-            ? '100%'
-            : '92px',
+              top: '20px',
+              right: '20px',
 
-        height:
-          mobile
-            ? '78px'
-            : '100vh',
+              width: '44px',
+              height: '44px',
 
-        background:
-          'rgba(0,0,0,0.72)',
+              borderRadius: '999px',
 
-        backdropFilter:
-          'blur(18px)',
+              background:
+                'rgba(0,255,157,0.08)',
 
-        borderRight:
-          mobile
-            ? 'none'
-            : '1px solid rgba(255,255,255,0.06)',
+              border:
+                '1px solid rgba(0,255,157,0.22)',
 
-        borderTop:
-          mobile
-            ? '1px solid rgba(255,255,255,0.06)'
-            : 'none',
+              display: 'flex',
 
-        display: 'flex',
+              alignItems: 'center',
 
-        flexDirection:
-          mobile
-            ? 'row'
-            : 'column',
+              justifyContent: 'center',
 
-        alignItems:
-          'center',
+              color: '#00ff9d',
 
-        justifyContent:
-          'space-between',
+              fontWeight: 'bold',
 
-        padding:
-          mobile
-            ? '6px 4px'
-            : '18px 0',
+              fontSize: '13px',
 
-        zIndex: 9999,
+              zIndex: 99999,
 
-        boxSizing: 'border-box',
-      }}
-    >
+              backdropFilter:
+                'blur(12px)',
 
-      {/* MENU */}
+              cursor: 'pointer'
+            }}
+          >
+            {iniciais}
+          </div>
 
-      <div
+        )
+      }
+
+      <nav
         style={{
+
+          position: 'fixed',
+
+          bottom:
+            mobile
+              ? 0
+              : 'unset',
+
+          top:
+            mobile
+              ? 'unset'
+              : 0,
+
+          left: 0,
+
+          right:
+            mobile
+              ? 0
+              : 'unset',
+
+          width:
+            mobile
+              ? '100vw'
+              : '92px',
+
+          maxWidth:
+            mobile
+              ? '100vw'
+              : '92px',
+
+          height:
+            mobile
+              ? '68px'
+              : '100vh',
+
+          background:
+            'rgba(0,0,0,0.72)',
+
+          backdropFilter:
+            'blur(18px)',
+
+          borderRight:
+            mobile
+              ? 'none'
+              : '1px solid rgba(255,255,255,0.06)',
+
+          borderTop:
+            mobile
+              ? '1px solid rgba(255,255,255,0.06)'
+              : 'none',
 
           display: 'flex',
 
@@ -286,485 +306,482 @@ export default function Navbar() {
             'center',
 
           justifyContent:
-            'center',
+            'space-between',
 
-          gap:
+          padding:
             mobile
-              ? '0px'
-              : '14px',
+              ? '6px 4px'
+              : '18px 0',
 
-          width: '100vw',
-          maxWidth: '100vm',
+          zIndex: 9999,
 
-          overflowX: 'hidden'
+          boxSizing:
+            'border-box',
+
+          overflow: 'hidden'
         }}
       >
 
-        {/* HOME */}
+        {/* MENU */}
 
         <div
-          onClick={() =>
-            router.push('/')
-          }
+          style={{
 
-          style={
-            itemStyle(
-              pathname === '/'
-            )
-          }
+            display: 'flex',
+
+            flexDirection:
+              mobile
+                ? 'row'
+                : 'column',
+
+            alignItems:
+              'center',
+
+            justifyContent:
+              'space-evenly',
+
+            gap:
+              mobile
+                ? '0px'
+                : '14px',
+
+            width:
+              mobile
+                ? '100%'
+                : 'auto',
+
+            overflow: 'hidden'
+          }}
         >
 
+          {/* HOME */}
+
           <div
+            onClick={() =>
+              router.push('/')
+            }
+
             style={
-              iconBoxStyle(
+              itemStyle(
                 pathname === '/'
               )
             }
           >
 
-            <Home
-              size={
-                mobile
-                  ? 16
-                  : 24
+            <div
+              style={
+                iconBoxStyle(
+                  pathname === '/'
+                )
               }
+            >
 
-              color={
-                pathname === '/'
+              <Home
+                size={
+                  mobile
+                    ? 14
+                    : 24
+                }
 
-                  ? '#00ff9d'
+                color={
+                  pathname === '/'
 
-                  : 'white'
-              }
-            />
+                    ? '#00ff9d'
+
+                    : 'white'
+                }
+              />
+
+            </div>
+
+            {
+              !mobile && (
+
+                <span
+                  style={
+                    textStyle(
+                      pathname === '/'
+                    )
+                  }
+                >
+                  HOME
+                </span>
+
+              )
+            }
 
           </div>
 
-          <span
-            style={
-              textStyle(
-                pathname === '/'
-              )
-            }
-          >
-            HOME
-          </span>
-
-        </div>
-
-        {/* JOGOS */}
-
-        <div
-          onClick={() =>
-            router.push('/jogos')
-          }
-
-          style={
-            itemStyle(
-              pathname === '/jogos'
-            )
-          }
-        >
+          {/* JOGOS */}
 
           <div
+            onClick={() =>
+              router.push('/jogos')
+            }
+
             style={
-              iconBoxStyle(
+              itemStyle(
                 pathname === '/jogos'
               )
             }
           >
 
-            <Swords
-              size={
-                mobile
-                  ? 16
-                  : 24
+            <div
+              style={
+                iconBoxStyle(
+                  pathname === '/jogos'
+                )
               }
+            >
 
-              color={
-                pathname ===
-                '/jogos'
+              <Swords
+                size={
+                  mobile
+                    ? 14
+                    : 24
+                }
 
-                  ? '#00ff9d'
+                color={
+                  pathname ===
+                  '/jogos'
 
-                  : 'white'
-              }
-            />
+                    ? '#00ff9d'
+
+                    : 'white'
+                }
+              />
+
+            </div>
+
+            {
+              !mobile && (
+
+                <span
+                  style={
+                    textStyle(
+                      pathname ===
+                      '/jogos'
+                    )
+                  }
+                >
+                  JOGOS
+                </span>
+
+              )
+            }
 
           </div>
 
-          <span
-            style={
-              textStyle(
-                pathname ===
-                '/jogos'
-              )
-            }
-          >
-            JOGOS
-          </span>
-
-        </div>
-
-        {/* RANKING */}
-
-        <div
-          onClick={() =>
-            router.push(
-              '/ranking'
-            )
-          }
-
-          style={
-            itemStyle(
-              pathname ===
-              '/ranking'
-            )
-          }
-        >
+          {/* RANK */}
 
           <div
+            onClick={() =>
+              router.push(
+                '/ranking'
+              )
+            }
+
             style={
-              iconBoxStyle(
+              itemStyle(
                 pathname ===
                 '/ranking'
               )
             }
           >
 
-            <Trophy
-              size={
-                mobile
-                  ? 16
-                  : 24
+            <div
+              style={
+                iconBoxStyle(
+                  pathname ===
+                  '/ranking'
+                )
               }
+            >
 
-              color={
-                pathname ===
-                '/ranking'
+              <Trophy
+                size={
+                  mobile
+                    ? 14
+                    : 24
+                }
 
-                  ? '#00ff9d'
+                color={
+                  pathname ===
+                  '/ranking'
 
-                  : 'white'
-              }
-            />
+                    ? '#00ff9d'
+
+                    : 'white'
+                }
+              />
+
+            </div>
+
+            {
+              !mobile && (
+
+                <span
+                  style={
+                    textStyle(
+                      pathname ===
+                      '/ranking'
+                    )
+                  }
+                >
+                  RANK
+                </span>
+
+              )
+            }
 
           </div>
 
-          <span
-            style={
-              textStyle(
-                pathname ===
-                '/ranking'
-              )
-            }
-          >
-            RANK
-          </span>
-
-        </div>
-
-        {/* PALPITES */}
-
-        <div
-          onClick={() =>
-            router.push(
-              '/palpites-publicos'
-            )
-          }
-
-          style={
-            itemStyle(
-              pathname ===
-              '/palpites-publicos'
-            )
-          }
-        >
+          {/* PALPITES */}
 
           <div
+            onClick={() =>
+              router.push(
+                '/palpites-publicos'
+              )
+            }
+
             style={
-              iconBoxStyle(
+              itemStyle(
                 pathname ===
                 '/palpites-publicos'
               )
             }
           >
 
-            <LayoutPanelTop
-              size={
-                mobile
-                  ? 16
-                  : 24
+            <div
+              style={
+                iconBoxStyle(
+                  pathname ===
+                  '/palpites-publicos'
+                )
               }
+            >
 
-              color={
-                pathname ===
-                '/palpites-publicos'
+              <LayoutPanelTop
+                size={
+                  mobile
+                    ? 14
+                    : 24
+                }
 
-                  ? '#00ff9d'
+                color={
+                  pathname ===
+                  '/palpites-publicos'
 
-                  : 'white'
-              }
-            />
+                    ? '#00ff9d'
+
+                    : 'white'
+                }
+              />
+
+            </div>
+
+            {
+              !mobile && (
+
+                <span
+                  style={
+                    textStyle(
+                      pathname ===
+                      '/palpites-publicos'
+                    )
+                  }
+                >
+                  PALPITES
+                </span>
+
+              )
+            }
 
           </div>
 
-          <span
-            style={
-              textStyle(
-                pathname ===
-                '/palpites-publicos'
-              )
-            }
-          >
-            PALPITES
-          </span>
-
-        </div>
-
-        {/* GRUPOS */}
-
-        <div
-          onClick={() =>
-            router.push(
-              '/grupos'
-            )
-          }
-
-          style={
-            itemStyle(
-              pathname ===
-              '/grupos'
-            )
-          }
-        >
+          {/* GRUPOS */}
 
           <div
+            onClick={() =>
+              router.push(
+                '/grupos'
+              )
+            }
+
             style={
-              iconBoxStyle(
+              itemStyle(
                 pathname ===
                 '/grupos'
               )
             }
           >
 
-            <Group
-              size={
-                mobile
-                  ? 16
-                  : 24
+            <div
+              style={
+                iconBoxStyle(
+                  pathname ===
+                  '/grupos'
+                )
               }
+            >
 
-              color={
-                pathname ===
-                '/grupos'
+              <Group
+                size={
+                  mobile
+                    ? 14
+                    : 24
+                }
 
-                  ? '#00ff9d'
+                color={
+                  pathname ===
+                  '/grupos'
 
-                  : 'white'
-              }
-            />
+                    ? '#00ff9d'
+
+                    : 'white'
+                }
+              />
+
+            </div>
+
+            {
+              !mobile && (
+
+                <span
+                  style={
+                    textStyle(
+                      pathname ===
+                      '/grupos'
+                    )
+                  }
+                >
+                  GRUPOS
+                </span>
+
+              )
+            }
 
           </div>
 
-          <span
-            style={
-              textStyle(
-                pathname ===
-                '/grupos'
-              )
-            }
-          >
-            GRUPOS
-          </span>
-
-        </div>
-
-        {/* CENTRAL GRUPOS */}
-
-        <div
-          onClick={() =>
-            router.push(
-              '/grupos-publicos'
-            )
-          }
-
-          style={
-            itemStyle(
-              pathname ===
-              '/grupos-publicos'
-            )
-          }
-        >
+          {/* TABELA */}
 
           <div
+            onClick={() =>
+              router.push(
+                '/grupos-publicos'
+              )
+            }
+
             style={
-              iconBoxStyle(
+              itemStyle(
                 pathname ===
                 '/grupos-publicos'
               )
             }
           >
 
-            <Ungroup
-              size={
-                mobile
-                  ? 16
-                  : 24
+            <div
+              style={
+                iconBoxStyle(
+                  pathname ===
+                  '/grupos-publicos'
+                )
               }
+            >
 
-              color={
-                pathname ===
-                '/grupos-publicos'
+              <Ungroup
+                size={
+                  mobile
+                    ? 14
+                    : 24
+                }
 
-                  ? '#00ff9d'
+                color={
+                  pathname ===
+                  '/grupos-publicos'
 
-                  : 'white'
-              }
-            />
+                    ? '#00ff9d'
+
+                    : 'white'
+                }
+              />
+
+            </div>
+
+            {
+              !mobile && (
+
+                <span
+                  style={
+                    textStyle(
+                      pathname ===
+                      '/grupos-publicos'
+                    )
+                  }
+                >
+                  TABELA
+                </span>
+
+              )
+            }
 
           </div>
 
-          <span
-            style={
-              textStyle(
-                pathname ===
-                '/grupos-publicos'
-              )
-            }
-          >
-            
-          </span>
-
         </div>
 
-      </div>
+        {/* PERFIL DESKTOP */}
 
-      {/* PERFIL */}
+        {
+          !mobile && (
 
-      <div
-        style={{
-          display: 'flex',
+            <div
+              onClick={() =>
+                router.push(
+                  '/perfil'
+                )
+              }
 
-          flexDirection:
-            mobile
-              ? 'row'
-              : 'column',
+              style={{
+                width: '52px',
 
-          alignItems:
-            'center',
+                height: '52px',
 
-          gap:
-            mobile
-              ? '4px'
-              : '12px'
-        }}
-      >
+                borderRadius:
+                  '999px',
 
-        <div
-          onClick={() =>
-            router.push(
-              '/perfil'
-            )
-          }
+                border:
+                  '1px solid rgba(0,255,157,0.25)',
 
-          style={{
-            width:
-              mobile
-                ? '40px'
-                : '52px',
+                background:
+                  'rgba(0,255,157,0.08)',
 
-            height:
-              mobile
-                ? '40px'
-                : '52px',
+                display: 'flex',
 
-            borderRadius:
-              '999px',
+                alignItems:
+                  'center',
 
-            border:
-              '1px solid rgba(0,255,157,0.25)',
+                justifyContent:
+                  'center',
 
-            background:
-              'rgba(0,255,157,0.08)',
+                color: '#00ff9d',
 
-            display: 'flex',
+                fontWeight: 'bold',
 
-            alignItems:
-              'center',
+                fontSize: '14px',
 
-            justifyContent:
-              'center',
+                cursor: 'pointer'
+              }}
+            >
+              {iniciais}
+            </div>
 
-            color: '#00ff9d',
+          )
+        }
 
-            fontWeight: 'bold',
+      </nav>
 
-            fontSize:
-              mobile
-                ? '11px'
-                : '14px',
-
-            cursor: 'pointer',
-
-            flexShrink: 0
-          }}
-        >
-          {iniciais}
-        </div>
-
-        <div
-          onClick={sair}
-
-          style={{
-            width:
-              mobile
-                ? '40px'
-                : '52px',
-
-            height:
-              mobile
-                ? '40px'
-                : '52px',
-
-            borderRadius:
-              mobile
-                ? '12px'
-                : '16px',
-
-            border:
-              '1px solid rgba(255,255,255,0.08)',
-
-            background:
-              'rgba(255,255,255,0.03)',
-
-            display: 'flex',
-
-            alignItems:
-              'center',
-
-            justifyContent:
-              'center',
-
-            cursor: 'pointer'
-          }}
-        >
-
-          <LogOut
-            size={
-              mobile
-                ? 16
-                : 22
-            }
-
-            color="white"
-          />
-
-        </div>
-
-      </div>
-
-    </nav>
+    </>
 
   )
 
