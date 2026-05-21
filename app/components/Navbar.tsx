@@ -264,7 +264,9 @@ export default function Navbar() {
             ? '6px 4px'
             : '18px 0',
 
-        zIndex: 9999
+        zIndex: 9999,
+
+        boxSizing: 'border-box',
       }}
     >
 
@@ -291,7 +293,10 @@ export default function Navbar() {
               ? '2px'
               : '14px',
 
-          width: '100%'
+          width: '100vw',
+          maxWidth: '100vm',
+
+          overflowX: 'hidden'
         }}
       >
 
