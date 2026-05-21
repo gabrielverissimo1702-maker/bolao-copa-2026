@@ -695,26 +695,20 @@ export default function HomePage() {
                     >
 
                       <p
-                        style={{
-                          fontSize:
-                            mobile
-                              ? '15px'
-                              : '22px',
+  style={{
+    fontSize:
+      mobile
+        ? '15px'
+        : '22px',
 
-                          fontWeight: 'bold',
+    fontWeight: 'bold',
 
-                          whiteSpace:
-                            'nowrap',
-
-                          overflow:
-                            'hidden',
-
-                          textOverflow:
-                            'ellipsis'
-                        }}
-                      >
-                        {user.nome}
-                      </p>
+    overflow:
+      'hidden'
+  }}
+>
+  {user.nome}
+</p>
 
                     </div>
 

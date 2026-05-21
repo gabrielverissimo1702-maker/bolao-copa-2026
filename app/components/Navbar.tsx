@@ -628,7 +628,7 @@ export default function Navbar() {
               )
             }
           >
-            TABELA
+            
           </span>
 
         </div>
