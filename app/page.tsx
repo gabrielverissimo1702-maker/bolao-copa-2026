@@ -7,7 +7,6 @@ import Navbar from './components/Navbar'
 import { supabase } from '../lib/supabase'
 
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
 
 export default function HomePage() {
 
@@ -54,12 +53,17 @@ export default function HomePage() {
     const carregar =
       async () => {
 
-        const { data: authData } =
+        const {
+          data: authData
+        } =
           await supabase.auth.getUser()
 
-        if (!authData.user)
-        { router.replace('/login')
+        if (!authData.user) {
+
+          router.replace('/login')
+
           return
+
         }
 
         const user =
@@ -67,7 +71,9 @@ export default function HomePage() {
 
         /* PERFIL */
 
-        const { data: perfilData } =
+        const {
+          data: perfilData
+        } =
           await supabase
             .from('profiles')
             .select('*')
@@ -79,7 +85,9 @@ export default function HomePage() {
 
         /* RANKING */
 
-        const { data: rankingData } =
+        const {
+          data: rankingData
+        } =
           await supabase
             .from('profiles')
             .select('*')
@@ -103,7 +111,9 @@ export default function HomePage() {
 
         /* GAMES */
 
-        const { data: gamesData } =
+        const {
+          data: gamesData
+        } =
           await supabase
             .from('games')
             .select('*')
@@ -117,7 +127,9 @@ export default function HomePage() {
 
         /* BETS */
 
-        const { data: betsData } =
+        const {
+          data: betsData
+        } =
           await supabase
             .from('bets')
             .select('*')
@@ -128,7 +140,9 @@ export default function HomePage() {
 
         /* TEAMS */
 
-        const { data: teamsData } =
+        const {
+          data: teamsData
+        } =
           await supabase
             .from('teams')
             .select('*')
@@ -151,13 +165,6 @@ export default function HomePage() {
 
   }, [])
 
-  /* TOP 3 */
-
-  const top3 =
-    ranking.slice(0, 3)
-
-  /* PEGAR TIME */
-
   const getTeam =
     (sigla: string) => {
 
@@ -167,8 +174,6 @@ export default function HomePage() {
       )
 
     }
-
-  /* PEGAR BET */
 
   const getBet =
     (gameId: number) => {
@@ -187,20 +192,30 @@ export default function HomePage() {
       <Navbar />
 
       <main
-  style={{
+        style={{
 
-    overflowX: 'hidden',
+          marginLeft:
+            mobile
+              ? '0'
+              : '110px',
 
-    width: '100%',
+          minHeight: '100vh',
 
-    maxWidth: '100vw',
+          padding:
+            mobile
+              ? '18px'
+              : '28px',
 
-    padding:
-      mobile
-        ? '20px'
-        : '40px'
-  }}
->
+          color: 'white',
+
+          overflowX: 'hidden',
+
+          width: '100%',
+
+          boxSizing:
+            'border-box'
+        }}
+      >
 
         {/* GRID */}
 
@@ -215,13 +230,21 @@ export default function HomePage() {
 
             gap: '24px',
 
-            alignItems: 'start'
+            alignItems: 'start',
+
+            width: '100%',
+
+            overflow: 'hidden'
           }}
         >
 
           {/* ESQUERDA */}
 
-          <div>
+          <div
+            style={{
+              minWidth: 0
+            }}
+          >
 
             {/* HERO */}
 
@@ -234,8 +257,12 @@ export default function HomePage() {
               <p
                 style={{
                   color: '#00ff9d',
-                  letterSpacing: '0.28em',
+
+                  letterSpacing:
+                    '0.28em',
+
                   fontSize: '10px',
+
                   marginBottom: '10px'
                 }}
               >
@@ -244,6 +271,7 @@ export default function HomePage() {
 
               <h1
                 className="fifa-title"
+
                 style={{
                   fontSize:
                     mobile
@@ -251,6 +279,7 @@ export default function HomePage() {
                       : '72px',
 
                   lineHeight: 0.88,
+
                   marginBottom: '10px'
                 }}
               >
@@ -270,8 +299,11 @@ export default function HomePage() {
               <p
                 style={{
                   fontSize: '16px',
+
                   opacity: 0.7,
+
                   maxWidth: '430px',
+
                   lineHeight: 1.4
                 }}
               >
@@ -286,9 +318,12 @@ export default function HomePage() {
 
             <h2
               className="fifa-title"
+
               style={{
                 fontSize: '34px',
+
                 textAlign: 'center',
+
                 marginBottom: '14px'
               }}
             >
@@ -308,6 +343,7 @@ export default function HomePage() {
 
             <div
               style={{
+
                 border:
                   '1px solid rgba(0,255,157,0.18)',
 
@@ -327,8 +363,11 @@ export default function HomePage() {
                 marginBottom: '22px',
 
                 display: 'flex',
+
                 alignItems: 'center',
-                justifyContent: 'space-between',
+
+                justifyContent:
+                  'space-between',
 
                 gap: '10px'
               }}
@@ -345,9 +384,13 @@ export default function HomePage() {
                 <p
                   style={{
                     color: '#b76cff',
+
                     fontSize: '10px',
+
                     marginBottom: '4px',
-                    textTransform: 'uppercase'
+
+                    textTransform:
+                      'uppercase'
                   }}
                 >
                   Colocação
@@ -371,7 +414,9 @@ export default function HomePage() {
               <div
                 style={{
                   width: '1px',
+
                   height: '44px',
+
                   background:
                     'rgba(255,255,255,0.08)'
                 }}
@@ -388,9 +433,13 @@ export default function HomePage() {
                 <p
                   style={{
                     color: '#00ff9d',
+
                     fontSize: '10px',
+
                     marginBottom: '4px',
-                    textTransform: 'uppercase'
+
+                    textTransform:
+                      'uppercase'
                   }}
                 >
                   Pontos
@@ -414,7 +463,9 @@ export default function HomePage() {
               <div
                 style={{
                   width: '1px',
+
                   height: '44px',
+
                   background:
                     'rgba(255,255,255,0.08)'
                 }}
@@ -431,9 +482,13 @@ export default function HomePage() {
                 <p
                   style={{
                     color: '#ffc400',
+
                     fontSize: '10px',
+
                     marginBottom: '4px',
-                    textTransform: 'uppercase'
+
+                    textTransform:
+                      'uppercase'
                   }}
                 >
                   Cravadas
@@ -458,11 +513,14 @@ export default function HomePage() {
 
             {/* TOP 3 */}
 
-          <h2
+            <h2
               className="fifa-title"
+
               style={{
                 fontSize: '34px',
+
                 textAlign: 'center',
+
                 marginBottom: '14px'
               }}
             >
@@ -475,696 +533,358 @@ export default function HomePage() {
               >
                 3
               </span>
-</h2>
+
+            </h2>
+
             <section
-
-            
-          style={{
-            maxWidth: '820px',
-            margin: '0 auto'
-          }}
-        >
-
-          {/* HEADER */}
-
-          <div
-            style={{
-              display: 'grid',
-
-              gridTemplateColumns:
-                mobile
-                  ? '42px 1fr 70px 70px'
-                  : '60px 1fr 120px 120px',
-
-              padding:
-                mobile
-                  ? '10px 14px'
-                  : '12px 18px',
-
-              opacity: 0.4,
-
-              fontSize: '10px',
-
-              textTransform:
-                'uppercase',
-
-              marginBottom: '8px'
-            }}
-          >
-
-            <div>Pos</div>
-
-            <div>Jogador</div>
-
-            <div
               style={{
-                textAlign: 'center'
-              }}
-            >
-              Pts
-            </div>
+                width: '100%',
 
-            <div
-              style={{
-                textAlign: 'center'
-              }}
-            >
-              Crav
-            </div>
-
-          </div>
-
-          {/* LISTA */}
-
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-
-              gap: '8px'
-            }}
-          >
-
-            {ranking
-  .slice(0,3)
-  .map(
-              (
-                user: any,
-                index: number
-              ) => {
-
-              const eu =
-                perfil?.id === user.id
-
-              return (
-
-                <div
-                  key={user.id}
-
-                  style={{
-                    display: 'grid',
-
-                    gridTemplateColumns:
-                      mobile
-                        ? '42px 1fr 70px 70px'
-                        : '60px 1fr 120px 120px',
-
-                    alignItems: 'center',
-
-                    minHeight:
-                      mobile
-                        ? '58px'
-                        : '72px',
-
-                    padding:
-                      mobile
-                        ? '0 14px'
-                        : '0 18px',
-
-                    borderRadius:
-                      '14px',
-
-                    background:
-                      eu
-                        ? 'rgba(0,255,157,0.08)'
-                        : 'rgba(255,255,255,0.03)',
-
-                    border:
-                      eu
-                        ? '1px solid rgba(0,255,157,0.25)'
-                        : '1px solid rgba(255,255,255,0.06)',
-
-                    boxShadow:
-                      eu
-                        ? '0 0 24px rgba(0,255,157,0.08)'
-                        : 'none',
-
-                    backdropFilter:
-                      'blur(20px)'
-                  }}
-                >
-
-                  {/* POS */}
-
-                  <div
-                    style={{
-                      fontSize:
-                        mobile
-                          ? '18px'
-                          : '22px',
-
-                      fontWeight: 'bold',
-
-                      color:
-                        index === 0
-                          ? '#ffc400'
-                          : index === 1
-                          ? '#d9d9d9'
-                          : index === 2
-                          ? '#cd7f32'
-                          : '#00ff9d'
-                    }}
-                  >
-                    {index + 1}
-                  </div>
-
-                  {/* USER */}
-
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-
-                      gap:
-                        mobile
-                          ? '10px'
-                          : '14px',
-
-                      overflow: 'hidden'
-                    }}
-                  >
-
-                    {/* BOLINHA */}
-
-                    <div
-  style={{
-    display: 'flex',
-    alignItems: 'center',
-
-    gap: '10px'
-  }}
->
-
-  {/* INICIAIS */}
-
-  <div
-    style={{
-      minWidth: '32px',
-      height: '32px',
-
-      borderRadius: '999px',
-
-      background:
-        'rgba(0,255,157,0.1)',
-
-      border:
-        '1px solid rgba(0,255,157,0.18)',
-
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-
-      color: '#00ff9d',
-
-      fontWeight: 'bold',
-
-      fontSize: '12px'
-    }}
-  >
-    {user.iniciais}
-  </div>
-
-  {/* NOME */}
-
-   <div
-                      style={{
-                        overflow: 'hidden'
-                      }}
-                    >
-
-                      <p
-  style={{
-    fontSize:
-      mobile
-        ? '15px'
-        : '22px',
-
-    fontWeight: 'bold',
-
-    overflow:
-      'hidden'
-  }}
->
-  {user.nome}
-</p>
-
-                    </div>
-
-</div>
-                    
-
-                  </div>
-
-                  {/* PTS */}
-
-                  <div
-                    style={{
-                      textAlign: 'center',
-
-                      fontSize:
-                        mobile
-                          ? '18px'
-                          : '26px',
-
-                      fontWeight: 'bold',
-
-                      color: '#00ff9d'
-                    }}
-                  >
-                    {user.pontos}
-                  </div>
-
-                  {/* CRAV */}
-
-                  <div
-                    style={{
-                      textAlign: 'center',
-
-                      fontSize:
-                        mobile
-                          ? '18px'
-                          : '26px',
-
-                      fontWeight: 'bold',
-
-                      color: '#ffc400'
-                    }}
-                  >
-                    {user.cravadas}
-                  </div>
-
-                </div>
-
-              )
-
-            })}
-
-          </div>
-
-        </section>
-
-        <div
-  style={{
-    display: 'flex',
-    justifyContent: 'center',
-
-    marginTop: '18px'
-  }}
->
-
-  <button
-    onClick={() =>
-      router.push('/ranking')
-    }
-
-    style={{
-      border:
-        '1px solid rgba(0,255,157,0.2)',
-
-      background:
-        'rgba(0,255,157,0.08)',
-
-      color: '#00ff9d',
-
-      padding:
-        mobile
-          ? '12px 18px'
-          : '14px 24px',
-
-      borderRadius: '14px',
-
-      fontWeight: 'bold',
-
-      cursor: 'pointer',
-
-      fontSize:
-        mobile
-          ? '12px'
-          : '14px',
-
-      transition: '0.2s'
-    }}
-  >
-    VER CLASSIFICAÇÃO COMPLETA
-  </button>
-
-</div>
-
-            </div>
-
-
-          {/* DIREITA */}
-
-          <div
-            style={{
-              paddingTop:
-                mobile
-                  ? '24px'
-                  : '120px'
-            }}
-          >
-                    {/* TITULO */}
-
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'center',
-                marginBottom: '16px'
+                overflow: 'hidden'
               }}
             >
 
-              <h2
-                className="fifa-title"
-                style={{
-                  fontSize: '38px'
-                }}
-              >
-                MEUS{' '}
-
-                <span
-                  style={{
-                    color: '#00ff9d'
-                  }}
-                >
-                  PALPITES
-                </span>
-
-              </h2>
-
-            </div>
-
-            {/* CARD */}
-
-            <div
-              style={{
-                border:
-                  '1px solid rgba(0,255,157,0.25)',
-
-                borderRadius: '16px',
-
-                overflow: 'hidden',
-
-                background:
-                  'rgba(0,0,0,0.45)',
-
-                maxWidth: '520px',
-
-                margin: '0 auto'
-              }}
-            >
-
-              {games.map(
-                (game: any, index: number) => {
-
-                const home =
-                  getTeam(game.home_team)
-
-                const away =
-                  getTeam(game.away_team)
-
-                const bet =
-                  getBet(game.id)
-
-                return (
-
-                  <div
-                    key={game.id}
-                    style={{
-                      padding: '14px 16px',
-
-                      borderBottom:
-                        index !== games.length - 1
-                          ? '1px solid rgba(255,255,255,0.06)'
-                          : 'none'
-                    }}
-                  >
-
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-
-                        padding: '12px 0px'
-                      }}
-                    >
-
-                      {/* LINHA */}
-
-                      <div
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-
-                          gap: '10px'
-                        }}
-                      >
-
-                        {/* HOME */}
-
-                        <div
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '6px',
-
-                            minWidth: '90px',
-                            justifyContent: 'flex-end'
-                          }}
-                        >
-
-                          <p
-                            style={{
-                              fontSize: '24px',
-                              fontWeight: 'bold'
-                            }}
-                          >
-                            {home?.nome}
-                          </p>
-
-                          <img
-                            src={`https://flagcdn.com/w80/${home?.flag}.png`}
-                            alt=""
-                            style={{
-                              width: '28px',
-                              height: '28px',
-
-                              borderRadius:
-                                '999px',
-
-                              objectFit: 'cover'
-                            }}
-                          />
-
-                        </div>
-
-                        {/* SCORE */}
-
-                        <div
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '8px'
-                          }}
-                        >
-
-                          <div
-                            style={{
-                              width: '36px',
-                              height: '36px',
-
-                              border:
-                                '1px solid #00ff9d',
-
-                              borderRadius:
-                                '8px',
-
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-
-                              color: '#00ff9d',
-
-                              fontSize: '24px',
-                              fontWeight: 'bold'
-                            }}
-                          >
-                            {bet?.home_guess ?? '-'}
-                          </div>
-
-                          <div
-                            style={{
-                              fontSize: '18px',
-                              fontWeight: 'bold'
-                            }}
-                          >
-                            x
-                          </div>
-
-                          <div
-                            style={{
-                              width: '36px',
-                              height: '36px',
-
-                              border:
-                                '1px solid #00ff9d',
-
-                              borderRadius:
-                                '8px',
-
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-
-                              color: '#00ff9d',
-
-                              fontSize: '24px',
-                              fontWeight: 'bold'
-                            }}
-                          >
-                            {bet?.away_guess ?? '-'}
-                          </div>
-
-                        </div>
-
-                        {/* AWAY */}
-
-                        <div
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '6px',
-
-                            minWidth: '90px'
-                          }}
-                        >
-
-                          <img
-                            src={`https://flagcdn.com/w80/${away?.flag}.png`}
-                            alt=""
-                            style={{
-                              width: '28px',
-                              height: '28px',
-
-                              borderRadius:
-                                '999px',
-
-                              objectFit: 'cover'
-                            }}
-                          />
-
-                          <p
-                            style={{
-                              fontSize: '24px',
-                              fontWeight: 'bold'
-                            }}
-                          >
-                            {away?.nome}
-                          </p>
-
-                        </div>
-
-                      </div>
-
-                      {/* DATA */}
-
-                      <div
-                        style={{
-                          marginTop: '8px',
-                          fontSize: '11px',
-                          opacity: 0.65
-                        }}
-                      >
-                        {
-                          new Date(
-                            game.match_date
-                          ).toLocaleDateString(
-                            'pt-BR',
-                            {
-                              day: '2-digit',
-                              month: '2-digit'
-                            }
-                          )
-                        }
-
-                        {' • '}
-
-                        {
-                          new Date(
-                            game.match_date
-                          ).toLocaleTimeString(
-                            'pt-BR',
-                            {
-                              hour: '2-digit',
-                              minute: '2-digit'
-                            }
-                          )
-                        }
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                )
-
-              })}
-
-              {/* BTN */}
+              {/* HEADER */}
 
               <div
                 style={{
-                  padding: '14px',
-                  borderTop:
-                    '1px solid rgba(255,255,255,0.05)'
+                  display: 'grid',
+
+                  gridTemplateColumns:
+                    mobile
+                      ? '36px minmax(0,1fr) 44px 44px'
+                      : '60px 1fr 120px 120px',
+
+                  padding:
+                    mobile
+                      ? '10px 12px'
+                      : '12px 18px',
+
+                  opacity: 0.4,
+
+                  fontSize:
+                    mobile
+                      ? '9px'
+                      : '10px',
+
+                  textTransform:
+                    'uppercase',
+
+                  marginBottom: '8px',
+
+                  width: '100%',
+
+                  boxSizing:
+                    'border-box'
                 }}
               >
 
-                <button
-                onClick={() =>
-      router.push('/jogos')
-    }
+                <div>Pos</div>
+
+                <div>Jogador</div>
+
+                <div
                   style={{
-                    width: '100%',
-
-                    background:
-                      'transparent',
-
-                    border:
-                      '1px solid rgba(0,255,157,0.25)',
-
-                    color: '#00ff9d',
-
-                    padding:
-                      '12px',
-
-                    borderRadius:
-                      '12px',
-
-                    fontSize: '11px',
-
-                    fontWeight: 'bold',
-
-                    textTransform:
-                      'uppercase',
-
-                    cursor: 'pointer'
+                    textAlign: 'center'
                   }}
                 >
-                  Ver todos
-                </button>
+                  Pts
+                </div>
+
+                <div
+                  style={{
+                    textAlign: 'center'
+                  }}
+                >
+                  Crav
+                </div>
 
               </div>
 
-            </div>
+              {/* LISTA */}
+
+              <div
+                style={{
+                  display: 'flex',
+
+                  flexDirection:
+                    'column',
+
+                  gap: '8px',
+
+                  width: '100%'
+                }}
+              >
+
+                {ranking
+                  .slice(0, 3)
+                  .map(
+                    (
+                      user: any,
+                      index: number
+                    ) => {
+
+                    const eu =
+                      perfil?.id ===
+                      user.id
+
+                    return (
+
+                      <div
+                        key={user.id}
+
+                        style={{
+                          display: 'grid',
+
+                          gridTemplateColumns:
+                            mobile
+                              ? '36px minmax(0,1fr) 44px 44px'
+                              : '60px 1fr 120px 120px',
+
+                          alignItems: 'center',
+
+                          minHeight:
+                            mobile
+                              ? '58px'
+                              : '72px',
+
+                          padding:
+                            mobile
+                              ? '0 12px'
+                              : '0 18px',
+
+                          borderRadius:
+                            '14px',
+
+                          background:
+                            eu
+                              ? 'rgba(0,255,157,0.08)'
+                              : 'rgba(255,255,255,0.03)',
+
+                          border:
+                            eu
+                              ? '1px solid rgba(0,255,157,0.25)'
+                              : '1px solid rgba(255,255,255,0.06)',
+
+                          boxShadow:
+                            eu
+                              ? '0 0 24px rgba(0,255,157,0.08)'
+                              : 'none',
+
+                          backdropFilter:
+                            'blur(20px)',
+
+                          overflow: 'hidden',
+
+                          width: '100%',
+
+                          boxSizing:
+                            'border-box'
+                        }}
+                      >
+
+                        {/* POS */}
+
+                        <div
+                          style={{
+                            fontSize:
+                              mobile
+                                ? '18px'
+                                : '22px',
+
+                            fontWeight:
+                              'bold',
+
+                            color:
+                              index === 0
+                                ? '#ffc400'
+                                : index === 1
+                                ? '#d9d9d9'
+                                : index === 2
+                                ? '#cd7f32'
+                                : '#00ff9d'
+                          }}
+                        >
+                          {index + 1}
+                        </div>
+
+                        {/* USER */}
+
+                        <div
+                          style={{
+                            display: 'flex',
+
+                            alignItems:
+                              'center',
+
+                            gap:
+                              mobile
+                                ? '8px'
+                                : '14px',
+
+                            overflow:
+                              'hidden',
+
+                            minWidth: 0
+                          }}
+                        >
+
+                          {/* INICIAIS */}
+
+                          <div
+                            style={{
+                              minWidth:
+                                mobile
+                                  ? '28px'
+                                  : '32px',
+
+                              width:
+                                mobile
+                                  ? '28px'
+                                  : '32px',
+
+                              height:
+                                mobile
+                                  ? '28px'
+                                  : '32px',
+
+                              borderRadius:
+                                '999px',
+
+                              background:
+                                'rgba(0,255,157,0.1)',
+
+                              border:
+                                '1px solid rgba(0,255,157,0.18)',
+
+                              display:
+                                'flex',
+
+                              alignItems:
+                                'center',
+
+                              justifyContent:
+                                'center',
+
+                              color:
+                                '#00ff9d',
+
+                              fontWeight:
+                                'bold',
+
+                              fontSize:
+                                mobile
+                                  ? '11px'
+                                  : '12px',
+
+                              flexShrink: 0
+                            }}
+                          >
+                            {
+                              user.iniciais
+                            }
+                          </div>
+
+                          {/* NOME */}
+
+                          <div
+                            style={{
+                              overflow:
+                                'hidden',
+
+                              minWidth: 0
+                            }}
+                          >
+
+                            <p
+                              style={{
+                                fontSize:
+                                  mobile
+                                    ? '14px'
+                                    : '22px',
+
+                                fontWeight:
+                                  'bold',
+
+                                whiteSpace:
+                                  'nowrap',
+
+                                overflow:
+                                  'hidden',
+
+                                textOverflow:
+                                  'ellipsis'
+                              }}
+                            >
+                              {user.nome}
+                            </p>
+
+                          </div>
+
+                        </div>
+
+                        {/* PTS */}
+
+                        <div
+                          style={{
+                            textAlign:
+                              'center',
+
+                            fontSize:
+                              mobile
+                                ? '15px'
+                                : '26px',
+
+                            fontWeight:
+                              'bold',
+
+                            color:
+                              '#00ff9d'
+                          }}
+                        >
+                          {user.pontos}
+                        </div>
+
+                        {/* CRAV */}
+
+                        <div
+                          style={{
+                            textAlign:
+                              'center',
+
+                            fontSize:
+                              mobile
+                                ? '15px'
+                                : '26px',
+
+                            fontWeight:
+                              'bold',
+
+                            color:
+                              '#ffc400'
+                          }}
+                        >
+                          {user.cravadas}
+                        </div>
+
+                      </div>
+
+                    )
+
+                  })}
+
+              </div>
+
+            </section>
 
           </div>
 
         </section>
-<br></br>
-<br></br>
-<br></br>
+
+        <br />
+        <br />
+        <br />
+
       </main>
 
     </>

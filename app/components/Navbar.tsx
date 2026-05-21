@@ -266,13 +266,9 @@ export default function Navbar() {
 
           width:
             mobile
-              ? '100vw'
+              ? '100%'
               : '92px',
 
-          maxWidth:
-            mobile
-              ? '100vw'
-              : '92px',
 
           height:
             mobile
