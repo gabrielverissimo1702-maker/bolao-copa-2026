@@ -290,7 +290,7 @@ export default function Navbar() {
 
           gap:
             mobile
-              ? '2px'
+              ? '0px'
               : '14px',
 
           width: '100vw',
