@@ -187,22 +187,20 @@ export default function HomePage() {
       <Navbar />
 
       <main
-        style={{
-          marginLeft:
-            mobile
-              ? '0'
-              : '110px',
+  style={{
 
-          minHeight: '100vh',
+    overflowX: 'hidden',
 
-          padding:
-            mobile
-              ? '18px'
-              : '28px',
+    width: '100%',
 
-          color: 'white'
-        }}
-      >
+    maxWidth: '100vw',
+
+    padding:
+      mobile
+        ? '20px'
+        : '40px'
+  }}
+>
 
         {/* GRID */}
 
