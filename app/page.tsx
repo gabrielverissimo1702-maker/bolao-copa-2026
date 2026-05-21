@@ -794,33 +794,38 @@ maxWidth: '100%',
 
                           {/* NOME */}
 
-   <div
-                      style={{
-                        overflow: 'hidden'
-                      }}
-                    >
+                          <div
+                            style={{
+                              overflow:
+                                'hidden',
 
-                      <p
-                        style={{
-                          fontSize:
-                            mobile
-                              ? '15px'
-                              : '22px',
+                              minWidth: 0
+                            }}
+                          >
 
-                          fontWeight: 'bold',
+                            <p
+                              style={{
+                                fontSize:
+                                  mobile
+                                    ? '14px'
+                                    : '22px',
 
-                          whiteSpace:
-                            'nowrap',
+                                fontWeight:
+                                  'bold',
 
-                          overflow:
-                            'hidden',
+                                whiteSpace:
+                                  'nowrap',
 
-                          textOverflow:
-                            'ellipsis'
-                        }}
-                      >
-                        {user.nome}
-                      </p>
+                                overflow:
+                                  'hidden',
+
+                                textOverflow:
+                                  'ellipsis'
+                              }}
+                            >
+                              {user.nome}
+                            </p>
+                            
                           </div>
 
                         </div>
