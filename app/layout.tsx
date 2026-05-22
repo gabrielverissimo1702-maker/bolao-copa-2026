@@ -60,10 +60,12 @@ export default function RootLayout({
     <html lang="pt-BR">
 
       <body
-  className={
-    poppins.className
-  }
->
+        className={`
+          ${bebas.variable}
+          ${inter.variable}
+          antialiased
+        `}
+      >
 
         {children}
 
