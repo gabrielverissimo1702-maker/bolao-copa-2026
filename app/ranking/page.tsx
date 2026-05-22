@@ -96,22 +96,29 @@ export default function RankingPage() {
         style={{
           marginLeft:
             mobile
-              ? '0'
+              ? 0
               : '110px',
 
           padding:
             mobile
-              ? '18px'
+              ? '18px 14px 120px'
               : '28px',
-
-          paddingBottom:
-            mobile
-              ? '120px'
-              : '40px',
 
           color: 'white',
 
-          minHeight: '100vh'
+          minHeight: '100vh',
+
+          overflowX: 'hidden',
+
+          width:
+            mobile
+              ? '100vw'
+              : 'calc(100vw - 110px)',
+
+          maxWidth: '100%',
+
+          boxSizing:
+            'border-box'
         }}
       >
 
@@ -126,8 +133,12 @@ export default function RankingPage() {
           <p
             style={{
               color: '#00ff9d',
-              letterSpacing: '0.28em',
+
+              letterSpacing:
+                '0.28em',
+
               fontSize: '10px',
+
               marginBottom: '10px'
             }}
           >
@@ -136,6 +147,7 @@ export default function RankingPage() {
 
           <h1
             className="fifa-title"
+
             style={{
               fontSize:
                 mobile
@@ -162,7 +174,9 @@ export default function RankingPage() {
           <p
             style={{
               opacity: 0.7,
+
               maxWidth: '520px',
+
               lineHeight: 1.5
             }}
           >
@@ -178,7 +192,10 @@ export default function RankingPage() {
         <section
           style={{
             maxWidth: '820px',
-            margin: '0 auto'
+
+            margin: '0 auto',
+
+            overflow: 'hidden'
           }}
         >
 
@@ -190,22 +207,30 @@ export default function RankingPage() {
 
               gridTemplateColumns:
                 mobile
-                  ? '42px 1fr 70px 70px'
+                  ? '32px minmax(0,1fr) 52px 52px'
                   : '60px 1fr 120px 120px',
 
               padding:
                 mobile
-                  ? '10px 14px'
+                  ? '10px 12px'
                   : '12px 18px',
 
               opacity: 0.4,
 
-              fontSize: '10px',
+              fontSize:
+                mobile
+                  ? '9px'
+                  : '10px',
 
               textTransform:
                 'uppercase',
 
-              marginBottom: '8px'
+              marginBottom: '8px',
+
+              width: '100%',
+
+              boxSizing:
+                'border-box'
             }}
           >
 
@@ -236,6 +261,7 @@ export default function RankingPage() {
           <div
             style={{
               display: 'flex',
+
               flexDirection: 'column',
 
               gap: '8px'
@@ -261,7 +287,7 @@ export default function RankingPage() {
 
                     gridTemplateColumns:
                       mobile
-                        ? '28px 1fr 48px 48px'
+                        ? '32px minmax(0,1fr) 52px 52px'
                         : '60px 1fr 120px 120px',
 
                     alignItems: 'center',
@@ -273,7 +299,7 @@ export default function RankingPage() {
 
                     padding:
                       mobile
-                        ? '0 14px'
+                        ? '0 12px'
                         : '0 18px',
 
                     borderRadius:
@@ -295,7 +321,14 @@ export default function RankingPage() {
                         : 'none',
 
                     backdropFilter:
-                      'blur(20px)'
+                      'blur(20px)',
+
+                    overflow: 'hidden',
+
+                    width: '100%',
+
+                    boxSizing:
+                      'border-box'
                   }}
                 >
 
@@ -328,93 +361,104 @@ export default function RankingPage() {
                   <div
                     style={{
                       display: 'flex',
+
                       alignItems: 'center',
 
-                      gap: '8px',
+                      gap:
+                        mobile
+                          ? '6px'
+                          : '12px',
 
                       minWidth: 0,
-                    }}
 
+                      overflow: 'hidden'
+                    }}
                   >
 
-                    {/* BOLINHA */}
+                    {/* INICIAIS */}
 
                     <div
-  style={{
-    display: 'flex',
-    alignItems: 'center',
+                      style={{
+                        width:
+                          mobile
+                            ? '24px'
+                            : '32px',
 
-    gap: '10px'
-  }}
->
+                        height:
+                          mobile
+                            ? '24px'
+                            : '32px',
 
-  {/* INICIAIS */}
+                        minWidth:
+                          mobile
+                            ? '24px'
+                            : '32px',
 
-  <div
-    style={{
-      minWidth: '24px',
-      height: '24px',
+                        borderRadius:
+                          '999px',
 
-      borderRadius: '999px',
+                        background:
+                          'rgba(0,255,157,0.1)',
 
-      background:
-        'rgba(0,255,157,0.1)',
+                        border:
+                          '1px solid rgba(0,255,157,0.18)',
 
-      border:
-        '1px solid rgba(0,255,157,0.18)',
+                        display: 'flex',
 
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
+                        alignItems: 'center',
 
-      color: '#00ff9d',
+                        justifyContent: 'center',
 
-      fontWeight: 'bold',
+                        color: '#00ff9d',
 
-      fontSize: '12px'
-    }}
-  >
-    {user.iniciais}
-  </div>
+                        fontWeight: 'bold',
 
-  {/* NOME */}
+                        fontSize:
+                          mobile
+                            ? '10px'
+                            : '12px',
 
-                          <div
-                            style={{
-                              overflow:
-                                'hidden',
-
-                              minWidth: 0
-                            }}
-                          >
-
-                            <p
-                              style={{
-                                fontSize:
-                                  mobile
-                                    ? '16px'
-                                    : '22px',
-
-                                fontWeight:
-                                  'bold',
-
-                                whiteSpace:
-                                  'nowrap',
-
-                                overflow:
-                                  'hidden',
-
-                                textOverflow:
-                                  'ellipsis'
-                              }}
-                            >
-                              {user.nome}
-                            </p>
-
+                        flexShrink: 0
+                      }}
+                    >
+                      {user.iniciais}
                     </div>
 
-</div>
-                    
+                    {/* NOME */}
+
+                    <div
+                      style={{
+                        overflow: 'hidden',
+
+                        minWidth: 0,
+
+                        flex: 1
+                      }}
+                    >
+
+                      <p
+                        style={{
+                          fontSize:
+                            mobile
+                              ? '15px'
+                              : '22px',
+
+                          fontWeight: 'bold',
+
+                          whiteSpace:
+                            'nowrap',
+
+                          overflow:
+                            'hidden',
+
+                          textOverflow:
+                            'ellipsis'
+                        }}
+                      >
+                        {user.nome}
+                      </p>
+
+                    </div>
 
                   </div>
 
@@ -426,12 +470,14 @@ export default function RankingPage() {
 
                       fontSize:
                         mobile
-                          ? '18px'
+                          ? '16px'
                           : '26px',
 
                       fontWeight: 'bold',
 
-                      color: '#00ff9d'
+                      color: '#00ff9d',
+
+                      flexShrink: 0
                     }}
                   >
                     {user.pontos}
@@ -445,12 +491,14 @@ export default function RankingPage() {
 
                       fontSize:
                         mobile
-                          ? '18px'
+                          ? '16px'
                           : '26px',
 
                       fontWeight: 'bold',
 
-                      color: '#ffc400'
+                      color: '#ffc400',
+
+                      flexShrink: 0
                     }}
                   >
                     {user.cravadas}
