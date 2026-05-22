@@ -330,13 +330,9 @@ export default function RankingPage() {
                       display: 'flex',
                       alignItems: 'center',
 
-                      gap:
-                        mobile
-                          ? '10px'
-                          : '14px',
+                      gap: '8px',
 
                       minWidth: 0,
-overflow: 'hidden'
                     }}
 
                   >
@@ -356,8 +352,8 @@ overflow: 'hidden'
 
   <div
     style={{
-      minWidth: '32px',
-      height: '32px',
+      minWidth: '24px',
+      height: '24px',
 
       borderRadius: '999px',
 
@@ -396,7 +392,7 @@ overflow: 'hidden'
                               style={{
                                 fontSize:
                                   mobile
-                                    ? '14px'
+                                    ? '16px'
                                     : '22px',
 
                                 fontWeight:
