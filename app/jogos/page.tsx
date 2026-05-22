@@ -374,6 +374,8 @@ export default function JogosPage() {
 
             return (
 
+              
+
               <div
                 key={game.id}
 
@@ -403,7 +405,30 @@ export default function JogosPage() {
                         : '20px 22px'
                   }}
                 >
+<p
+  style={{
+    fontSize:
+      mobile
+        ? '10px'
+        : '11px',
 
+    opacity: 0.55,
+
+    marginBottom: '10px',
+
+    textTransform:
+      'uppercase',
+
+    letterSpacing:
+      '0.04em',
+
+       textAlign:
+      'center'
+  }}
+>
+                     
+  {game.group_name} • {game.round}° Rodada
+</p>
                   {/* LINHA */}
 
                   <div
