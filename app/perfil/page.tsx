@@ -1,34 +1,48 @@
 'use client'
 
-import { useEffect, useState }
-from 'react'
+import { useEffect, useState } from 'react'
 
-import Navbar
-from '../components/Navbar'
+import Navbar from '../components/Navbar'
 
-import { supabase }
-from '../../lib/supabase'
+import { supabase } from '../../lib/supabase'
+
+import { useRouter } from 'next/navigation'
+import { LogIn, User } from 'lucide-react'
 
 export default function PerfilPage() {
 
-  const [iniciais,
-    setIniciais] =
-      useState('')
+  const router = useRouter()
 
-  const [mobile,
-    setMobile] =
-      useState(false)
+  const [mobile, setMobile] =
+    useState(false)
+
+  const [loading, setLoading] =
+    useState(false)
+
+  const [perfil, setPerfil] =
+    useState<any>(null)
+
+  const [nome, setNome] =
+    useState('')
+
+  const [iniciais, setIniciais] =
+    useState('')
+
+  const [login, setLogin] =
+    useState ('')
+
+  const [posicao, setPosicao] =
+    useState<number>(0)
 
   useEffect(() => {
 
-    const checkMobile =
-      () => {
+    const checkMobile = () => {
 
-        setMobile(
-          window.innerWidth <= 900
-        )
+      setMobile(
+        window.innerWidth <= 900
+      )
 
-      }
+    }
 
     checkMobile()
 
@@ -43,28 +57,70 @@ export default function PerfilPage() {
         const {
           data: authData
         } =
-          await supabase.auth
-            .getUser()
+          await supabase.auth.getUser()
 
-        if (!authData.user)
+        if (!authData.user) {
+
+          router.replace('/login')
+
           return
 
+        }
+
+        const user =
+          authData.user
+
+        /* PERFIL */
+
         const {
-          data: profile
+          data: perfilData
         } =
           await supabase
             .from('profiles')
             .select('*')
-            .eq(
-              'id',
-              authData.user.id
-            )
+            .eq('id', user.id)
             .single()
 
-        if (profile) {
+        if (perfilData) {
+
+          setPerfil(perfilData)
+
+          setNome(
+            perfilData.nome || ''
+          )
 
           setIniciais(
-            profile.iniciais || ''
+            perfilData.iniciais || ''
+          )
+
+          setLogin(
+  perfilData.login || ''
+)
+
+        }
+
+        /* RANKING */
+
+        const {
+          data: rankingData
+        } =
+          await supabase
+            .from('profiles')
+            .select('id')
+            .order('pontos', {
+              ascending: false
+            })
+
+        if (rankingData) {
+
+          const minhaPosicao =
+            rankingData.findIndex(
+              (u: any) =>
+                u.id === user.id
+            ) + 1
+
+          setPosicao(
+            minhaPosicao
           )
 
         }
@@ -87,32 +143,43 @@ export default function PerfilPage() {
   const salvar =
     async () => {
 
-      const {
-        data: authData
-      } =
-        await supabase.auth
-          .getUser()
-
-      if (!authData.user)
+      if (!perfil)
         return
+
+      setLoading(true)
 
       await supabase
         .from('profiles')
         .update({
 
+          nome:
+            nome
+              .trim()
+              .toUpperCase(),
+
           iniciais:
             iniciais
+              .trim()
               .toUpperCase()
 
         })
         .eq(
           'id',
-          authData.user.id
+          perfil.id
         )
 
-      alert(
-        'Perfil atualizado!'
-      )
+      setLoading(false)
+
+      window.location.reload()
+
+    }
+
+  const sair =
+    async () => {
+
+      await supabase.auth.signOut()
+
+      router.replace('/login')
 
     }
 
@@ -124,30 +191,40 @@ export default function PerfilPage() {
 
       <main
         style={{
+
           marginLeft:
             mobile
-              ? '0'
+              ? 0
               : '110px',
 
           padding:
             mobile
-              ? '18px'
+              ? '18px 14px 120px'
               : '28px',
 
-          paddingBottom:
-            mobile
-              ? '120px'
-              : '40px',
+          color: 'white',
 
-          color: 'white'
+          minHeight: '100vh',
+
+          overflowX: 'hidden',
+
+          width:
+            mobile
+              ? '100vw'
+              : 'calc(100vw - 110px)',
+
+          maxWidth: '100%',
+
+          boxSizing:
+            'border-box'
         }}
       >
 
-        <div
-          style={{
-            maxWidth: '520px',
+        {/* HERO */}
 
-            margin: '0 auto'
+        <section
+          style={{
+            marginBottom: '30px'
           }}
         >
 
@@ -163,7 +240,7 @@ export default function PerfilPage() {
               marginBottom: '10px'
             }}
           >
-            PERFIL
+            COPA DO MUNDO 2026
           </p>
 
           <h1
@@ -173,108 +250,617 @@ export default function PerfilPage() {
               fontSize:
                 mobile
                   ? '52px'
-                  : '72px',
+                  : '74px',
 
-              marginBottom: '22px'
+              lineHeight: 0.9,
+
+              marginBottom: '12px'
             }}
           >
-            SUAS{' '}
+            MEU{' '}
 
             <span
               style={{
                 color: '#00ff9d'
               }}
             >
-              INICIAIS
+              PERFIL
             </span>
 
           </h1>
 
+          <p
+            style={{
+              opacity: 0.7,
+
+              maxWidth: '520px',
+
+              lineHeight: 1.5
+            }}
+          >
+            Atualize suas informações
+            e acompanhe seus números
+            no bolão.
+          </p>
+
+        </section>
+
+        {/* CARD */}
+
+        <section
+          style={{
+            maxWidth: '520px',
+
+            margin: '0 auto'
+          }}
+        >
+
           <div
             style={{
+
               border:
-                '1px solid rgba(255,255,255,0.08)',
+                '1px solid rgba(0,255,157,0.25)',
+
+              borderRadius: '20px',
 
               background:
-                'rgba(255,255,255,0.03)',
+                'rgba(0,0,0,0.45)',
 
-              borderRadius:
-                '24px',
+              boxShadow:
+                '0 0 30px rgba(0,255,157,0.06)',
 
-              padding: '22px'
+              backdropFilter:
+                'blur(20px)',
+
+              padding:
+                mobile
+                  ? '24px 18px'
+                  : '32px'
             }}
           >
 
-            <input
-              value={iniciais}
+            {/* AVATAR */}
 
-              maxLength={3}
-
-              onChange={(e) =>
-                setIniciais(
-                  e.target.value
-                )
-              }
-
-              placeholder="GV"
-
+            <div
               style={{
-                width: '100%',
+                display: 'flex',
 
-                height: '58px',
+                justifyContent:
+                  'center',
 
-                borderRadius:
-                  '16px',
-
-                border:
-                  '1px solid rgba(255,255,255,0.08)',
-
-                background:
-                  'rgba(255,255,255,0.03)',
-
-                padding:
-                  '0 18px',
-
-                color: 'white',
-
-                fontSize: '18px',
-
-                outline: 'none'
-              }}
-            />
-
-            <button
-              onClick={salvar}
-
-              style={{
-                width: '100%',
-
-                height: '58px',
-
-                marginTop: '16px',
-
-                borderRadius:
-                  '16px',
-
-                border: 'none',
-
-                background:
-                  'linear-gradient(90deg,#00ff9d,#00c3ff)',
-
-                color: 'black',
-
-                fontWeight:
-                  'bold',
-
-                cursor: 'pointer'
+                marginBottom: '18px'
               }}
             >
-              SALVAR
-            </button>
+
+              <div
+                style={{
+                  width:
+                    mobile
+                      ? '92px'
+                      : '120px',
+
+                  height:
+                    mobile
+                      ? '92px'
+                      : '120px',
+
+                  borderRadius:
+                    '999px',
+
+                  background:
+                    'rgba(0,255,157,0.08)',
+
+                  border:
+                    '1px solid rgba(0,255,157,0.25)',
+
+                  display: 'flex',
+
+                  alignItems: 'center',
+
+                  justifyContent: 'center',
+
+                  color: '#00ff9d',
+
+                  fontWeight: 'bold',
+
+                  fontSize:
+                    mobile
+                      ? '34px'
+                      : '46px'
+                }}
+              >
+                {
+                  iniciais
+                    ?.toUpperCase()
+                }
+              </div>
+
+            </div>
+
+            {/* NOME */}
+
+            <div
+              style={{
+                textAlign: 'center',
+
+                marginBottom: '24px'
+              }}
+            >
+
+              <h2
+                style={{
+                  fontSize:
+                    mobile
+                      ? '24px'
+                      : '30px',
+
+                  fontWeight: 'bold',
+
+                  marginBottom: '8px'
+                }}
+              >
+                {nome || 'SEM NOME'}
+              </h2>
+
+            </div>
+
+            {/* STATS */}
+
+            <div
+              style={{
+                display: 'grid',
+
+                gridTemplateColumns:
+                  '1fr 1fr 1fr',
+
+                gap: '10px',
+
+                marginBottom: '26px'
+              }}
+            >
+
+              {/* PTS */}
+
+              <div
+                style={{
+                  border:
+                    '1px solid rgba(255,255,255,0.06)',
+
+                  background:
+                    'rgba(255,255,255,0.03)',
+
+                  borderRadius:
+                    '14px',
+
+                  padding:
+                    '14px',
+
+                  textAlign:
+                    'center'
+                }}
+              >
+
+                <p
+                  style={{
+                    opacity: 0.5,
+
+                    fontSize: '10px',
+
+                    marginBottom: '4px',
+
+                    textTransform:
+                      'uppercase'
+                  }}
+                >
+                  Pontos
+                </p>
+
+                <p
+                  style={{
+                    fontSize:
+                      mobile
+                        ? '22px'
+                        : '28px',
+
+                    fontWeight:
+                      'bold',
+
+                    color:
+                      '#00ff9d'
+                  }}
+                >
+                  {
+                    perfil?.pontos
+                    ?? 0
+                  }
+                </p>
+
+              </div>
+
+              {/* CRAV */}
+
+              <div
+                style={{
+                  border:
+                    '1px solid rgba(255,255,255,0.06)',
+
+                  background:
+                    'rgba(255,255,255,0.03)',
+
+                  borderRadius:
+                    '14px',
+
+                  padding:
+                    '14px',
+
+                  textAlign:
+                    'center'
+                }}
+              >
+
+                <p
+                  style={{
+                    opacity: 0.5,
+
+                    fontSize: '10px',
+
+                    marginBottom: '4px',
+
+                    textTransform:
+                      'uppercase'
+                  }}
+                >
+                  Cravadas
+                </p>
+
+                <p
+                  style={{
+                    fontSize:
+                      mobile
+                        ? '22px'
+                        : '28px',
+
+                    fontWeight:
+                      'bold',
+
+                    color:
+                      '#ffc400'
+                  }}
+                >
+                  {
+                    perfil?.cravadas
+                    ?? 0
+                  }
+                </p>
+
+              </div>
+
+              {/* POS */}
+
+              <div
+                style={{
+                  border:
+                    '1px solid rgba(255,255,255,0.06)',
+
+                  background:
+                    'rgba(255,255,255,0.03)',
+
+                  borderRadius:
+                    '14px',
+
+                  padding:
+                    '14px',
+
+                  textAlign:
+                    'center'
+                }}
+              >
+
+                <p
+                  style={{
+                    opacity: 0.5,
+
+                    fontSize: '10px',
+
+                    marginBottom: '4px',
+
+                    textTransform:
+                      'uppercase'
+                  }}
+                >
+                  COLOCAÇÃO
+                </p>
+
+                <p
+                  style={{
+                    fontSize:
+                      mobile
+                        ? '22px'
+                        : '28px',
+
+                    fontWeight:
+                      'bold',
+
+                    color:
+                      '#b76cff'
+                  }}
+                >
+                  {posicao}°
+                </p>
+
+              </div>
+
+            </div>
+
+            {/* FORM */}
+
+            <div
+              style={{
+                display: 'flex',
+
+                flexDirection:
+                  'column',
+
+                gap: '16px'
+              }}
+            >
+
+
+              {/* LOGIN */}
+
+              <div>
+
+                <p
+                  style={{
+                    fontSize: '11px',
+
+                    opacity: 0.6,
+
+                    marginBottom: '8px',
+
+                    textTransform:
+                      'uppercase'
+                  }}
+                >
+                  Nome
+                </p>
+
+                <input
+                  value={login}
+
+                  style={{
+                    width: '100%',
+
+                    height: '52px',
+
+                    opacity: 0.5,
+
+                    borderRadius:
+                      '14px',
+
+                    border:
+                      '1px solid rgba(255,255,255,0.08)',
+
+                    background:
+                      'rgba(255,255,255,0.03)',
+
+                    color: 'white',
+
+                    padding:
+                      '0 16px',
+
+                    fontSize:
+                      '16px',
+
+                    outline:
+                      'none',
+
+                    boxSizing:
+                      'border-box'
+                  }}
+                />
+
+              </div>
+
+              {/* NOME */}
+
+              <div>
+
+                <p
+                  style={{
+                    fontSize: '11px',
+
+                    opacity: 0.6,
+
+                    marginBottom: '8px',
+
+                    textTransform:
+                      'uppercase'
+                  }}
+                >
+                  Nome
+                </p>
+
+                <input
+                  value={nome}
+
+                  style={{
+                    width: '100%',
+
+                    height: '52px',
+
+                    opacity: 0.5,
+
+                    borderRadius:
+                      '14px',
+
+                    border:
+                      '1px solid rgba(255,255,255,0.08)',
+
+                    background:
+                      'rgba(255,255,255,0.03)',
+
+                    color: 'white',
+
+                    padding:
+                      '0 16px',
+
+                    fontSize:
+                      '16px',
+
+                    outline:
+                      'none',
+
+                    boxSizing:
+                      'border-box'
+                  }}
+                />
+
+              </div>
+
+              {/* INICIAIS */}
+
+              <div>
+
+                <p
+                  style={{
+                    fontSize: '11px',
+
+                    opacity: 0.6,
+
+                    marginBottom: '8px',
+
+                    textTransform:
+                      'uppercase'
+                  }}
+                >
+                  Iniciais
+                </p>
+
+                <input
+                  value={iniciais}
+
+                  maxLength={3}
+
+                  onChange={(e) =>
+                    setIniciais(
+                      e.target.value
+                    )
+                  }
+
+                  style={{
+                    width: '100%',
+
+                    height: '52px',
+
+                    borderRadius:
+                      '14px',
+
+                    border:
+                      '1px solid rgba(255,255,255,0.08)',
+
+                    background:
+                      'rgba(255,255,255,0.03)',
+
+                    color: 'white',
+
+                    padding:
+                      '0 16px',
+
+                    fontSize:
+                      '16px',
+
+                    outline:
+                      'none',
+
+                    boxSizing:
+                      'border-box'
+                  }}
+                />
+
+              </div>
+
+              {/* BTN */}
+
+              <button
+                onClick={salvar}
+
+                disabled={loading}
+
+                style={{
+                  width: '100%',
+
+                  height: '54px',
+
+                  border: 'none',
+
+                  borderRadius:
+                    '14px',
+
+                  background:
+                    '#00ff9d',
+
+                  color: 'black',
+
+                  fontWeight:
+                    'bold',
+
+                  fontSize:
+                    '15px',
+
+                  cursor:
+                    'pointer',
+
+                  marginTop: '6px'
+                }}
+              >
+                {
+                  loading
+                    ? 'SALVANDO...'
+                    : 'SALVAR ALTERAÇÕES'
+                }
+              </button>
+
+              {/* LOGOUT */}
+
+              <button
+                onClick={sair}
+
+                style={{
+                  width: '100%',
+
+                  height: '52px',
+
+                  borderRadius:
+                    '14px',
+
+                  border:
+                    '1px solid rgba(255,80,80,0.25)',
+
+                  background:
+                    'rgba(255,80,80,0.08)',
+
+                  color:
+                    '#ff7070',
+
+                  fontWeight:
+                    'bold',
+
+                  fontSize:
+                    '14px',
+
+                  cursor:
+                    'pointer'
+                }}
+              >
+                SAIR DA CONTA
+              </button>
+
+            </div>
 
           </div>
 
-        </div>
+        </section>
 
       </main>
 
