@@ -498,7 +498,7 @@ export default function GruposPage() {
               marginBottom: '10px'
             }}
           >
-            COPA DO MUNDO 2026
+            BOLÃO COPA DO MUNDO FIFA 2026
           </p>
 
           <h1
@@ -538,7 +538,8 @@ export default function GruposPage() {
           >
             Arraste as seleções
             para montar sua
-            classificação final.
+            classificação
+            da fase de grupos.
           </p>
 
         </section>

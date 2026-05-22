@@ -7,6 +7,7 @@ import Navbar from './components/Navbar'
 import { supabase } from '../lib/supabase'
 
 import { useRouter } from 'next/navigation'
+import { NOMEM } from 'dns'
 
 export default function HomePage() {
 
@@ -273,7 +274,7 @@ maxWidth: '100%',
                   marginBottom: '10px'
                 }}
               >
-                COPA DO MUNDO 2026
+                BOLÃO COPA DO MUNDO FIFA 2026
               </p>
 
               <h1
@@ -290,7 +291,7 @@ maxWidth: '100%',
                   marginBottom: '10px'
                 }}
               >
-                BOLÃO
+                PÁGINA
                 <br />
 
                 <span
@@ -298,7 +299,7 @@ maxWidth: '100%',
                     color: '#00ff9d'
                   }}
                 >
-                  OFICIAL
+                INICIAL
                 </span>
 
               </h1>
@@ -315,8 +316,8 @@ maxWidth: '100%',
                 }}
               >
                 Faça seus palpites,
-                dispute posições no ranking
-                e compare com seus adversários.
+                compare com seus adversários 
+                e tente superá-los.
               </p>
 
             </section>
@@ -825,7 +826,7 @@ maxWidth: '100%',
                             >
                               {user.nome}
                             </p>
-                            
+
                           </div>
 
                         </div>

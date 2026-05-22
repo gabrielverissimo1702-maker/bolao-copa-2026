@@ -1,5 +1,22 @@
 import './globals.css'
 
+import { Poppins }
+from 'next/font/google'
+const poppins =
+  Poppins({
+
+    subsets: ['latin'],
+
+    weight: [
+      '400',
+      '500',
+      '600',
+      '700',
+      '800'
+    ]
+
+  })
+
 import {
   Bebas_Neue,
   Inter
@@ -26,9 +43,13 @@ export const metadata = {
   description:
     'Bolão oficial da Copa do Mundo 2026'
 
+    
+
 }
 
 export default function RootLayout({
+
+  
   children
 }: Readonly<{
   children: React.ReactNode
@@ -39,12 +60,10 @@ export default function RootLayout({
     <html lang="pt-BR">
 
       <body
-        className={`
-          ${bebas.variable}
-          ${inter.variable}
-          antialiased
-        `}
-      >
+  className={
+    poppins.className
+  }
+>
 
         {children}
 

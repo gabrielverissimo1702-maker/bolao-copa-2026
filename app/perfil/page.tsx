@@ -240,7 +240,7 @@ export default function PerfilPage() {
               marginBottom: '10px'
             }}
           >
-            COPA DO MUNDO 2026
+           BOLÃO COPA DO MUNDO FIFA 2026 
           </p>
 
           <h1

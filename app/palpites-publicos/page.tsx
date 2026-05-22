@@ -196,7 +196,7 @@ export default function PlacaresPage() {
               marginBottom: '10px'
             }}
           >
-            COPA DO MUNDO 2026
+            BOLÃO COPA DO MUNDO FIFA 2026
           </p>
 
           <h1
@@ -231,9 +231,8 @@ export default function PlacaresPage() {
               lineHeight: 1.5
             }}
           >
-            Veja os palpites
-            de todos os jogadores
-            em tempo real.
+            Veja seus palpites e 
+            de todos os seus adversários.
           </p>
 
         </section>

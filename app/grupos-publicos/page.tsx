@@ -327,7 +327,7 @@ export default function GruposPublicosPage() {
                 '10px'
             }}
           >
-            COPA DO MUNDO 2026
+           BOLÃO COPA DO MUNDO FIFA 2026
           </p>
 
           <h1
@@ -370,10 +370,10 @@ export default function GruposPublicosPage() {
                 1.5
             }}
           >
-            Veja como cada
-            participante acredita
+            Veja como você e seus
+            adversários acreditam
             que terminarão os
-            grupos da Copa.
+            grupos da copa.
           </p>
 
         </section>

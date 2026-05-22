@@ -240,7 +240,7 @@ export default function JogosPage() {
               marginBottom: '10px'
             }}
           >
-            COPA DO MUNDO 2026
+            BOLÃO COPA DO MUNDO FIFA 2026
           </p>
 
           <h1
@@ -275,9 +275,7 @@ export default function JogosPage() {
               lineHeight: 1.5
             }}
           >
-            Faça seus palpites
-            e acompanhe todas
-            as partidas da Copa.
+            Análise os confrontos e faça seus palpites.
           </p>
 
         </section>

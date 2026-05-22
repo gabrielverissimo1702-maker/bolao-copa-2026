@@ -142,7 +142,7 @@ export default function RankingPage() {
               marginBottom: '10px'
             }}
           >
-            COPA DO MUNDO 2026
+           BOLÃO COPA DO MUNDO FIFA 2026
           </p>
 
           <h1
@@ -166,7 +166,7 @@ export default function RankingPage() {
                 color: '#00ff9d'
               }}
             >
-              GLOBAL
+              GERAL
             </span>
 
           </h1>
@@ -180,9 +180,8 @@ export default function RankingPage() {
               lineHeight: 1.5
             }}
           >
-            Veja quem lidera o bolão
-            e acompanhe a disputa
-            pela primeira colocação.
+            Acompanhe seu desempenho e a disputa
+            pela premiação.
           </p>
 
         </section>
