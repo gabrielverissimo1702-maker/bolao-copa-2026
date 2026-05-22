@@ -261,7 +261,7 @@ export default function RankingPage() {
 
                     gridTemplateColumns:
                       mobile
-                        ? '42px 1fr 70px 70px'
+                        ? '36px minmax(1fr) 44px 44px'
                         : '60px 1fr 120px 120px',
 
                     alignItems: 'center',
@@ -335,8 +335,10 @@ export default function RankingPage() {
                           ? '10px'
                           : '14px',
 
-                      overflow: 'hidden'
+                      minWidth: 0,
+overflow: 'hidden'
                     }}
+
                   >
 
                     {/* BOLINHA */}
