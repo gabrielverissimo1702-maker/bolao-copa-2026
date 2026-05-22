@@ -261,7 +261,7 @@ export default function RankingPage() {
 
                     gridTemplateColumns:
                       mobile
-                        ? '34px 1fr 52px 52px'
+                        ? '28px 1fr 48px 48px'
                         : '60px 1fr 120px 120px',
 
                     alignItems: 'center',
