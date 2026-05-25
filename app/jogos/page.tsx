@@ -6,6 +6,11 @@ import Navbar from '../components/Navbar'
 
 import { supabase } from '../../lib/supabase'
 
+const LIBERACAO_GRUPOS =
+  new Date(
+    '2026-01-01T00:00:00-03:00'
+  )
+
 export default function JogosPage() {
 
   const [games, setGames] =
@@ -194,6 +199,7 @@ export default function JogosPage() {
       )
 
     }
+  
 
   return (
 

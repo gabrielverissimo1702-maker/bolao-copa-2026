@@ -289,7 +289,11 @@ export default function LoginPage() {
       }}
     >
 
-      <div
+      <form
+      onSubmit={async (e) => {
+    e.preventDefault()
+    await entrar()
+      }}
         style={{
           width: '100%',
 
@@ -497,6 +501,7 @@ export default function LoginPage() {
             {/* BUTTON */}
 
             <button
+            type='submit'
               onClick={entrar}
 
               disabled={loading}
@@ -827,7 +832,7 @@ export default function LoginPage() {
 
         )}
 
-      </div>
+      </form>
 
     </main>
 

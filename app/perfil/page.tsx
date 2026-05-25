@@ -558,7 +558,7 @@ export default function PerfilPage() {
 
                 <p
                   style={{
-                    opacity: 0.5,
+                    opacity: 0.6,
 
                     fontSize: '10px',
 
@@ -622,44 +622,45 @@ export default function PerfilPage() {
                       'uppercase'
                   }}
                 >
-                  Nome
+                  LOGIN
                 </p>
 
-                <input
-                  value={login}
+               <input
+  value={login}
 
-                  style={{
-                    width: '100%',
+  readOnly
 
-                    height: '52px',
+  style={{
+    width: '100%',
 
-                    opacity: 0.5,
+    height: '52px',
 
-                    borderRadius:
-                      '14px',
+    opacity: 0.6,
 
-                    border:
-                      '1px solid rgba(255,255,255,0.08)',
+    borderRadius:
+      '14px',
 
-                    background:
-                      'rgba(255,255,255,0.03)',
+    border:
+      '1px solid rgba(255,255,255,0.08)',
 
-                    color: 'white',
+    background:
+      'rgba(255,255,255,0.03)',
 
-                    padding:
-                      '0 16px',
+    color: 'white',
 
-                    fontSize:
-                      '16px',
+    padding:
+      '0 16px',
 
-                    outline:
-                      'none',
+    fontSize:
+      '16px',
 
-                    boxSizing:
-                      'border-box'
-                  }}
-                />
+    outline:
+      'none',
 
+    boxSizing:
+      'border-box'
+  }}
+/>
               </div>
 
               {/* NOME */}
@@ -683,6 +684,8 @@ export default function PerfilPage() {
 
                 <input
                   value={nome}
+
+                  readOnly
 
                   style={{
                     width: '100%',
