@@ -30,6 +30,21 @@ export default function JogosPage() {
 
   const jogosPorPagina = 10
 
+  const jogoBloqueado = (
+  data: string
+) => {
+
+  if (!data) {
+    return false
+  }
+
+  return (
+    new Date(data)
+      .getTime() <=
+    Date.now()
+  )
+}
+
   useEffect(() => {
 
     const checkMobile = () => {
@@ -373,10 +388,10 @@ export default function JogosPage() {
                 game.away_team
               )
 
-            const bloqueado =
-              new Date(
-                game.match_date
-              ) < new Date()
+            const bloqueado = 
+            jogoBloqueado(
+              game.match_date
+            )
 
             return (
 
