@@ -5,6 +5,12 @@ import { useEffect, useState } from 'react'
 import Navbar from '../components/Navbar'
 
 import { supabase } from '../../lib/supabase'
+import {
+  calcularTotalPontosGrupos
+} from '../../lib/grupos'
+import {
+  calcularCravadasUsuario
+} from '../../lib/jogos'
 
 export default function RankingPage() {
 
@@ -64,12 +70,99 @@ export default function RankingPage() {
           await supabase
             .from('profiles')
             .select('*')
-            .order('pontos', {
-              ascending: false
-            })
 
-        if (rankingData)
-          setRanking(rankingData)
+        const { data: predictions } =
+          await supabase
+            .from('group_predictions')
+            .select('*')
+
+        const { data: results } =
+          await supabase
+            .from('group_results')
+            .select('*')
+
+        const { data: games } =
+          await supabase
+            .from('games')
+            .select('*')
+
+        const { data: bets } =
+          await supabase
+            .from('bets')
+            .select('*')
+
+        const resultsByGroup: Record<string, any> = {}
+
+        results?.forEach(
+          (result: any) => {
+            resultsByGroup[
+              result.group_name
+            ] = result
+          }
+        )
+
+        const gamesById: Record<number, any> = {}
+
+        games?.forEach(
+          (game: any) => {
+            gamesById[game.id] = game
+          }
+        )
+
+        if (rankingData) {
+
+          const rankingComPontos =
+            rankingData
+              .map(
+                (profile: any) => {
+
+                  const pontosPalpites =
+                    Number(
+                      profile.pontos || 0
+                    )
+
+                  const pontosGrupos =
+                    calcularTotalPontosGrupos(
+                      profile.id,
+                      predictions || [],
+                      resultsByGroup
+                    )
+
+                  const cravadasCalculadas =
+                    calcularCravadasUsuario(
+                      profile.id,
+                      bets || [],
+                      gamesById
+                    )
+
+                  return {
+                    ...profile,
+                    pontos_palpite:
+                      pontosPalpites,
+                    pontos_grupos:
+                      pontosGrupos,
+                    pontos_total:
+                      pontosPalpites +
+                      pontosGrupos,
+                    cravadas_total:
+                      cravadasCalculadas
+                  }
+
+                }
+              )
+              .sort(
+                (a: any, b: any) =>
+                  b.pontos_total -
+                    a.pontos_total ||
+                  b.cravadas_total -
+                    a.cravadas_total
+              )
+
+          setRanking(
+            rankingComPontos
+          )
+
+        }
 
       }
 
@@ -479,7 +572,7 @@ export default function RankingPage() {
                       flexShrink: 0
                     }}
                   >
-                    {user.pontos}
+                    {user.pontos_total}
                   </div>
 
                   {/* CRAV */}
@@ -500,7 +593,7 @@ export default function RankingPage() {
                       flexShrink: 0
                     }}
                   >
-                    {user.cravadas}
+                    {user.cravadas_total}
                   </div>
 
                 </div>

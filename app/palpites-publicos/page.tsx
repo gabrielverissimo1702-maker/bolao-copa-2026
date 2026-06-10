@@ -137,6 +137,136 @@ export default function PlacaresPage() {
 
     }
 
+  const getResultado =
+    (home: number, away: number) => {
+
+      if (home > away)
+        return 'home'
+
+      if (away > home)
+        return 'away'
+
+      return 'draw'
+
+    }
+
+  const calcularPontuacaoJogo =
+    (
+      bet: any,
+      game: any
+    ) => {
+
+      const placarValido =
+        game.home_score !== null &&
+        game.home_score !== undefined &&
+        game.away_score !== null &&
+        game.away_score !== undefined
+
+      if (!placarValido) {
+        return {
+          pontos: 0,
+          tipo: 'pendente',
+          label: 'Aguardando'
+        }
+      }
+
+      const homeScore =
+        Number(game.home_score)
+
+      const awayScore =
+        Number(game.away_score)
+
+      const homeGuess =
+        Number(bet.home_guess)
+
+      const awayGuess =
+        Number(bet.away_guess)
+
+      if (
+        homeGuess === homeScore &&
+        awayGuess === awayScore
+      ) {
+        return {
+          pontos: 5,
+          tipo: 'cravada',
+          label: 'Cravada'
+        }
+      }
+
+      if (
+        getResultado(
+          homeGuess,
+          awayGuess
+        ) ===
+        getResultado(
+          homeScore,
+          awayScore
+        )
+      ) {
+        return {
+          pontos: 2,
+          tipo: 'acerto',
+          label: 'Acerto'
+        }
+      }
+
+      return {
+        pontos: 0,
+        tipo: 'erro',
+        label: 'Errou'
+      }
+
+    }
+
+  const getPontuacaoStyle =
+    (tipo: string) => {
+
+      if (tipo === 'cravada') {
+        return {
+          border:
+            '1px solid rgba(255,196,0,0.42)',
+          background:
+            'rgba(255,196,0,0.10)',
+          color: '#ffc400',
+          shadow:
+            '0 0 24px rgba(255,196,0,0.12)'
+        }
+      }
+
+      if (tipo === 'acerto') {
+        return {
+          border:
+            '1px solid rgba(0,255,157,0.34)',
+          background:
+            'rgba(0,255,157,0.09)',
+          color: '#00ff9d',
+          shadow:
+            '0 0 22px rgba(0,255,157,0.10)'
+        }
+      }
+
+      if (tipo === 'erro') {
+        return {
+          border:
+            '1px solid rgba(255,90,90,0.22)',
+          background:
+            'rgba(255,90,90,0.06)',
+          color: '#ff8080',
+          shadow: 'none'
+        }
+      }
+
+      return {
+        border:
+          '1px solid rgba(255,255,255,0.08)',
+        background:
+          'rgba(255,255,255,0.03)',
+        color: 'rgba(255,255,255,0.65)',
+        shadow: 'none'
+      }
+
+    }
+
   const inicio =
     (pagina - 1) * jogosPorPagina
 
@@ -343,6 +473,21 @@ export default function PlacaresPage() {
                 (b: any) =>
                   b.user_id === userId
               )
+
+            const resultadoMeuPalpite =
+              meuPalpite
+                ? calcularPontuacaoJogo(
+                  meuPalpite,
+                  game
+                )
+                : null
+
+            const estiloMeuPalpite =
+              resultadoMeuPalpite
+                ? getPontuacaoStyle(
+                  resultadoMeuPalpite.tipo
+                )
+                : null
 
             return (
 
@@ -670,7 +815,18 @@ export default function PlacaresPage() {
 
                       <div
                         style={{
-                          marginBottom: '22px'
+                          marginBottom: '22px',
+                          border:
+                            estiloMeuPalpite?.border,
+                          background:
+                            estiloMeuPalpite?.background,
+                          boxShadow:
+                            estiloMeuPalpite?.shadow,
+                          borderRadius: '16px',
+                          padding:
+                            mobile
+                              ? '14px 12px'
+                              : '16px'
                         }}
                       >
 
@@ -693,6 +849,37 @@ export default function PlacaresPage() {
                         >
                           Meu palpite
                         </p>
+
+                        {resultadoMeuPalpite && (
+
+                          <div
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'center',
+                              marginBottom: '12px'
+                            }}
+                          >
+                            <div
+                              style={{
+                                border:
+                                  estiloMeuPalpite?.border,
+                                background:
+                                  'rgba(0,0,0,0.22)',
+                                color:
+                                  estiloMeuPalpite?.color,
+                                borderRadius: '999px',
+                                padding: '7px 12px',
+                                fontSize: '11px',
+                                fontWeight: 'bold',
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.06em'
+                              }}
+                            >
+                              {resultadoMeuPalpite.label} • {resultadoMeuPalpite.pontos} pts
+                            </div>
+                          </div>
+
+                        )}
 
                         <div
                           style={{
@@ -903,6 +1090,17 @@ export default function PlacaresPage() {
                               bet.user_id
                             )?.nome
 
+                          const resultadoPalpite =
+                            calcularPontuacaoJogo(
+                              bet,
+                              game
+                            )
+
+                          const estiloPalpite =
+                            getPontuacaoStyle(
+                              resultadoPalpite.tipo
+                            )
+
                           return (
 
                             <div
@@ -921,10 +1119,13 @@ export default function PlacaresPage() {
                                   '14px 12px',
 
                                 background:
-                                  'rgba(255,255,255,0.03)',
+                                  estiloPalpite.background,
 
                                 border:
-                                  '1px solid rgba(255,255,255,0.05)'
+                                  estiloPalpite.border,
+
+                                boxShadow:
+                                  estiloPalpite.shadow
                               }}
                             >
 
@@ -979,11 +1180,40 @@ export default function PlacaresPage() {
                                     fontSize: '14px',
 
                                     fontWeight: 'bold'
-                                  }}
-                                >
+                                }}
+                              >
                                   {nome}
                                 </div>
 
+                              </div>
+
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  justifyContent: 'center',
+                                  marginBottom: '12px'
+                                }}
+                              >
+                                <div
+                                  style={{
+                                    border:
+                                      estiloPalpite.border,
+                                    background:
+                                      'rgba(0,0,0,0.22)',
+                                    color:
+                                      estiloPalpite.color,
+                                    borderRadius: '999px',
+                                    padding: '6px 10px',
+                                    fontSize: '10px',
+                                    fontWeight: 'bold',
+                                    textTransform:
+                                      'uppercase',
+                                    letterSpacing:
+                                      '0.06em'
+                                  }}
+                                >
+                                  {resultadoPalpite.label} • {resultadoPalpite.pontos} pts
+                                </div>
                               </div>
 
                               {/* SCORE */}

@@ -7,7 +7,6 @@ import Navbar from '../components/Navbar'
 import { supabase } from '../../lib/supabase'
 
 import { useRouter } from 'next/navigation'
-import { LogIn, User } from 'lucide-react'
 
 export default function PerfilPage() {
 

@@ -6,11 +6,6 @@ import Navbar from '../components/Navbar'
 
 import { supabase } from '../../lib/supabase'
 
-const LIBERACAO_GRUPOS =
-  new Date(
-    '2026-05-11T00:00:00-03:00'
-  )
-
 export default function JogosPage() {
 
   const [games, setGames] =
@@ -28,6 +23,9 @@ export default function JogosPage() {
   const [pagina, setPagina] =
     useState(1)
 
+  const [agora] =
+    useState(() => Date.now())
+
   const jogosPorPagina = 10
 
   const jogoBloqueado = (
@@ -41,7 +39,7 @@ export default function JogosPage() {
   return (
     new Date(data)
       .getTime() <=
-    Date.now()
+    agora
   )
 }
 
@@ -178,14 +176,28 @@ export default function JogosPage() {
       const { data: authData } =
         await supabase.auth.getUser()
 
-      if (!authData.user)
+      if (!authData.user) {
+
+        alert(
+          'Faça login novamente para salvar seus palpites.'
+        )
+
         return
+
+      }
 
       const user =
         authData.user
 
       const payload =
         Object.entries(palpites)
+          .filter(
+            ([, value]: any) =>
+              value.home_guess !== undefined &&
+              value.home_guess !== '' &&
+              value.away_guess !== undefined &&
+              value.away_guess !== ''
+          )
           .map(
             ([gameId, value]: any) => ({
 
@@ -203,11 +215,115 @@ export default function JogosPage() {
 
             })
           )
+          .filter(
+            (item) =>
+              Number.isFinite(
+                item.home_guess
+              ) &&
+              Number.isFinite(
+                item.away_guess
+              )
+          )
 
-      await supabase
-        .from('bets')
-        .upsert(payload, {onConflict: 'user_id,game_id'
-})
+      if (payload.length === 0) {
+
+        alert(
+          'Preencha pelo menos um palpite antes de salvar.'
+        )
+
+        return
+
+      }
+
+      for (const item of payload) {
+
+        const {
+          data: palpiteExistente,
+          error: buscaError
+        } = await supabase
+          .from('bets')
+          .select('id')
+          .eq(
+            'user_id',
+            item.user_id
+          )
+          .eq(
+            'game_id',
+            item.game_id
+          )
+          .maybeSingle()
+
+        if (buscaError) {
+
+          console.error(
+            'Erro ao buscar palpite:',
+            buscaError
+          )
+
+          alert(
+            `Erro ao buscar palpite: ${buscaError.message}`
+          )
+
+          return
+
+        }
+
+        if (palpiteExistente?.id) {
+
+          const { error: updateError } =
+            await supabase
+              .from('bets')
+              .update({
+                home_guess:
+                  item.home_guess,
+                away_guess:
+                  item.away_guess
+              })
+              .eq(
+                'id',
+                palpiteExistente.id
+              )
+
+          if (updateError) {
+
+            console.error(
+              'Erro ao atualizar palpite:',
+              updateError
+            )
+
+            alert(
+              `Erro ao atualizar palpite: ${updateError.message}`
+            )
+
+            return
+
+          }
+
+          continue
+
+        }
+
+        const { error: insertError } =
+          await supabase
+            .from('bets')
+            .insert(item)
+
+        if (insertError) {
+
+          console.error(
+            'Erro ao inserir palpite:',
+            insertError
+          )
+
+          alert(
+            `Erro ao inserir palpite: ${insertError.message}`
+          )
+
+          return
+
+        }
+
+      }
 
       alert(
         'Palpites salvos!'

@@ -102,9 +102,7 @@ export default function Navbar() {
 
   }, [])
 
-  const itemStyle = (
-    active: boolean
-  ) => ({
+  const itemStyle = () => ({
 
     display: 'flex',
 
@@ -358,9 +356,7 @@ export default function Navbar() {
             }
 
             style={
-              itemStyle(
-                pathname === '/'
-              )
+              itemStyle()
             }
           >
 
@@ -416,9 +412,7 @@ export default function Navbar() {
             }
 
             style={
-              itemStyle(
-                pathname === '/jogos'
-              )
+              itemStyle()
             }
           >
 
@@ -478,10 +472,7 @@ export default function Navbar() {
             }
 
             style={
-              itemStyle(
-                pathname ===
-                '/ranking'
-              )
+              itemStyle()
             }
           >
 
@@ -542,10 +533,7 @@ export default function Navbar() {
             }
 
             style={
-              itemStyle(
-                pathname ===
-                '/palpites-publicos'
-              )
+              itemStyle()
             }
           >
 
@@ -606,10 +594,7 @@ export default function Navbar() {
             }
 
             style={
-              itemStyle(
-                pathname ===
-                '/grupos'
-              )
+              itemStyle()
             }
           >
 
@@ -670,10 +655,7 @@ export default function Navbar() {
             }
 
             style={
-              itemStyle(
-                pathname ===
-                '/grupos-publicos'
-              )
+              itemStyle()
             }
           >
 

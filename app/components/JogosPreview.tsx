@@ -4,14 +4,13 @@ type Props = {
   games: any[]
   teams: any[]
   palpites: any
-  handleChange: any
+  handleChange?: any
 }
 
 export default function JogosPreview({
   games,
   teams,
-  palpites,
-  handleChange
+  palpites
 }: Props) {
 
   return (
@@ -77,11 +76,6 @@ export default function JogosPreview({
               (t) =>
                 t.nome === game.away_team
             )
-
-          const bloqueado =
-            new Date(
-              game.match_date
-            ) <= new Date()
 
           return (
 

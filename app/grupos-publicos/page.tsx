@@ -4,6 +4,12 @@ import { useEffect, useState } from 'react'
 import Navbar from '../components/Navbar'
 import { supabase } from '../../lib/supabase'
 import { useRouter } from 'next/navigation'
+import {
+  calcularPontosGrupo,
+  DIVULGACAO_GRUPOS,
+  ORDEM_GRUPOS,
+  POSICOES_GRUPO
+} from '../../lib/grupos'
 
 export default function GruposPublicosPage() {
   const router = useRouter()
@@ -12,7 +18,10 @@ export default function GruposPublicosPage() {
     useState(false)
 
   const [groups, setGroups] =
-    useState<any>({})
+    useState<Record<string, any[]>>({})
+
+  const [officialGroups, setOfficialGroups] =
+    useState<Record<string, any>>({})
 
   const [profiles, setProfiles] =
     useState<any[]>([])
@@ -26,17 +35,14 @@ export default function GruposPublicosPage() {
   const [userId, setUserId] =
     useState('')
 
-  const ordemGrupos = [
-    'A','B','C','D',
-    'E','F','G','H',
-    'I','J','K','L'
-  ]
+  const [agora, setAgora] =
+    useState(() => Date.now())
+
+  const [erroResultado, setErroResultado] =
+    useState('')
 
   const liberado =
-    new Date().getTime() >=
-    new Date(
-      '2026-06-11T16:00:00'
-    ).getTime()
+    agora >= DIVULGACAO_GRUPOS
 
   useEffect(() => {
 
@@ -51,6 +57,14 @@ export default function GruposPublicosPage() {
       'resize',
       checkMobile
     )
+
+    const relogio =
+      window.setInterval(
+        () => {
+          setAgora(Date.now())
+        },
+        30000
+      )
 
     const carregar =
       async () => {
@@ -95,6 +109,32 @@ export default function GruposPublicosPage() {
             .from('teams')
             .select('*')
 
+        const resultQuery =
+          await supabase
+            .from('group_results')
+            .select('*')
+
+        let results =
+          resultQuery.data
+
+        if (resultQuery.error) {
+
+          const fallbackQuery =
+            await supabase
+              .from('groups_results')
+              .select('*')
+
+          results =
+            fallbackQuery.data
+
+          if (fallbackQuery.error) {
+            setErroResultado(
+              fallbackQuery.error.message
+            )
+          }
+
+        }
+
         if (profilesData)
           setProfiles(
             profilesData
@@ -105,7 +145,7 @@ export default function GruposPublicosPage() {
             teamsData
           )
 
-        const agrupados: any = {}
+        const agrupados: Record<string, any[]> = {}
 
         predictions?.forEach(
           (item: any) => {
@@ -127,8 +167,22 @@ export default function GruposPublicosPage() {
           }
         )
 
+        const oficiais: Record<string, any> = {}
+
+        results?.forEach(
+          (item: any) => {
+            oficiais[
+              item.group_name
+            ] = item
+          }
+        )
+
         setGroups(
           agrupados
+        )
+
+        setOfficialGroups(
+          oficiais
         )
 
       }
@@ -142,15 +196,22 @@ export default function GruposPublicosPage() {
         checkMobile
       )
 
+      window.clearInterval(
+        relogio
+      )
+
     }
 
-  }, [])
+  }, [router])
 
   const grupoAtual =
-    ordemGrupos[pagina]
+    ORDEM_GRUPOS[pagina]
 
   const palpites =
     groups[grupoAtual] || []
+
+  const oficial =
+    officialGroups[grupoAtual]
 
   const meuPalpite =
     palpites.find(
@@ -163,9 +224,6 @@ export default function GruposPublicosPage() {
       (p: any) =>
         p.user_id !== userId
     )
-
-  const oficial =
-    palpites[0]
 
   const getProfile =
     (id: string) =>
@@ -181,14 +239,44 @@ export default function GruposPublicosPage() {
           t.nome === sigla
       )
 
+  const contarAcertos =
+    (item: any) => {
+
+      if (!oficial)
+        return 0
+
+      return POSICOES_GRUPO.filter(
+        (posicao) =>
+          item?.[posicao] ===
+          oficial?.[posicao]
+      ).length
+
+    }
+
+  const pontosDoPalpite =
+    (item: any) =>
+      calcularPontosGrupo(
+        item,
+        oficial
+      )
+
   const renderTeam =
     (
       sigla: string,
-      posicao: number
+      posicao: number,
+      comparacao?: string
     ) => {
 
       const team =
         getTeam(sigla)
+
+      const acertou =
+        comparacao &&
+        sigla === comparacao
+
+      const errou =
+        comparacao &&
+        sigla !== comparacao
 
       return (
 
@@ -196,54 +284,98 @@ export default function GruposPublicosPage() {
           style={{
             display: 'flex',
             alignItems: 'center',
+            justifyContent:
+              'space-between',
             gap: '10px',
             padding: '10px 12px',
             borderRadius: '12px',
             background:
-              'rgba(255,255,255,0.03)',
+              acertou
+                ? 'rgba(0,255,157,0.08)'
+                : 'rgba(255,255,255,0.03)',
             border:
-              '1px solid rgba(255,255,255,0.05)'
+              acertou
+                ? '1px solid rgba(0,255,157,0.28)'
+                : errou
+                ? '1px solid rgba(255,90,90,0.22)'
+                : '1px solid rgba(255,255,255,0.05)'
           }}
         >
 
           <div
             style={{
-              width: '26px',
-              textAlign:
-                'center',
-              fontWeight:
-                'bold',
-              opacity: 0.6
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              minWidth: 0
             }}
           >
-            {posicao}º
+
+            <div
+              style={{
+                width: '26px',
+                textAlign:
+                  'center',
+                fontWeight:
+                  'bold',
+                opacity: 0.6
+              }}
+            >
+              {posicao}º
+            </div>
+
+            {team?.flag && (
+
+              <img
+                src={`https://flagcdn.com/w80/${team.flag}.png`}
+                alt=""
+                style={{
+                  width: '28px',
+                  height: '28px',
+                  borderRadius:
+                    '999px',
+                  objectFit:
+                    'cover',
+                  flexShrink: 0
+                }}
+              />
+
+            )}
+
+            <div
+              style={{
+                fontWeight:
+                  'bold',
+                overflow:
+                  'hidden',
+                textOverflow:
+                  'ellipsis',
+                whiteSpace:
+                  'nowrap'
+              }}
+            >
+              {sigla}
+            </div>
+
           </div>
 
-          {team?.flag && (
+          {comparacao && (
 
-            <img
-              src={`https://flagcdn.com/w80/${team.flag}.png`}
-              alt=""
+            <span
               style={{
-                width: '28px',
-                height: '28px',
-                borderRadius:
-                  '999px',
-                objectFit:
-                  'cover'
+                color:
+                  acertou
+                    ? '#00ff9d'
+                    : '#ff6b6b',
+                fontSize: '11px',
+                fontWeight: 'bold',
+                flexShrink: 0
               }}
-            />
+            >
+              {acertou ? 'OK' : `Era ${comparacao}`}
+            </span>
 
           )}
-
-          <div
-            style={{
-              fontWeight:
-                'bold'
-            }}
-          >
-            {sigla}
-          </div>
 
         </div>
 
@@ -251,21 +383,62 @@ export default function GruposPublicosPage() {
 
     }
 
+  const renderListaGrupo =
+    (
+      item: any,
+      comparar = false
+    ) => (
+
+      <div
+        style={{
+          display: 'flex',
+          flexDirection:
+            'column',
+          gap: '10px'
+        }}
+      >
+
+        {POSICOES_GRUPO.map(
+          (posicao, index) =>
+            renderTeam(
+              item?.[posicao],
+              index + 1,
+              comparar
+                ? oficial?.[posicao]
+                : undefined
+            )
+        )}
+
+      </div>
+
+    )
+
   const renderCard =
-    (item: any) => {
+    (
+      item: any,
+      titulo?: string
+    ) => {
 
       const profile =
         getProfile(
           item.user_id
         )
 
+      const acertos =
+        contarAcertos(item)
+
+      const pontos =
+        pontosDoPalpite(item)
+
       return (
 
         <div
-          key={item.user_id}
+          key={`${titulo || 'palpite'}-${item.user_id}`}
           style={{
             border:
-              '1px solid rgba(0,255,157,0.18)',
+              item.user_id === userId
+                ? '1px solid rgba(0,255,157,0.3)'
+                : '1px solid rgba(0,255,157,0.18)',
 
             background:
               'rgba(0,0,0,0.45)',
@@ -285,7 +458,7 @@ export default function GruposPublicosPage() {
             style={{
               display: 'flex',
               justifyContent:
-                'center',
+                'space-between',
               alignItems:
                 'center',
               gap: '10px',
@@ -296,76 +469,83 @@ export default function GruposPublicosPage() {
 
             <div
               style={{
-                width: '34px',
-                height: '34px',
-                borderRadius:
-                  '999px',
-                background:
-                  'rgba(0,255,157,0.1)',
-                border:
-                  '1px solid rgba(0,255,157,0.2)',
-                display:
-                  'flex',
+                display: 'flex',
                 alignItems:
                   'center',
-                justifyContent:
-                  'center',
-                color:
-                  '#00ff9d',
-                fontWeight:
-                  'bold'
+                gap: '10px',
+                minWidth: 0
               }}
             >
-              {
-                profile
-                  ?.iniciais
-              }
+
+              <div
+                style={{
+                  width: '34px',
+                  height: '34px',
+                  borderRadius:
+                    '999px',
+                  background:
+                    'rgba(0,255,157,0.1)',
+                  border:
+                    '1px solid rgba(0,255,157,0.2)',
+                  display:
+                    'flex',
+                  alignItems:
+                    'center',
+                  justifyContent:
+                    'center',
+                  color:
+                    '#00ff9d',
+                  fontWeight:
+                    'bold',
+                  flexShrink: 0
+                }}
+              >
+                {
+                  profile
+                    ?.iniciais ||
+                  '--'
+                }
+              </div>
+
+              <div
+                style={{
+                  fontWeight:
+                    'bold',
+                  overflow:
+                    'hidden',
+                  textOverflow:
+                    'ellipsis',
+                  whiteSpace:
+                    'nowrap'
+                }}
+              >
+                {
+                  titulo ||
+                  profile
+                    ?.nome ||
+                  'Participante'
+                }
+              </div>
+
             </div>
 
             <div
               style={{
-                fontWeight:
-                  'bold'
+                color: '#00ff9d',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                flexShrink: 0
               }}
             >
-              {
-                profile
-                  ?.nome
-              }
+              {pontos}/20 pts
             </div>
 
           </div>
 
-          <div
-            style={{
-              display: 'flex',
-              flexDirection:
-                'column',
-              gap: '10px'
-            }}
-          >
-
-            {renderTeam(
-              item.first_place,
-              1
-            )}
-
-            {renderTeam(
-              item.second_place,
-              2
-            )}
-
-            {renderTeam(
-              item.third_place,
-              3
-            )}
-
-            {renderTeam(
-              item.fourth_place,
-              4
-            )}
-
-          </div>
+          {renderListaGrupo(
+            item,
+            Boolean(oficial)
+          )}
 
         </div>
 
@@ -454,13 +634,12 @@ export default function GruposPublicosPage() {
 
           <p
             style={{
-              opacity: 0.7
+              opacity: 0.7,
+              maxWidth: '620px',
+              lineHeight: 1.5
             }}
           >
-            Veja como cada
-            participante acredita
-            que terminarão os
-            grupos da Copa.
+            Resultado oficial dos grupos e comparação dos palpites dos participantes.
           </p>
 
         </section>
@@ -486,6 +665,15 @@ export default function GruposPublicosPage() {
               Palpites ainda ocultos
             </h2>
 
+            <p
+              style={{
+                opacity: 0.65,
+                marginTop: '8px'
+              }}
+            >
+              Eles serão liberados após a data e hora de divulgação.
+            </p>
+
           </div>
 
         )}
@@ -507,7 +695,7 @@ export default function GruposPublicosPage() {
               }}
             >
 
-              {ordemGrupos.map(
+              {ORDEM_GRUPOS.map(
                 (
                   grupo,
                   index
@@ -539,7 +727,10 @@ export default function GruposPublicosPage() {
                       color:
                         pagina === index
                           ? '#00ff9d'
-                          : 'white'
+                          : 'white',
+
+                      cursor: 'pointer',
+                      fontWeight: 'bold'
                     }}
                   >
                     {grupo}
@@ -559,12 +750,69 @@ export default function GruposPublicosPage() {
               }}
             >
 
-              {oficial && (
+              <h2
+                className="fifa-title"
+                style={{
+                  fontSize:
+                    mobile
+                      ? '34px'
+                      : '44px',
+                  textAlign:
+                    'center',
+                  marginBottom:
+                    '18px'
+                }}
+              >
+                GRUPO{' '}
+                <span
+                  style={{
+                    color:
+                      '#00ff9d'
+                  }}
+                >
+                  {grupoAtual}
+                </span>
+              </h2>
+
+              {erroResultado && (
+
+                <div
+                  style={{
+                    border:
+                      '1px solid rgba(255,90,90,0.22)',
+                    background:
+                      'rgba(255,90,90,0.08)',
+                    borderRadius:
+                      '16px',
+                    padding:
+                      '16px',
+                    marginBottom:
+                      '18px',
+                    color:
+                      '#ff8a8a',
+                    textAlign:
+                      'center'
+                  }}
+                >
+                  Erro ao buscar resultado oficial: {erroResultado}
+                </div>
+
+              )}
+
+              {oficial ? (
 
                 <div
                   style={{
                     marginBottom:
-                      '18px'
+                      '18px',
+                    border:
+                      '1px solid rgba(255,196,0,0.28)',
+                    background:
+                      'rgba(255,196,0,0.07)',
+                    borderRadius:
+                      '20px',
+                    padding:
+                      '20px'
                   }}
                 >
 
@@ -573,32 +821,39 @@ export default function GruposPublicosPage() {
                       textAlign:
                         'center',
                       marginBottom:
-                        '14px'
+                        '14px',
+                      color:
+                        '#ffc400'
                     }}
                   >
                     RESULTADO OFICIAL
                   </h3>
 
-                  {renderTeam(
-                    oficial.first_place,
-                    1
+                  {renderListaGrupo(
+                    oficial
                   )}
 
-                  {renderTeam(
-                    oficial.second_place,
-                    2
-                  )}
+                </div>
 
-                  {renderTeam(
-                    oficial.third_place,
-                    3
-                  )}
+              ) : (
 
-                  {renderTeam(
-                    oficial.fourth_place,
-                    4
-                  )}
-
+                <div
+                  style={{
+                    border:
+                      '1px solid rgba(255,255,255,0.08)',
+                    background:
+                      'rgba(255,255,255,0.03)',
+                    borderRadius:
+                      '16px',
+                    padding:
+                      '18px',
+                    marginBottom:
+                      '18px',
+                    textAlign:
+                      'center'
+                  }}
+                >
+                  Nenhum resultado oficial cadastrado para este grupo.
                 </div>
 
               )}
@@ -612,7 +867,8 @@ export default function GruposPublicosPage() {
                   }}
                 >
                   {renderCard(
-                    meuPalpite
+                    meuPalpite,
+                    'Meu palpite'
                   )}
                 </div>
 
@@ -633,7 +889,8 @@ export default function GruposPublicosPage() {
               >
 
                 {rivais.map(
-                  renderCard
+                  (item) =>
+                    renderCard(item)
                 )}
 
               </div>

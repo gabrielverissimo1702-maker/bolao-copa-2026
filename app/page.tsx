@@ -5,9 +5,14 @@ import { useEffect, useState } from 'react'
 import Navbar from './components/Navbar'
 
 import { supabase } from '../lib/supabase'
+import {
+  calcularTotalPontosGrupos
+} from '../lib/grupos'
+import {
+  calcularCravadasUsuario
+} from '../lib/jogos'
 
 import { useRouter } from 'next/navigation'
-import { NOMEM } from 'dns'
 
 export default function HomePage() {
 
@@ -98,10 +103,101 @@ export default function HomePage() {
 
         if (rankingData) {
 
-          setRanking(rankingData)
+          const {
+            data: predictions
+          } =
+            await supabase
+              .from('group_predictions')
+              .select('*')
+
+          const {
+            data: results
+          } =
+            await supabase
+              .from('group_results')
+              .select('*')
+
+          const {
+            data: allBets
+          } =
+            await supabase
+              .from('bets')
+              .select('*')
+
+          const {
+            data: allGames
+          } =
+            await supabase
+              .from('games')
+              .select('*')
+
+          const resultsByGroup: Record<string, any> = {}
+
+          results?.forEach(
+            (result: any) => {
+              resultsByGroup[
+                result.group_name
+              ] = result
+            }
+          )
+
+          const gamesById: Record<number, any> = {}
+
+          allGames?.forEach(
+            (game: any) => {
+              gamesById[game.id] = game
+            }
+          )
+
+          const rankingComPontos =
+            rankingData
+              .map(
+                (profile: any) => {
+                  const pontosPalpites =
+                    Number(
+                      profile.pontos || 0
+                    )
+
+                  const pontosGrupos =
+                    calcularTotalPontosGrupos(
+                      profile.id,
+                      predictions || [],
+                      resultsByGroup
+                    )
+
+                  const cravadasCalculadas =
+                    calcularCravadasUsuario(
+                      profile.id,
+                      allBets || [],
+                      gamesById
+                    )
+
+                  return {
+                    ...profile,
+                    pontos_palpite:
+                      pontosPalpites,
+                    pontos_grupos:
+                      pontosGrupos,
+                    pontos_total:
+                      pontosPalpites +
+                      pontosGrupos,
+                    cravadas_total:
+                      cravadasCalculadas
+                  }
+                }
+              )
+              .sort(
+                (a: any, b: any) =>
+                  b.pontos_total -
+                    a.pontos_total ||
+                  b.cravadas_total -
+                    a.cravadas_total
+              )
+
+          setRanking(rankingComPontos)
 
           const posicao =
-            rankingData.findIndex(
+            rankingComPontos.findIndex(
               (u: any) =>
                 u.id === user.id
             ) + 1
@@ -164,7 +260,7 @@ export default function HomePage() {
 
     }
 
-  }, [])
+  }, [router])
 
   const getTeam =
     (sigla: string) => {
@@ -463,7 +559,14 @@ maxWidth: '100%',
                     fontWeight: 'bold'
                   }}
                 >
-                  {perfil?.pontos ?? 0}
+                  {
+                    ranking.find(
+                      (user: any) =>
+                        user.id === perfil?.id
+                    )?.pontos_total ??
+                    perfil?.pontos ??
+                    0
+                  }
                 </p>
 
               </div>
@@ -512,7 +615,14 @@ maxWidth: '100%',
                     fontWeight: 'bold'
                   }}
                 >
-                  {perfil?.cravadas ?? 0}
+                  {
+                    ranking.find(
+                      (user: any) =>
+                        user.id === perfil?.id
+                    )?.cravadas_total ??
+                    perfil?.cravadas ??
+                    0
+                  }
                 </p>
 
               </div>
@@ -850,7 +960,7 @@ maxWidth: '100%',
                               '#00ff9d'
                           }}
                         >
-                          {user.pontos}
+                          {user.pontos_total}
                         </div>
 
                         {/* CRAV */}
@@ -872,7 +982,7 @@ maxWidth: '100%',
                               '#ffc400'
                           }}
                         >
-                          {user.cravadas}
+                          {user.cravadas_total}
                         </div>
 
                       </div>

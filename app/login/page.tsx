@@ -8,6 +8,38 @@ import { useRouter } from 'next/navigation'
 
 import { supabase } from '../../lib/supabase'
 
+const getAuthErrorMessage = (
+  message?: string
+) => {
+
+  if (
+    message ===
+    'Email not confirmed'
+  ) {
+
+    return (
+      'Conta criada, mas o Supabase esta exigindo confirmacao de e-mail. ' +
+      'Desative a confirmacao de e-mail no painel do Supabase ou confirme este usuario manualmente.'
+    )
+
+  }
+
+  if (
+    message ===
+    'Invalid login credentials'
+  ) {
+
+    return 'Login ou senha invalidos'
+
+  }
+
+  return (
+    message ||
+    'Nao foi possivel autenticar agora'
+  )
+
+}
+
 export default function LoginPage() {
 
   const router = useRouter()
@@ -34,6 +66,10 @@ export default function LoginPage() {
     setCodigoValido] =
       useState(false)
 
+  const [codigoLiberado,
+    setCodigoLiberado] =
+      useState<any>(null)
+
   /* CREATE ACCOUNT */
 
   const [nome, setNome] =
@@ -55,8 +91,16 @@ export default function LoginPage() {
     setConfirmarSenha] =
       useState('')
 
-  const [loading,
-    setLoading] =
+  const [loadingLogin,
+    setLoadingLogin] =
+      useState(false)
+
+  const [loadingCodigo,
+    setLoadingCodigo] =
+      useState(false)
+
+  const [loadingCriar,
+    setLoadingCriar] =
       useState(false)
 
   /* LOGIN */
@@ -64,33 +108,62 @@ export default function LoginPage() {
   const entrar =
     async () => {
 
-      setLoading(true)
+      if (loadingLogin) return
 
-      const email =
-        `${login}@bolao.com`
-
-      const { error } =
-        await supabase.auth
-          .signInWithPassword({
-
-            email,
-            password
-
-          })
-
-      setLoading(false)
-
-      if (error) {
+      if (
+        !login.trim() ||
+        !password.trim()
+      ) {
 
         alert(
-          'Login ou senha inválidos'
+          'Preencha login e senha'
         )
 
         return
 
       }
 
-      router.push('/')
+      setLoadingLogin(true)
+
+      try {
+
+        const email =
+          `${login.trim().toLowerCase()}@bolao.com`
+
+        const { error } =
+          await supabase.auth
+            .signInWithPassword({
+
+              email,
+              password
+
+            })
+
+        if (error) {
+
+          alert(
+            getAuthErrorMessage(
+              error.message
+            )
+          )
+
+          return
+
+        }
+
+        router.push('/')
+
+      } catch {
+
+        alert(
+          'Erro ao entrar'
+        )
+
+      } finally {
+
+        setLoadingLogin(false)
+
+      }
 
     }
 
@@ -99,35 +172,115 @@ export default function LoginPage() {
   const validarCodigo =
     async () => {
 
-      if (!codigo)
-        return
+      if (loadingCodigo) return
 
-      setLoading(true)
+      const codigoLimpo =
+        codigo.trim().toUpperCase()
 
-      const { data, error } =
-        await supabase
-          .from('access_codes')
-          .select('*')
-          .eq(
-            'code',
-            codigo.toUpperCase()
-          )
-          .eq('used', false)
-          .single()
-
-      setLoading(false)
-
-      if (error || !data) {
+      if (!codigoLimpo) {
 
         alert(
-          'Código inválido'
+          'Digite o código de acesso'
         )
 
         return
 
       }
 
-      setCodigoValido(true)
+      setLoadingCodigo(true)
+
+      try {
+
+        const { data, error } =
+          await supabase
+            .from('access_codes')
+            .select('*')
+            .eq(
+              'code',
+              codigoLimpo
+            )
+            .maybeSingle()
+
+        if (error) {
+
+          console.error(
+            'Erro ao validar código no Supabase:',
+            error
+          )
+
+          alert(
+            `Erro ao validar código: ${error.message}`
+          )
+
+          return
+
+        }
+
+        if (!data) {
+
+          alert(
+            'Código inválido'
+          )
+
+          return
+
+        }
+
+        const isActive =
+          data.is_active !== false
+
+        const used =
+          data.used === true
+
+        const usedCount =
+          Number(data.used_count ?? 0)
+
+        const maxUses =
+          Number(data.max_uses ?? 1)
+
+        if (!isActive) {
+
+          alert(
+            'Este código está inativo'
+          )
+
+          return
+
+        }
+
+        if (
+          used ||
+          usedCount >= maxUses
+        ) {
+
+          alert(
+            'Este código já foi usado'
+          )
+
+          return
+
+        }
+
+        setCodigoLiberado(data)
+
+        setCodigoValido(true)
+
+      } catch (error) {
+
+        console.error(
+          'Erro inesperado ao validar código:',
+          error
+        )
+
+        alert(
+          'Erro inesperado ao validar código'
+        )
+
+      } finally {
+
+        setLoadingCodigo(false)
+
+      }
 
     }
 
@@ -136,11 +289,14 @@ export default function LoginPage() {
   const criarConta =
     async () => {
 
+      if (loadingCriar) return
+
       if (
-        !nome ||
-        !iniciais ||
-        !novoLogin ||
-        !novaSenha
+        !nome.trim() ||
+        !iniciais.trim() ||
+        !novoLogin.trim() ||
+        !novaSenha ||
+        !confirmarSenha
       ) {
 
         alert(
@@ -164,109 +320,300 @@ export default function LoginPage() {
 
       }
 
-      setLoading(true)
-
-      /* CHECK LOGIN */
-
-      const {
-        data: loginExiste
-      } = await supabase
-        .from('profiles')
-        .select('login')
-        .eq(
-          'login',
-          novoLogin
-        )
-        .single()
-
-      if (loginExiste) {
-
-        setLoading(false)
+      if (novaSenha.length < 6) {
 
         alert(
-          'Login já utilizado'
+          'A senha precisa ter pelo menos 6 caracteres'
         )
 
         return
 
       }
 
-      /* SIGNUP */
+      if (!codigoLiberado) {
 
-      const email =
-        `${novoLogin}@bolao.com`
+        alert(
+          'Valide o código novamente'
+        )
 
-      const {
-        data,
-        error
-      } =
-        await supabase.auth
-          .signUp({
+        setCodigoValido(false)
 
-            email,
-            password:
-              novaSenha
+        return
+
+      }
+
+      setLoadingCriar(true)
+
+      try {
+
+        const loginLimpo =
+          novoLogin
+            .trim()
+            .toLowerCase()
+            .replace(/\s/g, '')
+
+        const codigoLimpo =
+          codigo.trim().toUpperCase()
+
+        /* CHECK LOGIN */
+
+        const {
+          data: loginExiste,
+          error: loginError
+        } = await supabase
+          .from('profiles')
+          .select('login')
+          .eq(
+            'login',
+            loginLimpo
+          )
+          .maybeSingle()
+
+        if (loginError) {
+
+          console.error(
+            'Erro ao verificar login:',
+            loginError
+          )
+
+          alert(
+            `Erro ao verificar login: ${loginError.message}`
+          )
+
+          return
+
+        }
+
+        if (loginExiste) {
+
+          alert(
+            'Login já utilizado'
+          )
+
+          return
+
+        }
+
+        /* CONFERE CÓDIGO DE NOVO */
+
+        const {
+          data: codigoAtual,
+          error: codigoAtualError
+        } = await supabase
+          .from('access_codes')
+          .select('*')
+          .eq(
+            'id',
+            codigoLiberado.id
+          )
+          .maybeSingle()
+
+        if (
+          codigoAtualError ||
+          !codigoAtual
+        ) {
+
+          console.error(
+            'Erro ao conferir código:',
+            codigoAtualError
+          )
+
+          alert(
+            codigoAtualError?.message ||
+            'Erro ao conferir código'
+          )
+
+          return
+
+        }
+
+        const usedCount =
+          Number(codigoAtual.used_count ?? 0)
+
+        const maxUses =
+          Number(codigoAtual.max_uses ?? 1)
+
+        if (
+          codigoAtual.is_active === false ||
+          codigoAtual.used === true ||
+          usedCount >= maxUses
+        ) {
+
+          alert(
+            'Este código não está mais disponível'
+          )
+
+          setCodigoValido(false)
+
+          setCodigoLiberado(null)
+
+          return
+
+        }
+
+        /* SIGNUP */
+
+        const email =
+          `${loginLimpo}@bolao.com`
+
+        const {
+          data,
+          error
+        } =
+          await supabase.auth
+            .signUp({
+
+              email,
+              password:
+                novaSenha,
+              options: {
+                data: {
+                  nome:
+                    nome.trim().toUpperCase(),
+                  iniciais:
+                    iniciais.trim().toUpperCase(),
+                  login:
+                    loginLimpo,
+                  access_code:
+                    codigoLimpo
+                }
+              }
+
+            })
+
+        if (
+          error ||
+          !data.user
+        ) {
+
+          console.error(
+            'Erro ao criar usuário:',
+            error
+          )
+
+          alert(
+            error?.message ||
+            'Erro ao criar conta'
+          )
+
+          return
+
+        }
+
+        /* PROFILE */
+
+        const {
+          error: profileError
+        } = await supabase
+          .from('profiles')
+          .insert({
+
+            id:
+              data.user.id,
+
+            nome:
+              nome.trim().toUpperCase(),
+
+            iniciais:
+              iniciais
+                .trim()
+                .toUpperCase(),
+
+            login:
+              loginLimpo,
+
+            pontos: 0,
+
+            cravadas: 0
 
           })
 
-      if (
-        error ||
-        !data.user
-      ) {
+        if (profileError) {
 
-        setLoading(false)
+          console.error(
+            'Erro ao criar perfil:',
+            profileError
+          )
+
+          alert(
+            `Conta criada, mas houve erro ao criar o perfil: ${profileError.message}`
+          )
+
+          return
+
+        }
+
+        /* USED CODE */
+
+        const {
+          error: usedCodeError
+        } = await supabase
+          .from('access_codes')
+          .update({
+            used: true,
+            used_count:
+              usedCount + 1
+          })
+          .eq(
+            'id',
+            codigoAtual.id
+          )
+
+        if (usedCodeError) {
+
+          console.error(
+            'Erro ao atualizar código:',
+            usedCodeError
+          )
+
+          alert(
+            `Conta criada, mas houve erro ao marcar código como usado: ${usedCodeError.message}`
+          )
+
+          return
+
+        }
+
+        if (data.session) {
+
+          alert(
+            'Conta criada!'
+          )
+
+          router.push('/')
+
+          return
+
+        }
 
         alert(
-          'Erro ao criar conta'
+          'Conta criada, mas ainda nao foi possivel entrar automaticamente. ' +
+          'No Supabase, desative a confirmacao de e-mail para usar login por usuario e senha sem e-mail real.'
         )
 
-        return
+        setCodigoValido(false)
+        setCodigoLiberado(null)
+        setPrimeiroAcesso(false)
+        setCodigo('')
+        setLogin(loginLimpo)
+        setPassword('')
+
+      } catch (error) {
+
+        console.error(
+          'Erro inesperado ao criar conta:',
+          error
+        )
+
+        alert(
+          'Erro inesperado ao criar conta'
+        )
+
+      } finally {
+
+        setLoadingCriar(false)
 
       }
-
-      /* PROFILE */
-
-      await supabase
-        .from('profiles')
-        .insert({
-
-          id:
-            data.user.id,
-
-          nome,
-
-          iniciais:
-            iniciais
-              .toUpperCase(),
-
-          login:
-            novoLogin,
-
-          pontos: 0,
-
-          cravadas: 0
-
-        })
-
-      /* USED CODE */
-
-      await supabase
-        .from('access_codes')
-        .update({
-          used: true
-        })
-        .eq(
-          'code',
-          codigo.toUpperCase()
-        )
-
-      setLoading(false)
-
-      alert(
-        'Conta criada!'
-      )
-
-      router.push('/')
 
     }
 
@@ -290,10 +637,13 @@ export default function LoginPage() {
     >
 
       <form
-      onSubmit={async (e) => {
-    e.preventDefault()
-    await entrar()
-      }}
+        onSubmit={async (e) => {
+          e.preventDefault()
+
+          if (!codigoValido) {
+            await entrar()
+          }
+        }}
         style={{
           width: '100%',
 
@@ -501,10 +851,9 @@ export default function LoginPage() {
             {/* BUTTON */}
 
             <button
-            type='submit'
-              onClick={entrar}
+              type='submit'
 
-              disabled={loading}
+              disabled={loadingLogin}
 
               style={{
                 width: '100%',
@@ -532,11 +881,17 @@ export default function LoginPage() {
                 textTransform:
                   'uppercase',
 
-                cursor: 'pointer'
+                cursor:
+                  loadingLogin
+                    ? 'not-allowed'
+                    : 'pointer',
+
+                opacity:
+                  loadingLogin ? 0.75 : 1
               }}
             >
               {
-                loading
+                loadingLogin
                   ? 'Entrando...'
                   : 'Entrar'
               }
@@ -554,24 +909,18 @@ export default function LoginPage() {
             >
 
               <button
+                type="button"
                 onClick={() =>
                   setPrimeiroAcesso(
                     !primeiroAcesso
                   )
                 }
-
                 style={{
-                  background:
-                    'transparent',
-
+                  background: 'transparent',
                   border: 'none',
-
                   color: '#00ff9d',
-
                   cursor: 'pointer',
-
-                  fontWeight:
-                    'bold'
+                  fontWeight: 'bold'
                 }}
               >
                 Primeiro acesso?
@@ -591,45 +940,39 @@ export default function LoginPage() {
 
                 <input
                   value={codigo}
-
                   onChange={(e) =>
                     setCodigo(
-                      e.target.value
+                      e.target.value.toUpperCase()
                     )
                   }
-
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault()
+                      validarCodigo()
+                    }
+                  }}
                   placeholder="Digite o código"
-
                   style={{
                     width: '100%',
-
                     height: '56px',
-
-                    borderRadius:
-                      '16px',
-
+                    borderRadius: '16px',
                     border:
                       '1px solid rgba(255,255,255,0.08)',
-
                     background:
                       'rgba(255,255,255,0.03)',
-
-                    padding:
-                      '0 18px',
-
+                    padding: '0 18px',
                     color: 'white',
-
                     fontSize: '16px',
-
                     outline: 'none'
                   }}
                 />
 
                 <button
+                  type="button"
                   onClick={
                     validarCodigo
                   }
-
+                  disabled={loadingCodigo}
                   style={{
                     width: '100%',
 
@@ -651,10 +994,20 @@ export default function LoginPage() {
                     fontWeight:
                       'bold',
 
-                    cursor: 'pointer'
+                    cursor:
+                      loadingCodigo
+                        ? 'not-allowed'
+                        : 'pointer',
+
+                    opacity:
+                      loadingCodigo ? 0.75 : 1
                   }}
                 >
-                  Continuar
+                  {
+                    loadingCodigo
+                      ? 'Validando...'
+                      : 'Continuar'
+                  }
                 </button>
 
               </div>
@@ -687,10 +1040,10 @@ export default function LoginPage() {
               value={nome}
 
               onChange={(e) =>
-  setNome(
-    e.target.value.toUpperCase()
-  )
-}
+                setNome(
+                  e.target.value.toUpperCase()
+                )
+              }
 
               placeholder="Nome"
 
@@ -706,8 +1059,8 @@ export default function LoginPage() {
 
               onChange={(e) =>
                 setIniciais(
-  e.target.value.toUpperCase()
-)
+                  e.target.value.toUpperCase()
+                )
               }
 
               placeholder="Iniciais"
@@ -726,10 +1079,10 @@ export default function LoginPage() {
 
               onChange={(e) =>
                 setNovoLogin(
-  e.target.value
-    .toLowerCase()
-    .replace(/\s/g, '')
-)
+                  e.target.value
+                    .toLowerCase()
+                    .replace(/\s/g, '')
+                )
               }
 
               placeholder="Login"
@@ -790,10 +1143,11 @@ export default function LoginPage() {
             {/* BTN */}
 
             <button
+              type="button"
               onClick={
                 criarConta
               }
-
+              disabled={loadingCriar}
               style={{
                 width: '100%',
 
@@ -822,10 +1176,40 @@ export default function LoginPage() {
                 textTransform:
                   'uppercase',
 
-                cursor: 'pointer'
+                cursor:
+                  loadingCriar
+                    ? 'not-allowed'
+                    : 'pointer',
+
+                opacity:
+                  loadingCriar ? 0.75 : 1
               }}
             >
-              Criar conta
+              {
+                loadingCriar
+                  ? 'Criando...'
+                  : 'Criar conta'
+              }
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setCodigoValido(false)
+                setCodigoLiberado(null)
+              }}
+              disabled={loadingCriar}
+              style={{
+                width: '100%',
+                marginTop: '16px',
+                background: 'transparent',
+                border: 'none',
+                color: '#00ff9d',
+                cursor: 'pointer',
+                fontWeight: 'bold'
+              }}
+            >
+              Voltar
             </button>
 
           </div>
