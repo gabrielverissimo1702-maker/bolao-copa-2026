@@ -36,6 +36,8 @@ type Team = {
 type GroupsState =
   Record<string, string[]>
 
+type EditMode = 'drag' | 'table'
+
 function isGruposBloqueado() {
   return Date.now() >= DIVULGACAO_GRUPOS
 }
@@ -203,6 +205,206 @@ function TeamRow({
 
 }
 
+function GroupPositionGrid({
+  groupName,
+  orderedTeams,
+  allTeams,
+  mobile,
+  locked,
+  onSelectPosition
+}: {
+  groupName: string
+  orderedTeams: string[]
+  allTeams: Team[]
+  mobile: boolean
+  locked: boolean
+  onSelectPosition: (
+    teamName: string,
+    positionIndex: number
+  ) => void
+}) {
+
+  const groupTeams =
+    allTeams
+      .filter(
+        (team) =>
+          team.group_name === groupName
+      )
+      .map(
+        (team) =>
+          team.nome
+      )
+      .sort()
+
+  return (
+
+    <div
+      style={{
+        overflowX: 'auto'
+      }}
+    >
+
+      <div
+        style={{
+          minWidth:
+            mobile
+              ? '420px'
+              : '100%',
+          display: 'grid',
+          gridTemplateColumns:
+            'minmax(90px,1fr) repeat(4,56px)',
+          gap: '8px',
+          alignItems: 'center'
+        }}
+      >
+
+        <div />
+
+        {[1, 2, 3, 4].map(
+          (position) => (
+
+            <div
+              key={position}
+              style={{
+                textAlign: 'center',
+                color: '#00ff9d',
+                fontSize: '12px',
+                fontWeight: 'bold'
+              }}
+            >
+              {position}º
+            </div>
+
+          )
+        )}
+
+        {groupTeams.map(
+          (teamName) => {
+
+            const team =
+              allTeams.find(
+                (item) =>
+                  item.nome === teamName
+              )
+
+            const currentPosition =
+              orderedTeams.indexOf(
+                teamName
+              )
+
+            return (
+
+              <div
+                key={teamName}
+                style={{
+                  display: 'contents'
+                }}
+              >
+
+                <div
+                  style={{
+                    height: '48px',
+                    borderRadius: '12px',
+                    border:
+                      '1px solid rgba(255,255,255,0.06)',
+                    background:
+                      'rgba(255,255,255,0.03)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '0 10px',
+                    minWidth: 0
+                  }}
+                >
+                  <img
+                    src={`https://flagcdn.com/w80/${team?.flag}.png`}
+                    alt=""
+                    style={{
+                      width: '26px',
+                      height: '26px',
+                      borderRadius: '999px',
+                      objectFit: 'cover',
+                      flexShrink: 0
+                    }}
+                  />
+
+                  <span
+                    style={{
+                      fontWeight: 'bold',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap'
+                    }}
+                  >
+                    {teamName}
+                  </span>
+                </div>
+
+                {[0, 1, 2, 3].map(
+                  (positionIndex) => {
+
+                    const selected =
+                      currentPosition ===
+                      positionIndex
+
+                    return (
+
+                      <button
+                        key={positionIndex}
+                        type="button"
+                        disabled={locked}
+                        onClick={() =>
+                          onSelectPosition(
+                            teamName,
+                            positionIndex
+                          )
+                        }
+                        aria-label={`${teamName} em ${positionIndex + 1} lugar`}
+                        style={{
+                          height: '48px',
+                          borderRadius: '12px',
+                          border:
+                            selected
+                              ? '1px solid #00ff9d'
+                              : '1px solid rgba(255,255,255,0.08)',
+                          background:
+                            selected
+                              ? 'rgba(0,255,157,0.14)'
+                              : 'rgba(255,255,255,0.03)',
+                          color:
+                            selected
+                              ? '#00ff9d'
+                              : 'white',
+                          cursor:
+                            locked
+                              ? 'default'
+                              : 'pointer',
+                          fontWeight: 'bold'
+                        }}
+                      >
+                        {selected ? 'X' : ''}
+                      </button>
+
+                    )
+
+                  }
+                )}
+
+              </div>
+
+            )
+
+          }
+        )}
+
+      </div>
+
+    </div>
+
+  )
+
+}
+
 export default function GruposPage() {
 
   const [mobile, setMobile] =
@@ -219,6 +421,9 @@ export default function GruposPage() {
 
   const [agora, setAgora] =
     useState(() => Date.now())
+
+  const [editMode, setEditMode] =
+    useState<EditMode>('table')
 
   const bloqueado =
     agora >= DIVULGACAO_GRUPOS
@@ -361,6 +566,41 @@ export default function GruposPage() {
             oldIndex,
             newIndex
           )
+      })
+
+    }
+
+  const handleSelectPosition =
+    (
+      groupName: string,
+      teamName: string,
+      positionIndex: number
+    ) => {
+
+      if (isGruposBloqueado())
+        return
+
+      const items =
+        [...(groups[groupName] || [])]
+
+      const currentIndex =
+        items.indexOf(teamName)
+
+      if (
+        currentIndex === -1 ||
+        currentIndex === positionIndex
+      )
+        return
+
+      const occupyingTeam =
+        items[positionIndex]
+
+      items[positionIndex] = teamName
+      items[currentIndex] = occupyingTeam
+
+      setGroups({
+        ...groups,
+        [groupName]: items
       })
 
     }
@@ -551,6 +791,76 @@ export default function GruposPage() {
 
         )}
 
+        {!bloqueado && (
+
+          <div
+            style={{
+              display: 'flex',
+              justifyContent:
+                mobile
+                  ? 'stretch'
+                  : 'flex-start',
+              gap: '8px',
+              marginBottom: '18px',
+              maxWidth: '520px'
+            }}
+          >
+
+            {[
+              ['table', 'Tabela'],
+              ['drag', 'Arrastar']
+            ].map(
+              ([mode, label]) => {
+
+                const active =
+                  editMode === mode
+
+                return (
+
+                  <button
+                    key={mode}
+                    type="button"
+                    onClick={() =>
+                      setEditMode(
+                        mode as EditMode
+                      )
+                    }
+                    style={{
+                      flex:
+                        mobile
+                          ? 1
+                          : 'initial',
+                      height: '44px',
+                      padding: '0 18px',
+                      borderRadius: '14px',
+                      border:
+                        active
+                          ? '1px solid #00ff9d'
+                          : '1px solid rgba(255,255,255,0.08)',
+                      background:
+                        active
+                          ? 'rgba(0,255,157,0.12)'
+                          : 'rgba(255,255,255,0.03)',
+                      color:
+                        active
+                          ? '#00ff9d'
+                          : 'white',
+                      fontWeight: 'bold',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {label}
+                  </button>
+
+                )
+
+              }
+            )}
+
+          </div>
+
+        )}
+
         <section
           style={{
             display: 'grid',
@@ -625,18 +935,43 @@ export default function GruposPage() {
                   }}
                 >
 
-                  <DndContext
-                    collisionDetection={
-                      closestCenter
-                    }
-                    onDragEnd={
-                      (event) =>
-                        handleDragEnd(
-                          event,
-                          groupName
-                        )
-                    }
-                  >
+                  {editMode === 'table' ? (
+
+                    <GroupPositionGrid
+                      groupName={groupName}
+                      orderedTeams={
+                        groups[groupName] || []
+                      }
+                      allTeams={teamsData}
+                      mobile={mobile}
+                      locked={bloqueado}
+                      onSelectPosition={
+                        (
+                          teamName,
+                          positionIndex
+                        ) =>
+                          handleSelectPosition(
+                            groupName,
+                            teamName,
+                            positionIndex
+                          )
+                      }
+                    />
+
+                  ) : (
+
+                    <DndContext
+                      collisionDetection={
+                        closestCenter
+                      }
+                      onDragEnd={
+                        (event) =>
+                          handleDragEnd(
+                            event,
+                            groupName
+                          )
+                      }
+                    >
 
                     <SortableContext
                       items={
@@ -667,7 +1002,9 @@ export default function GruposPage() {
 
                     </SortableContext>
 
-                  </DndContext>
+                    </DndContext>
+
+                  )}
 
                 </div>
 
