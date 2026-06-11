@@ -644,7 +644,7 @@ export default function GruposPage() {
         }
 
         const {
-          data: existente,
+          data: existentes,
           error: buscaError
         } =
           await supabase
@@ -652,7 +652,6 @@ export default function GruposPage() {
             .select('id')
             .eq('user_id', userId)
             .eq('group_name', group)
-            .maybeSingle()
 
         if (buscaError) {
           alert(
@@ -661,12 +660,19 @@ export default function GruposPage() {
           return
         }
 
+        const jaExiste =
+          Boolean(
+            existentes &&
+            existentes.length > 0
+          )
+
         const query =
-          existente?.id
+          jaExiste
             ? supabase
               .from('group_predictions')
               .update(payload)
-              .eq('id', existente.id)
+              .eq('user_id', userId)
+              .eq('group_name', group)
             : supabase
               .from('group_predictions')
               .insert(payload)
