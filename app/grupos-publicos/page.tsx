@@ -6,6 +6,7 @@ import { supabase } from '../../lib/supabase'
 import { useRouter } from 'next/navigation'
 import {
   calcularPontosGrupo,
+  deduplicarPredicoesGrupos,
   DIVULGACAO_GRUPOS,
   ORDEM_GRUPOS,
   POSICOES_GRUPO
@@ -147,7 +148,9 @@ export default function GruposPublicosPage() {
 
         const agrupados: Record<string, any[]> = {}
 
-        predictions?.forEach(
+        deduplicarPredicoesGrupos(
+          predictions || []
+        ).forEach(
           (item: any) => {
 
             if (

@@ -6,7 +6,8 @@ import Navbar from './components/Navbar'
 
 import { supabase } from '../lib/supabase'
 import {
-  calcularTotalPontosGrupos
+  calcularTotalPontosGrupos,
+  deduplicarPredicoesGrupos
 } from '../lib/grupos'
 import {
   calcularCravadasUsuario
@@ -150,49 +151,56 @@ export default function HomePage() {
           )
 
           const rankingComPontos =
-            rankingData
-              .map(
-                (profile: any) => {
-                  const pontosPalpites =
-                    Number(
-                      profile.pontos || 0
-                    )
+            (() => {
+              const predictionsValidas =
+                deduplicarPredicoesGrupos(
+                  predictions || []
+                )
 
-                  const pontosGrupos =
-                    calcularTotalPontosGrupos(
-                      profile.id,
-                      predictions || [],
-                      resultsByGroup
-                    )
+              return rankingData
+                .map(
+                  (profile: any) => {
+                    const pontosPalpites =
+                      Number(
+                        profile.pontos || 0
+                      )
 
-                  const cravadasCalculadas =
-                    calcularCravadasUsuario(
-                      profile.id,
-                      allBets || [],
-                      gamesById
-                    )
+                    const pontosGrupos =
+                      calcularTotalPontosGrupos(
+                        profile.id,
+                        predictionsValidas,
+                        resultsByGroup
+                      )
 
-                  return {
-                    ...profile,
-                    pontos_palpite:
-                      pontosPalpites,
-                    pontos_grupos:
-                      pontosGrupos,
-                    pontos_total:
-                      pontosPalpites +
-                      pontosGrupos,
-                    cravadas_total:
-                      cravadasCalculadas
+                    const cravadasCalculadas =
+                      calcularCravadasUsuario(
+                        profile.id,
+                        allBets || [],
+                        gamesById
+                      )
+
+                    return {
+                      ...profile,
+                      pontos_palpite:
+                        pontosPalpites,
+                      pontos_grupos:
+                        pontosGrupos,
+                      pontos_total:
+                        pontosPalpites +
+                        pontosGrupos,
+                      cravadas_total:
+                        cravadasCalculadas
+                    }
                   }
-                }
-              )
-              .sort(
-                (a: any, b: any) =>
-                  b.pontos_total -
-                    a.pontos_total ||
-                  b.cravadas_total -
-                    a.cravadas_total
-              )
+                )
+                .sort(
+                  (a: any, b: any) =>
+                    b.pontos_total -
+                      a.pontos_total ||
+                    b.cravadas_total -
+                      a.cravadas_total
+                )
+            })()
 
           setRanking(rankingComPontos)
 

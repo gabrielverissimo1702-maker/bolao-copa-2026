@@ -19,11 +19,85 @@ export const POSICOES_GRUPO = [
 ] as const
 
 type GroupRecord = {
+  id?: number
+  user_id?: string
   group_name?: string
   first_place?: string
   second_place?: string
   third_place?: string
   fourth_place?: string
+}
+
+export function normalizarGrupo(
+  groupName?: string | null
+) {
+
+  if (!groupName)
+    return ''
+
+  return groupName
+    .toString()
+    .trim()
+    .toUpperCase()
+    .replace(/^GRUPO\s+/, '')
+
+}
+
+export function deduplicarPredicoesGrupos<
+  T extends GroupRecord
+>(predictions: T[]) {
+
+  const byUserAndGroup =
+    new Map<string, T>()
+
+  predictions.forEach(
+    (prediction) => {
+
+      if (
+        !prediction.user_id ||
+        !prediction.group_name
+      ) {
+        return
+      }
+
+      const normalizedGroup =
+        normalizarGrupo(
+          prediction.group_name
+        )
+
+      if (!normalizedGroup)
+        return
+
+      const normalizedPrediction = {
+        ...prediction,
+        group_name:
+          normalizedGroup
+      }
+
+      const key =
+        `${prediction.user_id}:${normalizedGroup}`
+
+      const current =
+        byUserAndGroup.get(key)
+
+      if (
+        !current ||
+        Number(prediction.id || 0) >=
+          Number(current.id || 0)
+      ) {
+        byUserAndGroup.set(
+          key,
+          normalizedPrediction
+        )
+      }
+
+    }
+  )
+
+  return Array.from(
+    byUserAndGroup.values()
+  )
+
 }
 
 export function calcularPontosGrupo(

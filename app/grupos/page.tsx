@@ -623,25 +623,51 @@ export default function GruposPage() {
         return
       }
 
-      for (const group of ORDEM_GRUPOS) {
+      const payload =
+        ORDEM_GRUPOS
+          .map((group) => {
 
-        const teams =
-          groups[group]
+            const teams =
+              groups[group]
 
-        if (
-          !teams ||
-          teams.length < 4
+            if (
+              !teams ||
+              teams.length < 4
+            )
+              return null
+
+            return {
+              user_id: userId,
+              group_name: group,
+              first_place: teams[0],
+              second_place: teams[1],
+              third_place: teams[2],
+              fourth_place: teams[3]
+            }
+
+          })
+          .filter(
+            (
+              item
+            ): item is {
+              user_id: string
+              group_name: string
+              first_place: string
+              second_place: string
+              third_place: string
+              fourth_place: string
+            } =>
+              Boolean(item)
+          )
+
+      if (payload.length === 0) {
+        alert(
+          'Nenhum grupo completo para salvar.'
         )
-          continue
+        return
+      }
 
-        const payload = {
-          user_id: userId,
-          group_name: group,
-          first_place: teams[0],
-          second_place: teams[1],
-          third_place: teams[2],
-          fourth_place: teams[3]
-        }
+      for (const prediction of payload) {
 
         const {
           data: existentes,
@@ -651,38 +677,39 @@ export default function GruposPage() {
             .from('group_predictions')
             .select('id')
             .eq('user_id', userId)
-            .eq('group_name', group)
+            .eq(
+              'group_name',
+              prediction.group_name
+            )
 
         if (buscaError) {
           alert(
-            `Erro ao buscar grupo ${group}: ${buscaError.message}`
+            `Erro ao buscar grupo ${prediction.group_name}: ${buscaError.message}`
           )
           return
         }
 
-        const jaExiste =
-          Boolean(
-            existentes &&
-            existentes.length > 0
-          )
-
-        const query =
-          jaExiste
-            ? supabase
-              .from('group_predictions')
-              .update(payload)
-              .eq('user_id', userId)
-              .eq('group_name', group)
-            : supabase
-              .from('group_predictions')
-              .insert(payload)
+        const existe =
+          existentes &&
+          existentes.length > 0
 
         const { error } =
-          await query
+          existe
+            ? await supabase
+              .from('group_predictions')
+              .update(prediction)
+              .eq('user_id', userId)
+              .eq(
+                'group_name',
+                prediction.group_name
+              )
+            : await supabase
+              .from('group_predictions')
+              .insert(prediction)
 
         if (error) {
           alert(
-            `Erro ao salvar grupo ${group}: ${error.message}`
+            `Erro ao salvar grupo ${prediction.group_name}: ${error.message}`
           )
           return
         }

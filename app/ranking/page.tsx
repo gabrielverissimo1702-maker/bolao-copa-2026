@@ -6,7 +6,8 @@ import Navbar from '../components/Navbar'
 
 import { supabase } from '../../lib/supabase'
 import {
-  calcularTotalPontosGrupos
+  calcularTotalPontosGrupos,
+  deduplicarPredicoesGrupos
 } from '../../lib/grupos'
 import {
   calcularCravadasUsuario
@@ -111,6 +112,11 @@ export default function RankingPage() {
 
         if (rankingData) {
 
+          const predictionsValidas =
+            deduplicarPredicoesGrupos(
+              predictions || []
+            )
+
           const rankingComPontos =
             rankingData
               .map(
@@ -124,7 +130,7 @@ export default function RankingPage() {
                   const pontosGrupos =
                     calcularTotalPontosGrupos(
                       profile.id,
-                      predictions || [],
+                      predictionsValidas,
                       resultsByGroup
                     )
 
