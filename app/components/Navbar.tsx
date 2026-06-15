@@ -408,7 +408,9 @@ export default function Navbar() {
 
           <div
             onClick={() =>
-              router.push('/jogos')
+              router.push(
+                '/jogos?proximo=1'
+              )
             }
 
             style={

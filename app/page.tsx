@@ -225,10 +225,25 @@ export default function HomePage() {
             .order('match_date', {
               ascending: true
             })
-            .limit(4)
 
-        if (gamesData)
-          setGames(gamesData)
+        if (gamesData) {
+          const proximosJogos =
+            gamesData
+              .filter(
+                (game: any) =>
+                  new Date(
+                    game.match_date
+                  ).getTime() >=
+                  Date.now()
+              )
+              .slice(0, 4)
+
+          setGames(
+            proximosJogos.length > 0
+              ? proximosJogos
+              : gamesData.slice(-4)
+          )
+        }
 
         /* BETS */
 
@@ -287,6 +302,13 @@ export default function HomePage() {
         (b: any) =>
           b.game_id === gameId
       )
+
+    }
+
+  const irParaProximosJogos =
+    () => {
+
+      router.push('/jogos?proximo=1')
 
     }
 
@@ -454,6 +476,7 @@ maxWidth: '100%',
             {/* STATUS */}
 
             <div
+              onClick={irParaProximosJogos}
               style={{
 
                 border:
@@ -1147,7 +1170,10 @@ maxWidth: '100%',
                   '0 auto',
 
                 boxSizing:
-                  'border-box'
+                  'border-box',
+
+                cursor:
+                  'pointer'
               }}
             >
 
@@ -1584,9 +1610,7 @@ maxWidth: '100%',
 
                 <button
                   onClick={() =>
-                    router.push(
-                      '/jogos'
-                    )
+                    irParaProximosJogos()
                   }
 
                   style={{

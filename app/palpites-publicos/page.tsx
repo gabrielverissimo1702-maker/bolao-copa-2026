@@ -1,6 +1,10 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import {
+  ChevronLeft,
+  ChevronRight
+} from 'lucide-react'
 
 import Navbar from '../components/Navbar'
 
@@ -65,8 +69,9 @@ export default function PlacaresPage() {
               ascending: true
             })
 
-        if (gamesData)
+        if (gamesData) {
           setGames(gamesData)
+        }
 
         const { data: betsData } =
           await supabase
@@ -267,6 +272,22 @@ export default function PlacaresPage() {
 
     }
 
+  const getMobilePalpiteBackground =
+    (tipo: string) => {
+
+      if (tipo === 'cravada')
+        return '#3a2f05'
+
+      if (tipo === 'acerto')
+        return '#043526'
+
+      if (tipo === 'erro')
+        return '#351214'
+
+      return '#151515'
+
+    }
+
   const inicio =
     (pagina - 1) * jogosPorPagina
 
@@ -370,6 +391,7 @@ export default function PlacaresPage() {
         {/* PAGINAÇÃO */}
 
         <div
+          data-print-hidden="true"
           style={{
             display: 'flex',
             justifyContent: 'center',
@@ -811,7 +833,7 @@ export default function PlacaresPage() {
 
                     {/* MEU PALPITE */}
 
-                    {meuPalpite && (
+                    {!mobile && meuPalpite && (
 
                       <div
                         style={{
@@ -1063,21 +1085,172 @@ export default function PlacaresPage() {
                       Palpites da rodada
                     </p>
 
+                    {mobile && (
+
+                      <div
+                        style={{
+                          position: 'relative',
+                          height: 0,
+                          zIndex: 2
+                        }}
+                      >
+
+                        <button
+                          onClick={() =>
+                            document
+                              .getElementById(
+                                `palpites-scroll-${game.id}`
+                              )
+                              ?.scrollBy({
+                                left: -114,
+                                behavior: 'smooth'
+                              })
+                          }
+                          style={{
+                            position: 'absolute',
+                            left: '114px',
+                            top: '36px',
+                            width: '24px',
+                            height: '42px',
+                            border: 'none',
+                            background: 'transparent',
+                            color: '#00ff9d',
+                            fontWeight: 'bold',
+                            fontSize: '24px',
+                            cursor: 'pointer',
+                            padding: 0
+                          }}
+                        >
+                          <ChevronLeft
+                            size={24}
+                            strokeWidth={2.6}
+                          />
+                        </button>
+
+                        <button
+                          onClick={() =>
+                            document
+                              .getElementById(
+                                `palpites-scroll-${game.id}`
+                              )
+                              ?.scrollBy({
+                                left: 114,
+                                behavior: 'smooth'
+                              })
+                          }
+                          style={{
+                            position: 'absolute',
+                            right: '-4px',
+                            top: '36px',
+                            width: '24px',
+                            height: '42px',
+                            border: 'none',
+                            background: 'transparent',
+                            color: '#00ff9d',
+                            fontWeight: 'bold',
+                            fontSize: '24px',
+                            cursor: 'pointer',
+                            padding: 0
+                          }}
+                        >
+                          <ChevronRight
+                            size={24}
+                            strokeWidth={2.6}
+                          />
+                        </button>
+
+                        <div
+                          style={{
+                            position: 'absolute',
+                            left: '104px',
+                            top: '18px',
+                            bottom: '-96px',
+                            width: '34px',
+                            pointerEvents: 'none',
+                            background:
+                              'linear-gradient(90deg, rgba(0,0,0,0.88), rgba(0,0,0,0))'
+                          }}
+                        />
+
+                        <div
+                          style={{
+                            position: 'absolute',
+                            right: '-2px',
+                            top: '18px',
+                            bottom: '-96px',
+                            width: '34px',
+                            pointerEvents: 'none',
+                            background:
+                              'linear-gradient(270deg, rgba(0,0,0,0.88), rgba(0,0,0,0))'
+                          }}
+                        />
+
+                      </div>
+
+                    )}
+
                     <div
+                      id={`palpites-scroll-${game.id}`}
                       style={{
                         display: 'flex',
-                        flexWrap: 'wrap',
+                        flexWrap:
+                          mobile
+                            ? 'nowrap'
+                            : 'wrap',
 
-                        justifyContent: 'center',
+                        overflowX:
+                          mobile
+                            ? 'auto'
+                            : 'visible',
 
-                        gap: '10px'
+                        justifyContent:
+                          mobile
+                            ? 'flex-start'
+                            : 'center',
+
+                        gap: '10px',
+
+                        paddingBottom:
+                          mobile
+                            ? '6px'
+                            : 0,
+
+                        paddingLeft:
+                          mobile
+                            ? 0
+                            : 0,
+
+                        paddingRight:
+                          mobile
+                            ? '18px'
+                            : 0,
+
+                        scrollSnapType:
+                          mobile
+                            ? 'x mandatory'
+                            : 'none',
+
+                        WebkitOverflowScrolling:
+                          'touch'
                       }}
                     >
 
                       {palpites
                         .filter(
                           (b: any) =>
+                            mobile ||
                             b.user_id !== userId
+                        )
+                        .sort(
+                          (a: any, b: any) =>
+                            mobile
+                              ? Number(
+                                b.user_id === userId
+                              ) -
+                              Number(
+                                a.user_id === userId
+                              )
+                              : 0
                         )
                         .map(
                           (
@@ -1100,6 +1273,205 @@ export default function PlacaresPage() {
                             getPontuacaoStyle(
                               resultadoPalpite.tipo
                             )
+
+                          const palpiteDoUsuario =
+                            bet.user_id === userId
+
+                          if (mobile) {
+                            return (
+
+                              <div
+                                key={index}
+                                style={{
+                                  width:
+                                    palpiteDoUsuario
+                                      ? '108px'
+                                      : '104px',
+                                  flexShrink: 0,
+                                  scrollSnapAlign: 'start',
+                                  position:
+                                    palpiteDoUsuario
+                                      ? 'sticky'
+                                      : 'relative',
+                                  left:
+                                    palpiteDoUsuario
+                                      ? 0
+                                      : 'auto',
+                                  zIndex:
+                                    palpiteDoUsuario
+                                      ? 10
+                                      : 1,
+                                  display: 'flex',
+                                  flexDirection: 'column',
+                                  alignItems: 'center',
+                                  gap: '6px',
+                                  borderRadius: '10px',
+                                  padding: '8px 6px',
+                                  background:
+                                    getMobilePalpiteBackground(
+                                      resultadoPalpite.tipo
+                                    ),
+                                  border:
+                                    palpiteDoUsuario
+                                      ? estiloPalpite.border
+                                      : estiloPalpite.border,
+                                  boxShadow:
+                                    palpiteDoUsuario
+                                      ? `10px 0 22px #050505, inset 0 -3px 0 ${estiloPalpite.color}`
+                                      : estiloPalpite.shadow
+                                }}
+                              >
+
+                                <div
+                                  style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    minWidth: 0,
+                                    width: '100%'
+                                  }}
+                                >
+
+                                  <div
+                                    style={{
+                                      width: '28px',
+                                      height: '28px',
+                                      borderRadius: '999px',
+                                      display: 'none',
+                                      background:
+                                        'rgba(0,255,157,0.1)',
+                                      border:
+                                        '1px solid rgba(0,255,157,0.2)',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      color: '#00ff9d',
+                                      fontWeight: 'bold',
+                                      fontSize: '10px',
+                                      flexShrink: 0
+                                    }}
+                                  >
+                                    {
+                                      getProfile(
+                                        bet.user_id
+                                      )?.iniciais
+                                    }
+                                  </div>
+
+                                  <div
+                                    style={{
+                                      fontSize: '11px',
+                                      fontWeight: 'bold',
+                                      textAlign: 'center',
+                                      overflow: 'hidden',
+                                      textOverflow:
+                                        'ellipsis',
+                                      whiteSpace:
+                                        'nowrap'
+                                    }}
+                                  >
+                                    {palpiteDoUsuario
+                                      ? 'Meu palpite'
+                                      : nome}
+                                  </div>
+
+                                </div>
+
+                                <div
+                                  style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '5px',
+                                    fontWeight: 'bold',
+                                    color: 'white'
+                                  }}
+                                >
+                                  <span
+                                    style={{
+                                      width: '30px',
+                                      height: '30px',
+                                      borderRadius: '8px',
+                                      border:
+                                        estiloPalpite.border,
+                                      background:
+                                        'rgba(0,0,0,0.24)',
+                                      color:
+                                        estiloPalpite.color ===
+                                        'rgba(255,255,255,0.65)'
+                                          ? 'white'
+                                          : estiloPalpite.color,
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      fontSize: '17px',
+                                      fontWeight: 'bold'
+                                    }}
+                                  >
+                                    {bet.home_guess}
+                                  </span>
+
+                                  <span
+                                    style={{
+                                      opacity: 0.45,
+                                      fontSize: '13px'
+                                    }}
+                                  >
+                                    x
+                                  </span>
+
+                                  <span
+                                    style={{
+                                      width: '30px',
+                                      height: '30px',
+                                      borderRadius: '8px',
+                                      border:
+                                        estiloPalpite.border,
+                                      background:
+                                        'rgba(0,0,0,0.24)',
+                                      color:
+                                        estiloPalpite.color ===
+                                        'rgba(255,255,255,0.65)'
+                                          ? 'white'
+                                          : estiloPalpite.color,
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      fontSize: '17px',
+                                      fontWeight: 'bold'
+                                    }}
+                                  >
+                                    {bet.away_guess}
+                                  </span>
+                                </div>
+
+                                <div
+                                  style={{
+                                    alignSelf: 'center',
+                                    border:
+                                      estiloPalpite.border,
+                                    background:
+                                      'rgba(0,0,0,0.22)',
+                                    color:
+                                      estiloPalpite.color,
+                                    borderRadius: '999px',
+                                    padding: '5px 8px',
+                                    fontSize: '9px',
+                                    fontWeight: 'bold',
+                                    textTransform:
+                                      'uppercase',
+                                    whiteSpace: 'nowrap',
+                                    display: 'block'
+                                  }}
+                                >
+                                  {palpiteDoUsuario
+                                    ? `${resultadoPalpite.pontos} pts`
+                                    : `${resultadoPalpite.pontos} pts`}
+                                </div>
+
+                              </div>
+
+                            )
+                          }
 
                           return (
 

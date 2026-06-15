@@ -686,6 +686,7 @@ export default function GruposPublicosPage() {
           <>
 
             <div
+              data-print-hidden="true"
               style={{
                 display: 'flex',
                 justifyContent:

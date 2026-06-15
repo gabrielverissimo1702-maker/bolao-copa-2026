@@ -85,6 +85,31 @@ export default function JogosPage() {
         if (gamesData)
           setGames(gamesData)
 
+        if (
+          gamesData &&
+          new URLSearchParams(
+            window.location.search
+          ).get('proximo') === '1'
+        ) {
+          const proximoIndex =
+            gamesData.findIndex(
+              (game: any) =>
+                new Date(
+                  game.match_date
+                ).getTime() >=
+                Date.now()
+            )
+
+          if (proximoIndex >= 0) {
+            setPagina(
+              Math.floor(
+                proximoIndex /
+                jogosPorPagina
+              ) + 1
+            )
+          }
+        }
+
         /* TEAMS */
 
         const { data: teamsData } =
