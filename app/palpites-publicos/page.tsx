@@ -73,10 +73,72 @@ export default function PlacaresPage() {
           setGames(gamesData)
         }
 
-        const { data: betsData } =
-          await supabase
-            .from('bets')
-            .select('*')
+        const buscarTodosPalpites =
+          async () => {
+
+            const tamanhoPagina =
+              1000
+
+            let paginaAtual =
+              0
+
+            let todos: any[] =
+              []
+
+            while (true) {
+
+              const inicio =
+                paginaAtual *
+                tamanhoPagina
+
+              const fim =
+                inicio +
+                tamanhoPagina -
+                1
+
+              const {
+                data,
+                error
+              } =
+                await supabase
+                  .from('bets')
+                  .select('*')
+                  .range(
+                    inicio,
+                    fim
+                  )
+
+              if (error) {
+                console.error(
+                  'Erro ao buscar palpites:',
+                  error
+                )
+                break
+              }
+
+              todos =
+                todos.concat(
+                  data || []
+                )
+
+              if (
+                !data ||
+                data.length <
+                  tamanhoPagina
+              ) {
+                break
+              }
+
+              paginaAtual += 1
+
+            }
+
+            return todos
+
+          }
+
+        const betsData =
+          await buscarTodosPalpites()
 
         if (betsData)
           setBets(betsData)
@@ -123,11 +185,12 @@ export default function PlacaresPage() {
     }
 
   const getBets =
-    (gameId: number) => {
+    (gameId: number | string) => {
 
       return bets.filter(
         (b: any) =>
-          b.game_id === gameId
+          String(b.game_id) ===
+          String(gameId)
       )
 
     }
