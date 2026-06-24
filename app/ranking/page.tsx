@@ -12,6 +12,9 @@ import {
 import {
   calcularCravadasUsuario
 } from '../../lib/jogos'
+import {
+  buscarTodosPalpites
+} from '../../lib/bets'
 
 export default function RankingPage() {
 
@@ -87,10 +90,8 @@ export default function RankingPage() {
             .from('games')
             .select('*')
 
-        const { data: bets } =
-          await supabase
-            .from('bets')
-            .select('*')
+        const bets =
+          await buscarTodosPalpites()
 
         const resultsByGroup: Record<string, any> = {}
 

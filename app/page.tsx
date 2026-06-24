@@ -12,6 +12,9 @@ import {
 import {
   calcularCravadasUsuario
 } from '../lib/jogos'
+import {
+  buscarTodosPalpites
+} from '../lib/bets'
 
 import { useRouter } from 'next/navigation'
 
@@ -118,12 +121,8 @@ export default function HomePage() {
               .from('group_results')
               .select('*')
 
-          const {
-            data: allBets
-          } =
-            await supabase
-              .from('bets')
-              .select('*')
+          const allBets =
+            await buscarTodosPalpites()
 
           const {
             data: allGames
